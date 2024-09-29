@@ -10,7 +10,6 @@ def user_login_service(req: UserLoginReq, db: Session) -> UserLoginReply:
     if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
 
-    # 把用户id存在生命周期里面
     pwd = encrypt_pwd(req.password)
     if pwd != user.password:
         raise HTTPException(status_code=400, detail="密码错误")
