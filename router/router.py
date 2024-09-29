@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from . import user_router, api_router, file_router, moudle_router, project_router
+from . import user_router, api_router, file_router, moudle_router, project_router, data_router
 
 
 app = FastAPI()
@@ -8,6 +8,7 @@ app.include_router(api_router.apiHandler)
 app.include_router(file_router.fileHandler)
 app.include_router(moudle_router.moduleHandler)
 app.include_router(project_router.projectHandler)
+app.include_router(data_router.dataHandler)
 
 
 # 定义中间件

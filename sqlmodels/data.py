@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 
 class Data(SQLModel, table=True):
+    __tablename__ = "t_data"
     Id: str = Field(default=None, primary_key=True)
     DataName: Optional[str] = Field(default=None)
     ModuleTypeId: Optional[str] = Field(default=None)
@@ -20,7 +21,7 @@ class Data(SQLModel, table=True):
     ClassNum: Optional[int] = Field(default=None)
 
     @classmethod
-    def find_by_page(cls, session: Session, uid: str, page: int, size: int, like: Optional[str] = None) -> (List["Data"], int):
+    def find_by_page(cls, uid: str, page: int, size: int, like: str, session: Session) -> (List["Data"], int):
         query = select(cls).where(cls.CreateUid == uid, cls.IsDelete == False)
         if like:
             query = query.where(

@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Session
-from sqlmodels.moudleType import ModuleType
+from sqlmodels.moduleType import ModuleType
 
 class GetModuleTypeReply(SQLModel):
     id: str
@@ -16,7 +16,7 @@ class StringIdReq(BaseModel):
 
 
 def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:
-    module_type = ModuleType.select_by_id(db, req.Id)
+    module_type = ModuleType.select_by_id(req.Id, db)
     if not module_type:
         return None
     return GetModuleTypeReply.from_orm(module_type)

@@ -43,6 +43,7 @@ class Module(SQLModel, table=True):
     def select_by_id(cls, session: Session, id: str) -> Optional["Module"]:
         return session.get(cls, id)
 
+
     def save(self, session: Session):
         session.add(self)
         session.commit()
