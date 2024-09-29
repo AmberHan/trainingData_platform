@@ -1,4 +1,6 @@
 # schemas/user.py
+from typing import Optional
+
 from pydantic import BaseModel
 
 class UserLoginReq(BaseModel):
@@ -8,12 +10,12 @@ class UserLoginReq(BaseModel):
 class LoginUserInfo(BaseModel):
     id: str
     username: str
-    need_repass: bool
-    repassed: bool
-    pic_url: str
-    phone_num: str
-    position: str
-    email: str
+    need_repass: Optional[bool] = None
+    repassed: Optional[bool] = None
+    pic_url: Optional[str] = None
+    phone_num: Optional[str] = None
+    position: Optional[str] = None
+    email: Optional[str] = None
 
 class UserLoginReply(BaseModel):
     user_info: LoginUserInfo

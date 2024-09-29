@@ -17,13 +17,7 @@ def user_login_service(req: UserLoginReq, db: Session) -> UserLoginReply:
 
     user_info = LoginUserInfo(
         id=user.id,
-        username=user.username,
-        need_repass=False,
-        repassed=False,
-        pic_url="",
-        phone_num="11",
-        position="11",
-        email="333"
+        username=user.username
         )
 
     return UserLoginReply(user_info=user_info)
