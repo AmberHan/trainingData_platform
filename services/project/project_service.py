@@ -11,17 +11,17 @@ from services.module import moudle_service
 
 class SaveProjectReq(BaseModel):
     id: Optional[str] = None
-    project_name: Optional[str] = None
-    module_type_id: Optional[str] = None
-    module_type_name: Optional[str] = None
-    create_way: Optional[str] = None
+    projectName: Optional[str] = None
+    moduleTypeId: Optional[str] = None
+    moduleTypeName: Optional[str] = None
+    createWay: Optional[str] = None
     icon: Optional[str] = None
-    work_total_num: Optional[int] = None
-    working_num: Optional[int] = None
-    complete_num: Optional[int] = None
-    create_uid: Optional[str] = None
-    create_time: Optional[str] = None
-    user_name: Optional[str] = None
+    workTotalNum: Optional[int] = None
+    workingNum: Optional[int] = None
+    completeNum: Optional[int] = None
+    createUid: Optional[str] = None
+    createTime: Optional[str] = None
+    userName: Optional[str] = None
     detail: Optional[str] = None
 
 class GetProjectListByPageReply(BaseModel):
@@ -31,14 +31,14 @@ class GetProjectListByPageReply(BaseModel):
 def project_to_save_project_req(project: Project) -> SaveProjectReq:
     return SaveProjectReq(
         id=project.Id,
-        project_name=project.ProjectName,
-        module_type_id=project.ModuleTypeId,
-        work_total_num=project.WorkTotalNum,
-        working_num=project.WorkingNum,
-        complete_num=project.CompleteNum,
-        create_uid=project.CreateUid,
+        projectName=project.ProjectName,
+        moduleTypeId=project.ModuleTypeId,
+        workTotalNum=project.WorkTotalNum,
+        workingNum=project.WorkingNum,
+        completeNum=project.CompleteNum,
+        createUid=project.CreateUid,
         detail=project.Detail,
-        create_time=project.CreateTime
+        createTime=project.CreateTime
     )
 
 def get_project_list_by_page_impl(
@@ -62,10 +62,10 @@ def get_project_list_by_page_impl(
 
         if module_type_reply:
             saveProjectReq.icon = module_type_reply.Icon
-            saveProjectReq.module_type_name = module_type_reply.ModuleTypeName
-            saveProjectReq.create_way = module_type_reply.CreateWay
+            saveProjectReq.moduleTypeName = module_type_reply.ModuleTypeName
+            saveProjectReq.createWay = module_type_reply.CreateWay
         user = User.select_by_id(p.CreateUid, db)
         if user:
-            saveProjectReq.user_name = user.username
+            saveProjectReq.userName = user.username
         reply.list.append(saveProjectReq)
     return reply
