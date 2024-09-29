@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from . import user_router, api_router, file_router, moudle_router
+from fastapi import FastAPI, Request
+from . import user_router, api_router, file_router, moudle_router, project_router
 
 
 app = FastAPI()
@@ -7,6 +7,11 @@ app.include_router(user_router.userHandle)
 app.include_router(api_router.apiHandler)
 app.include_router(file_router.fileHandler)
 app.include_router(moudle_router.moduleHandler)
+app.include_router(project_router.projectHandler)
+
+
+# 定义中间件
+
 
 @app.get("/")
 async def root():

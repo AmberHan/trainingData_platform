@@ -1,11 +1,21 @@
 from fastapi import APIRouter
 from common import const
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from common.const import CURRENT_USER_ID_KEY
+from services.db import get_db
+from schemas.project_model import GetProjectListByPageReq
+from services.project.project_service import get_project_list_by_page_impl
+
 
 projectHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-p")
 
 @projectHandler.post("/getProjectListByPage")
-def get_project_list_by_page():
-    pass
+def get_project_list_by_page(req: GetProjectListByPageReq, db: Session = Depends(get_db)):
+    reply = get_project_list_by_page_impl(CURRENT_USER_ID_KEY, req, db)
+    # reply = get_project_list_by_page_impl(Request.headers.get("X-User-ID"), req, db)
+    return reply
 
 @projectHandler.post("/saveProject")
 def save_project():

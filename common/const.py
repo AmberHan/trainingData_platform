@@ -7,7 +7,8 @@ CONFIG_CENTER_KEY = "/micro/registry/training-config.conf"
 
 RECORD_NOT_FOUND = "record not found"
 
-CURRENT_USER_ID_KEY = "Current_user_id"
+# go里面目前也是写死的
+CURRENT_USER_ID_KEY = "25f0f097-71e7-4bb9-890b-32c42bd607bd"
 
 
 # 产品类型枚举
