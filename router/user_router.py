@@ -1,10 +1,8 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from common import const
-from common.code import RequestSuccess, LoginInfoError
+from common.code import *
 from schemas.user_model import UserLoginReq
 from services.db import get_db
 from services.user.user import user_login
@@ -17,8 +15,8 @@ userHandle = APIRouter(prefix=const.API_URL_PREFIX + "/api-u")
 async def login(req: UserLoginReq, db: Session = Depends(get_db)):
     try:
         reply = user_login(req, db)
-        return reply
+        return response_format(RequestSuccess, reply)
     except HTTPException as e:
-        return response_format(RequestSuccess, e.detail)
+        return response_format(ServiceInsideError, e.detail)
     except Exception as e:
-        return response_format(LoginInfoError, str(e))
+        return response_format(ServiceInsideError, str(e))
