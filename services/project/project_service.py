@@ -7,7 +7,7 @@ from sqlmodels.project import Project
 from sqlmodels.user import User
 from schemas.project_model import GetProjectListByPageReq
 from sqlalchemy.orm import Session
-from services.module import moudle_service
+from services.module import module_service
 
 class SaveProjectReq(BaseModel):
     id: Optional[str] = None
@@ -58,7 +58,7 @@ def get_project_list_by_page_impl(
     reply = GetProjectListByPageReply(total=total)
     for i, p in enumerate(projects):
         saveProjectReq = project_to_save_project_req(p)
-        module_type_reply = moudle_service.get_module_type_by_id(moudle_service.StringIdReq(Id=p.ModuleTypeId), db)
+        module_type_reply = module_service.get_module_type_by_id(module_service.StringIdReq(Id=p.ModuleTypeId), db)
 
         if module_type_reply:
             saveProjectReq.icon = module_type_reply.Icon

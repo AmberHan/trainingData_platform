@@ -4,6 +4,7 @@ from sqlalchemy import text, func
 
 
 class DataFile(SQLModel, table=True):
+    __tablename__ = "t_data_file"
     Id: Optional[int] = Field(default=None, primary_key=True)
     DataId: Optional[str] = Field(default=None)
     FilePath: Optional[str] = Field(default=None)

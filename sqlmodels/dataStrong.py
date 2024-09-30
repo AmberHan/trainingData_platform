@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 
 class DataStrong(SQLModel, table=True):
+    __tablename__ = "t_data_strong"
     Id: str = Field(default=None, primary_key=True)
     DataId: Optional[str] = Field(default=None)
     StrongParam: Optional[str] = Field(default=None)

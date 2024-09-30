@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, Session, select
 from typing import Optional
 
 class ProjectWorkParam(SQLModel, table=True):
+    __tablename__ = "t_project_work_param"
     Id: str = Field(default=None, primary_key=True)
     ProjectId: Optional[str] = Field(default=None)
     ProjectWorkId: Optional[str] = Field(default=None)

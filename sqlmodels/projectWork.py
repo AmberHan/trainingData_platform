@@ -4,6 +4,7 @@ from sqlalchemy import text, func
 
 
 class ProjectWork(SQLModel, table=True):
+    __tablename__ = "t_project_work"
     Id: str = Field(default=None, primary_key=True, nullable=False)
     ProjectId: Optional[str] = Field(default=None)
     ModuleTypeId: Optional[str] = Field(default=None)

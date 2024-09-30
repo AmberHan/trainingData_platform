@@ -1,0 +1,41 @@
+from typing import Optional, List
+
+from pydantic import BaseModel
+
+
+class GetModuleListByPageReq(BaseModel):
+    page: Optional[int] = 1  # 默认值为 1
+    size: Optional[int] = 5  # 默认值为 5
+    like: Optional[str] = None  # 可选字符串，默认为 None
+
+
+
+# data 返回实体
+class SaveModuleReq(BaseModel):
+    id: Optional[str] = None
+    moduleName: Optional[str] = None
+    moduleTypeId: Optional[str] = None
+    frameId: Optional[str] = None
+    detail: Optional[str] = None
+    moduleFile: Optional[str] = None
+    isDelete: Optional[bool] = False
+    createUid: Optional[str] = None
+    createTime: Optional[str] = None
+    sort: Optional[str] = None
+
+    # 附加 ModuleFrame
+    frameName: Optional[str] = None
+    # 附加 ModuleType
+    moduleTypeName: Optional[str] = None
+    icon: Optional[str] = None
+    createWay: Optional[str] = None
+
+
+
+
+# 返回list数据列表
+class GetModuleListByPageReply(BaseModel):
+    total: Optional[int] = None
+    list: List[SaveModuleReq] = []
+
+

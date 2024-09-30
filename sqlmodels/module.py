@@ -5,6 +5,7 @@ from sqlalchemy import text, func
 
 
 class Module(SQLModel, table=True):
+    __tablename__ = "t_module"
     Id: str = Field(default=None, primary_key=True, nullable=False, index=True)
     ModuleName: Optional[str] = Field(default=None, index=True)
     ModuleTypeId: Optional[str] = Field(default=None)

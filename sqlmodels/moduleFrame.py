@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 
 class ModuleFrame(SQLModel, table=True):
+    __tablename__ = "t_module_frame"
     Id: str = Field(default=None, primary_key=True, nullable=False)
     FrameName: Optional[str] = Field(default=None)
 

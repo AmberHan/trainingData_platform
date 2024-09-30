@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 
 class ProjectWorkType(SQLModel, table=True):
+    __tablename__ = "t_project_work_type"
     Id: str = Field(default=None, primary_key=True)
     TypeName: Optional[str] = Field(default=None)
     Icon: Optional[str] = Field(default=None)

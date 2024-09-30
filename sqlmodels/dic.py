@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, Session, select
 from typing import Optional, List
 
 class Dic(SQLModel, table=True):
+    __tablename__ = "t_dic"
     Id: str = Field(default=None, primary_key=True)
     Value: Optional[str] = Field(default=None)
     Name: Optional[str] = Field(default=None)
