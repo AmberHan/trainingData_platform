@@ -5,7 +5,7 @@ from common import const
 from common.code import *
 from schemas.user_model import UserLoginReq
 from services.db import get_db
-from services.user.user import user_login
+from services.user.user_service import user_login_impl
 from util.response_format import response_format
 
 userHandle = APIRouter(prefix=const.API_URL_PREFIX + "/api-u")
@@ -14,7 +14,7 @@ userHandle = APIRouter(prefix=const.API_URL_PREFIX + "/api-u")
 @userHandle.post("/login")
 async def login(req: UserLoginReq, db: Session = Depends(get_db)):
     try:
-        reply = user_login(req, db)
+        reply = user_login_impl(req, db)
         return response_format(RequestSuccess, reply)
     except HTTPException as e:
         return response_format(ServiceInsideError, e.detail)

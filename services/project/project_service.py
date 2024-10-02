@@ -9,6 +9,8 @@ from schemas.project_model import GetProjectListByPageReq
 from sqlalchemy.orm import Session
 from services.module import module_service
 
+
+
 class SaveProjectReq(BaseModel):
     id: Optional[str] = None
     projectName: Optional[str] = None
@@ -24,22 +26,26 @@ class SaveProjectReq(BaseModel):
     userName: Optional[str] = None
     detail: Optional[str] = None
 
+    @classmethod
+    def from_orm(self, project: Project) -> 'SaveProjectReq':
+        return SaveProjectReq(
+            id=project.Id,
+            projectName=project.ProjectName,
+            moduleTypeId=project.ModuleTypeId,
+            workTotalNum=project.WorkTotalNum,
+            workingNum=project.WorkingNum,
+            completeNum=project.CompleteNum,
+            createUid=project.CreateUid,
+            detail=project.Detail,
+            createTime=project.CreateTime
+        )
+
+
+
 class GetProjectListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectReq] = []
 
-def project_to_save_project_req(project: Project) -> SaveProjectReq:
-    return SaveProjectReq(
-        id=project.Id,
-        projectName=project.ProjectName,
-        moduleTypeId=project.ModuleTypeId,
-        workTotalNum=project.WorkTotalNum,
-        workingNum=project.WorkingNum,
-        completeNum=project.CompleteNum,
-        createUid=project.CreateUid,
-        detail=project.Detail,
-        createTime=project.CreateTime
-    )
 
 def get_project_list_by_page_impl(
     uid: str,
@@ -57,7 +63,7 @@ def get_project_list_by_page_impl(
     projects, total = Project.find_by_page(uid, req.page, req.size, req.like, db)
     reply = GetProjectListByPageReply(total=total)
     for i, p in enumerate(projects):
-        saveProjectReq = project_to_save_project_req(p)
+        saveProjectReq = SaveProjectReq.from_orm(p)
         module_type_reply = module_service.get_module_type_by_id(module_service.StringIdReq(Id=p.ModuleTypeId), db)
 
         if module_type_reply:

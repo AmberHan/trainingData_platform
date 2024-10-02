@@ -5,7 +5,7 @@ from common.code import *
 from common.const import CURRENT_USER_ID_KEY
 from services.db import get_db
 from schemas.project_model import GetProjectListByPageReq
-from services.project import project
+from services.project import project_service
 from util.response_format import response_format
 
 projectHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-p")
@@ -13,7 +13,7 @@ projectHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-p")
 @projectHandler.post("/getProjectListByPage")
 def get_project_list_by_page(req: GetProjectListByPageReq, db: Session = Depends(get_db)):
     try:
-        reply = project.get_project_list_by_page(CURRENT_USER_ID_KEY, req, db)
+        reply = project_service.get_project_list_by_page_impl(CURRENT_USER_ID_KEY, req, db)
         return response_format(RequestSuccess, reply)
     except HTTPException as e:
         return response_format(ServiceInsideError, e.detail)
