@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from common.code import *
 from common.const import CURRENT_USER_ID_KEY
 from services.db import get_db
-from schemas.project_model import GetProjectListByPageReq
+from schemas.project_model import GetProjectListByPageReq, GetProjectByIdReq
 from services.project import project_service
 from util.response_format import response_format
 
@@ -33,7 +33,7 @@ def delete_all_projects():
     pass
 
 @projectHandler.post("/getProjectWorkListByPage")
-def get_project_work_list_by_page(project_id: int, page: int, size: int):
+def get_project_work_list_by_page(req: GetProjectListByPageReq, db: Session = Depends(get_db)):
     pass
 
 @projectHandler.post("/saveProjectWork")
@@ -49,8 +49,14 @@ def delete_all_project_works(project_id: int):
     pass
 
 @projectHandler.post("/getProjectWorkById")
-def get_project_work_by_id(work_id: int):
-    pass
+def get_project_work_by_id(req: GetProjectByIdReq, db: Session = Depends(get_db)):
+    try:
+        reply = project_service.getProjectWorkById(CURRENT_USER_ID_KEY, req, db)
+        return response_format(RequestSuccess, reply)
+    except HTTPException as e:
+        return response_format(ServiceInsideError, e.detail)
+    except Exception as e:
+        return response_format(ServiceInsideError, str(e))
 
 @projectHandler.post("/flushProjectWorkNum")
 def flush_project_work_num(project_id: int):

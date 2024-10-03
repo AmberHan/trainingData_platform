@@ -5,7 +5,7 @@ from services.db import get_db
 from common import const
 from common.const import CURRENT_USER_ID_KEY
 from schemas.module_model import GetModuleListByPageReq
-from services.module import module
+from services.module import module_service
 from util.response_format import response_format
 
 moduleHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-m")
@@ -13,7 +13,7 @@ moduleHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-m")
 @moduleHandler.post("/getModuleListByPage")
 async def get_module_list_by_page(req: GetModuleListByPageReq, db: Session = Depends(get_db)):
     try:
-        reply = module.get_module_list_by_page(CURRENT_USER_ID_KEY, req, db)
+        reply = module_service.get_module_list_by_page_impl(CURRENT_USER_ID_KEY, req, db)
         return response_format(RequestSuccess, reply)
     except HTTPException as e:
         return response_format(ServiceInsideError, e.detail)

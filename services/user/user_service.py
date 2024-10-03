@@ -38,7 +38,7 @@ def user_login_impl(req: UserLoginReq, db: Session) -> LoginRespWithToken:
 
 # 数据库缺少一些字段
 def user_login_service(req: UserLoginReq, db: Session) -> UserLoginReply:
-    user = User.get_user(req.userName, db)
+    user = User.get_user(db, req.userName)
     if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
 

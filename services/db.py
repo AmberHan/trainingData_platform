@@ -17,7 +17,7 @@ def init_data_db():
     try:
         with Session(engine) as session:
             # 检查用户是否存在
-            num = User.exist_username("basic", session)
+            num = User.exist_username(session, "basic")
             if num == 0:
                 user = User(
                     id="25f0f097-71e7-4bb9-890b-32c42bd607bd",

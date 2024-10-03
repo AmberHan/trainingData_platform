@@ -24,26 +24,10 @@ class StringIdReq(BaseModel):
 
 
 def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:
-    module_type = ModuleType.select_by_id(req.Id, db)
+    module_type = ModuleType.select_by_id(db, req.Id)
     if not module_type:
         return None
     return GetModuleTypeReply.from_orm(module_type)
-
-
-def module_to_save_project_req(module: Module) -> SaveModuleReq:
-    return SaveModuleReq(
-        id=module.Id,
-        moduleName=module.ModuleName,
-        moduleTypeId=module.ModuleTypeId,
-
-        frameId=module.FrameId,
-        detail=module.Detail,
-        moduleFile=module.ModuleFile,
-        isDelete=module.IsDelete,
-        createUid=module.CreateUid,
-        createTime=module.CreateTime,
-        sort=module.Sort
-    )
 
 
 
@@ -59,17 +43,37 @@ def get_module_list_by_page_impl(id: str, req: GetModuleListByPageReq, db: Sessi
         projects, total = Module.find_by_page(db, id, req.page, req.size, req.like)
         reply = GetModuleListByPageReply(total=total)
         for i, p in enumerate(projects):
-            saveModuleReq = module_to_save_project_req(p)
+            saveModuleReq = SaveModuleReq.from_module_orm(p)
             try:
-                saveModuleReq.frameName = ModuleFrame.select_by_id(db, p.FrameId).FrameName
-                moduleTypeUse = ModuleType.select_by_id(p.ModuleTypeId, db)
-                saveModuleReq.moduleTypeName = moduleTypeUse.ModuleTypeName
-                saveModuleReq.icon = moduleTypeUse.Icon
-                saveModuleReq.createWay = moduleTypeUse.CreateWay
+                saveModuleReq.FrameName = ModuleFrame.select_by_id(db, p.FrameId).FrameName
+                moduleTypeUse = ModuleType.select_by_id(db, p.ModuleTypeId)
+                saveModuleReq.ModuleTypeName = moduleTypeUse.ModuleTypeName
+                saveModuleReq.Icon = moduleTypeUse.Icon
+                saveModuleReq.CreateWay = moduleTypeUse.CreateWay
             except:
-                saveModuleReq.frameName = "none"
+                saveModuleReq.FrameName = "none"
             reply.list.append(saveModuleReq)
         return reply
     except Exception as e:
         logger.error(f"Failed to get data by page: {e}")
         raise Exception("Failed to fetch data")
+
+
+def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:
+    module = Module.select_by_id(db, req.Id)
+    if not module:
+        return None
+    moduleR = SaveModuleReq.from_module_orm(module)
+    if not moduleR:
+        return None
+    # 查询框架
+    moduleF = ModuleFrame.select_by_id(db, moduleR.FrameId)
+    if not moduleF:
+        return
+    moduleR.FrameName = moduleF.FrameName
+    # 查询类型
+    moduleT = ModuleType.select_by_id(db, moduleR.FrameId)
+    if not moduleT:
+        return None
+    moduleR.ModuleTypeName = moduleF.ModuleTypeName
+    return moduleR

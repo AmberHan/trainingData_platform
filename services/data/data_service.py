@@ -43,9 +43,9 @@ def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
         reply = GetDataListByPageReply(total=total)
         for i, p in enumerate(projects):
             saveDataReq = data_to_save_project_req(p)
-            saveDataReq.userName = User.select_by_id(p.CreateUid, db).username
+            saveDataReq.userName = User.select_by_id(db, p.CreateUid).username
             try:
-                saveDataReq.moduleTypeName = ModuleType.select_by_id(p.ModuleTypeId, db).ModuleTypeName
+                saveDataReq.moduleTypeName = ModuleType.select_by_id(db, p.ModuleTypeId).ModuleTypeName
             except:
                 saveDataReq.moduleTypeName = "none"
             reply.list.append(saveDataReq)

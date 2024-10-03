@@ -32,3 +32,6 @@ class GetProjectListByPageReq(BaseModel):
     size: Optional[int] = 5  # 默认值为 5
     like: Optional[str] = None  # 可选字符串，默认为 None
 
+class GetProjectByIdReq(BaseModel):
+    id: str
+

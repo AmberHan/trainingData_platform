@@ -11,7 +11,7 @@ class ModuleType(SQLModel, table=True):
     CreateTime: str = Field(..., alias="createTime")
 
     @classmethod
-    def select_by_id(cls, id: str, session: Session) -> Optional["ModuleType"]:
+    def select_by_id(cls, session: Session, id: str) -> Optional["ModuleType"]:
         return session.exec(select(cls).where(cls.id == id)).first()
 
     @classmethod

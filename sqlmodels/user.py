@@ -17,21 +17,21 @@ class User(SQLModel, table=True):
         return True
 
     @classmethod
-    def update(cls, user: 'User', session: Session) -> bool:
+    def update(cls, session: Session, user: 'User') -> bool:
         session.merge(user)
         session.commit()
         return True
 
     @classmethod
-    def select_by_id(cls, id: str, session: Session) -> Optional['User']:
+    def select_by_id(cls, session: Session, id: str) -> Optional['User']:
         return session.exec(select(User).where(User.id == id)).first()
 
     @classmethod
-    def exist_username(cls, username: str, session: Session) -> int:
+    def exist_username(cls, session: Session, username: str) -> int:
         result = session.exec(select(func.count()).where(cls.username == username)).one()
         return result
 
     @classmethod
-    def get_user(cls, username: str, session: Session) -> 'User':
+    def get_user(cls, session: Session, username: str) -> 'User':
         result = session.exec(select(User).where(cls.username == username)).first()
         return result
