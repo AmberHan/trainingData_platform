@@ -6,6 +6,8 @@ from common.const import CURRENT_USER_ID_KEY
 from services.db import get_db
 from schemas.project_model import GetProjectListByPageReq, GetProjectByIdReq
 from services.project import project_service
+from services.project.project_service import SaveProjectReq, DeleteListReq
+from sqlmodels.project import Project
 from util.response_format import response_format
 
 projectHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-p")
@@ -21,15 +23,36 @@ def get_project_list_by_page(req: GetProjectListByPageReq, db: Session = Depends
         return response_format(ServiceInsideError, str(e))
 
 @projectHandler.post("/saveProject")
-def save_project():
-    pass
+def save_project(req: SaveProjectReq, db: Session = Depends(get_db)):
+    try:
+        reply = project_service.save_project_impl(CURRENT_USER_ID_KEY, req, db)
+        return response_format(RequestSuccess, reply)
+    except HTTPException as e:
+        return response_format(ServiceInsideError, e.detail)
+    except Exception as e:
+        return response_format(ServiceInsideError, str(e))
 
 @projectHandler.post("/deleteProject")
-def delete_project(project_id: int):
-    pass
+def delete_project(project_req: SaveProjectReq, db: Session = Depends(get_db)):
+    try:
+        reply = project_service.delete_project_impl(project_req.id, db)
+        return response_format(RequestSuccess, reply)
+    except HTTPException as e:
+        return response_format(ServiceInsideError, e.detail)
+    except Exception as e:
+        return response_format(ServiceInsideError, str(e))
 
 @projectHandler.post("/deleteAllProject")
-def delete_all_projects():
+def delete_all_projects(ids: DeleteListReq, db: Session = Depends(get_db)):
+    if len(ids.id) == 0:
+        return response_format(DeleteNoIDRequest, "id不能为空")
+    try:
+        reply = project_service.delete_all_project_impl(ids.id, db)
+        return response_format(RequestSuccess, reply)
+    except HTTPException as e:
+        return response_format(ServiceInsideError, e.detail)
+    except Exception as e:
+        return response_format(ServiceInsideError, str(e))
     pass
 
 @projectHandler.post("/getProjectWorkListByPage")

@@ -1,6 +1,7 @@
 from typing import Optional, List
 from fastapi import HTTPException
 from pydantic import BaseModel
+from sqlalchemy.exc import SQLAlchemyError
 
 from services.module.module_service import get_module_type_by_id, get_module_by_id
 from sqlmodels.data import Data
@@ -11,6 +12,9 @@ from sqlmodels.user import User
 from schemas.project_model import GetProjectListByPageReq, GetProjectByIdReq
 from sqlalchemy.orm import Session
 from services.module import module_service
+from util import util
+import logging
+
 
 class SaveProjectReq(BaseModel):
     id: Optional[str] = None
@@ -146,6 +150,9 @@ class GetProjectListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectReq] = []
 
+# 定义入参实体
+class DeleteListReq(BaseModel):
+    id: List[str]
 
 def get_project_list_by_page_impl(
     uid: str,
@@ -176,6 +183,78 @@ def get_project_list_by_page_impl(
         reply.list.append(saveProjectReq)
     return reply
 
+
+# 保存项目信息
+def save_project_impl(
+    uid: str,
+    req: SaveProjectReq,
+    db: Session,
+    # current_user_id: str = Depends(get_current_user_id)
+) -> GetProjectListByPageReply:
+    project = Project()
+    # 日志配置
+    logger = logging.getLogger(__name__)
+    try:
+        # 判断是否是更新项目
+        if req.id:
+            project = Project.select_by_id(db, req.id)
+            if not project:
+                logger.error(f"Failed to find project with ID {req.id}")
+                return Exception("项目不存在")
+
+            # 验证用户是否有权限操作
+            if project.CreateUid != uid:
+                return Exception("无权操作")
+
+        # 如果是新项目，检查项目名称是否已存在
+        else:
+            if Project.project_name_exists(db, uid, req.projectName):
+                return Exception("项目名称已存在")
+            # 生成新项目 ID 和创建时间
+            project.Id = util.NewId()
+            project.CreateTime = util.TimeNow()
+
+        project.ProjectName = req.projectName
+        project.ModuleTypeId = req.moduleTypeId
+        project.CreateUid = uid
+        project.Detail = req.detail
+        project.save(db)
+
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to save project: {e}")
+        return e  # 返回错误对象
+    return None
+
+# 删除项目信息
+def delete_project_impl(
+    id: str,
+    db: Session,
+    # current_user_id: str = Depends(get_current_user_id)
+) -> GetProjectListByPageReply:
+    project = Project()
+    # 日志配置
+    logger = logging.getLogger(__name__)
+    try:
+        project.Id = id
+        project.delete(db)
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to save project: {e}")
+        return e  # 返回错误对象
+    return None
+
+def delete_all_project_impl(
+    id: list,
+    db: Session,
+    # current_user_id: str = Depends(get_current_user_id)
+) -> GetProjectListByPageReply:
+    # 日志配置
+    logger = logging.getLogger(__name__)
+    try:
+        Project.delete_all(db, id)
+    except SQLAlchemyError as e:
+        logger.error(f"Failed to save project: {e}")
+        return e  # 返回错误对象
+    return None
 def get_project_work_by_id(
     req: GetProjectByIdReq,
     db: Session
