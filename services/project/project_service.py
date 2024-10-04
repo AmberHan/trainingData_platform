@@ -152,7 +152,9 @@ class GetProjectListByPageReply(BaseModel):
     list: List[SaveProjectReq] = []
 
 
-
+class GetProjectWorkListByPageReply(BaseModel):
+    total: Optional[int] = None
+    list: List[SaveProjectWorkReq] = []
 
 
 
@@ -331,7 +333,7 @@ def get_project_info(
 
 
 # project_work_listpage业务方法
-# TODO: 得到的方法reply无法在responseformat封装
+# TODO: 得到的方法responseformat封装对应不全
 def get_project_work_list_by_page_impl(
     uid: str,
     req: GetProjectWorkListByPageReq,
@@ -346,7 +348,7 @@ def get_project_work_list_by_page_impl(
 
     # 调用封装好的分页方法
     projectWorks, total = ProjectWorkM.find_by_page(db, uid, req.projectId, req.page, req.size, req.like)
-    reply = GetProjectListByPageReply(total=total)
+    reply = GetProjectWorkListByPageReply(total=total)
     for i, p in enumerate(projectWorks):
         saveProjectWorkReq = get_project_info(p, db)
         reply.list.append(saveProjectWorkReq)
