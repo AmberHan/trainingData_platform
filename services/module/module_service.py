@@ -78,12 +78,10 @@ def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:
         return None
     # 查询框架
     moduleF = ModuleFrame.select_by_id(db, moduleR.frameId)
-    if not moduleF:
-        return
-    moduleR.frameName = moduleF.FrameName
+    if moduleF:
+        moduleR.frameName = moduleF.FrameName
     # 查询类型
     moduleT = ModuleType.select_by_id(db, moduleR.frameId)
-    if not moduleT:
-        return None
-    moduleR.ModuleTypeName = moduleT.ModuleTypeName
+    if moduleT:
+        moduleR.ModuleTypeName = moduleT.ModuleTypeName
     return moduleR

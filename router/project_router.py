@@ -81,7 +81,7 @@ def delete_all_project_works(project_id: int):
 @projectHandler.post("/getProjectWorkById")
 def get_project_work_by_id(req: GetProjectByIdReq, db: Session = Depends(get_db)):
     try:
-        reply = project_service.getProjectWorkById(CURRENT_USER_ID_KEY, req, db)
+        reply = project_service.get_project_work_by_id(req, db)
         return response_format(RequestSuccess, reply)
     except HTTPException as e:
         return response_format(ServiceInsideError, e.detail)
@@ -93,15 +93,15 @@ def flush_project_work_num(project_id: int):
     pass
 
 @projectHandler.post("/getProjectWorkStageById")
-def get_project_work_stage_by_id(work_id: int):
+def get_project_work_stage_by_id(req: GetProjectByIdReq, db: Session = Depends(get_db)):
     pass
 
 @projectHandler.post("/getProjectWorkInterById")
-def get_project_work_inter_by_id(work_id: int):
+def get_project_work_inter_by_id(req: GetProjectByIdReq, db: Session = Depends(get_db)):
     pass
 
 @projectHandler.post("/getProjectWorkInterValById")
-def get_project_work_inter_val_by_id(work_id: int):
+def get_project_work_inter_val_by_id(req: GetProjectByIdReq, db: Session = Depends(get_db)):
     pass
 
 @projectHandler.post("/getProjectWorkReport")

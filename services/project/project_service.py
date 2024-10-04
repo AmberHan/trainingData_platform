@@ -378,12 +378,14 @@ def delete_all_project_impl(
         logger.error(f"Failed to save project: {e}")
         return e  # 返回错误对象
     return None
+
 def get_project_work_by_id(
     req: GetProjectByIdReq,
     db: Session
 ) -> SaveProjectWorkReq:
     work = ProjectWorkM.select_by_id(db, req.id)
-    ret = get_project_info(work, db)
+    projectWork = ProjectWork.from_orm(work)
+    ret = get_project_info(projectWork, db)
     if ret is None:
         return None
     return ret
@@ -393,9 +395,9 @@ def get_project_work_type_by_id(
     db: Session
 ) -> ProjectWorkTypeReply:
     work_type = ProjectWorkType.select_by_id(db, req.id)
-    ret = ProjectWorkTypeReply.from_orm(work_type)
-    if ret is None:
+    if work_type is None:
         return None
+    ret = ProjectWorkTypeReply.from_orm(work_type)
     return ret
 
 def get_project_info(
