@@ -6,10 +6,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from services.module.module_service import get_module_type_by_id, get_module_by_id
 from sqlmodels.data import Data
 from sqlmodels.project import Project
-from sqlmodels.projectWork import ProjectWork
+from sqlmodels.projectWork import ProjectWork as ProjectWorkM
 from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
-from schemas.project_model import GetProjectListByPageReq, GetProjectByIdReq
+from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamM
+from schemas.project_model import GetProjectListByPageReq, GetProjectByIdReq, GetProjectWorkListByPageReq
 from sqlalchemy.orm import Session
 from services.module import module_service
 from util import util
@@ -150,6 +151,11 @@ class GetProjectListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectReq] = []
 
+
+
+
+
+
 # 定义入参实体
 class DeleteListReq(BaseModel):
     id: List[str]
@@ -182,6 +188,8 @@ def get_project_list_by_page_impl(
             saveProjectReq.userName = user.username
         reply.list.append(saveProjectReq)
     return reply
+
+
 
 
 # 保存项目信息
@@ -259,7 +267,7 @@ def get_project_work_by_id(
     req: GetProjectByIdReq,
     db: Session
 ) -> SaveProjectWorkReq:
-    work = ProjectWork.select_by_id(db, req.id)
+    work = ProjectWorkM.select_by_id(db, req.id)
     ret = get_project_info(work, db)
     if ret is None:
         return None
@@ -280,13 +288,13 @@ def get_project_info(
     db: Session
 ) -> SaveProjectWorkReq:
     saveProjectWorkReq = SaveProjectWorkReq()
-    work = ProjectWork.select_by_id(db, req.id)
+    work = ProjectWorkM.select_by_id(db, req.Id)
     if work is None:
         raise HTTPException(status_code=404, detail="id不存在")
     saveProjectWorkReq.work = work
 
     # 查询参数
-    param = ProjectWork.select_by_project_work_id(work.Id)
+    param = ProjectWorkParamM.select_by_project_work_id(db, work.Id)
     if param is not None:
         saveProjectWorkReq.param = param
 
@@ -295,28 +303,53 @@ def get_project_info(
     if type is not None:
         saveProjectWorkReq.moduleType = type
 
-    # 模型
-    module = get_module_by_id(module_service.StringIdReq(Id=work.ModuleTypeId), db)
-    if module is not None:
-        saveProjectWorkReq.module = module
+    # 模型 TODO：这个module拿不到数据
+    # module = get_module_by_id(module_service.StringIdReq(Id=work.ModuleId), db)
+    # if module is not None:
+    #     saveProjectWorkReq.module = module
 
     # 项目
-    projectM = Project.select_by_id(db, req.projectId)
+    projectM = Project.select_by_id(db, req.ProjectId)
     if projectM is not None:
         saveProjectWorkReq.project = projectM
 
     # 创建者
-    user = User.select_by_id(db, req.projectId)
+    user = User.select_by_id(db, req.CreateUid)
     if user is not None:
         saveProjectWorkReq.user = user
 
     # 数据
-    data = Data.select_by_id(db, req.projectId)
+    data = Data.select_by_id(db, req.DataId)
     if data is not None:
         saveProjectWorkReq.data = data
 
     # 数据类型
-    projectWorkType = ProjectWorkType.select_by_id(db, req.projectId)
+    projectWorkType = ProjectWorkType.select_by_id(db, req.ProjectWorkTypeId)
     if projectWorkType is not None:
         saveProjectWorkReq.projectWorkType = projectWorkType
     return saveProjectWorkReq
+
+
+# project_work_listpage业务方法
+# TODO: 得到的方法reply无法在responseformat封装
+def get_project_work_list_by_page_impl(
+    uid: str,
+    req: GetProjectWorkListByPageReq,
+    db: Session,
+    # current_user_id: str = Depends(get_current_user_id)
+) -> GetProjectListByPageReply:
+    # 处理分页参数，确保 page 和 size 有效
+    if req.size < 5:
+        req.size = 5
+    if req.page < 1:
+        req.page = 1
+
+    # 调用封装好的分页方法
+    projectWorks, total = ProjectWorkM.find_by_page(db, uid, req.projectId, req.page, req.size, req.like)
+    reply = GetProjectListByPageReply(total=total)
+    for i, p in enumerate(projectWorks):
+        saveProjectWorkReq = get_project_info(p, db)
+        reply.list.append(saveProjectWorkReq)
+
+    replya = reply
+    return reply
