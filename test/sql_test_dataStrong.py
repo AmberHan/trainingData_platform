@@ -37,7 +37,7 @@ class TestDataStrongModel(unittest.TestCase):
     # def test_select_by_id(self):
     #     # 插入一条 DataStrong 记录
     #     data_strong = DataStrong(
-    #         Id="2",
+    #         id="2",
     #         DataId="D002",
     #         StrongParam="param2",
     #         IsDelete=False
@@ -53,7 +53,7 @@ class TestDataStrongModel(unittest.TestCase):
     #     # 插入几条 DataStrong 记录
     #     for i in range(10):
     #         data_strong = DataStrong(
-    #             Id=str(i + 3),
+    #             id=str(i + 3),
     #             DataId=f"D00{i + 3}",
     #             StrongParam=f"param{i + 3}",
     #             IsDelete=False
@@ -69,7 +69,7 @@ class TestDataStrongModel(unittest.TestCase):
     # def test_delete_data_strong(self):
     #     # 插入一条 DataStrong 记录
     #     data_strong = DataStrong(
-    #         Id="11",
+    #         id="11",
     #         DataId="D011",
     #         StrongParam="param11",
     #         IsDelete=False

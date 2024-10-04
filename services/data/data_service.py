@@ -1,33 +1,12 @@
-from typing import Optional, List
-
 from fastapi.logger import logger
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from schemas.data_model import GetDataListByPageReq, SaveDataReq, GetDataListByPageReply
+from services.module import module_service
+from services.module.module_service import StringIdReq, get_module_type_by_id
 from sqlmodels.data import Data
-from sqlmodels.module import Module
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
-
-
-def data_to_save_project_req(data: Data) -> SaveDataReq:
-    return SaveDataReq(
-        id=data.Id,
-        dataName=data.DataName,
-        moduleTypeId=data.ModuleTypeId,
-
-        detail=data.Detail,
-        dataStatus=data.DataStatus,
-        uploadPath=data.UploadPath,
-        exportPath=data.ExportPath,
-        fileSize=data.FileSize,
-        createUid=data.CreateUid,
-        createTime=data.CreateTime,
-        updateTime=data.UpdateTime,
-        classNum=data.ClassNum
-    )
-
 
 
 def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
@@ -42,7 +21,7 @@ def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
         projects, total = Data.find_by_page(id, req.page, req.size, req.like, db)
         reply = GetDataListByPageReply(total=total)
         for i, p in enumerate(projects):
-            saveDataReq = data_to_save_project_req(p)
+            saveDataReq = SaveDataReq.from_orm(p)
             saveDataReq.userName = User.select_by_id(db, p.CreateUid).username
             try:
                 saveDataReq.moduleTypeName = ModuleType.select_by_id(db, p.ModuleTypeId).ModuleTypeName
@@ -53,3 +32,14 @@ def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
     except Exception as e:
         logger.error(f"Failed to get data by page: {e}")
         raise Exception("Failed to fetch data")
+
+def get_data_by_id(req: StringIdReq, db: Session)->SaveDataReq:
+    data = Data.select_by_id(db, req.Id)
+    if data is None:
+        return None
+    saveData = SaveDataReq.from_orm(data)
+    m = get_module_type_by_id(module_service.StringIdReq(Id=data.ModuleTypeId), db)
+    saveData.moduleTypeName = m.moduleTypeName
+    user = User.select_by_id(db, data.CreateUid)
+    saveData.userName = user.username
+    return saveData

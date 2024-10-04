@@ -2,6 +2,8 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
+from sqlmodels.data import Data
+
 
 class GetDataListByPageReq(BaseModel):
     page: Optional[int] = 1  # 默认值为 1
@@ -27,6 +29,25 @@ class SaveDataReq(BaseModel):
     # 附加
     userName: Optional[str] = None
     moduleTypeName: Optional[str] = None
+
+    @classmethod
+    def from_orm(cls, data: Data) -> 'SaveDataReq':
+        return SaveDataReq(
+            id=data.Id,
+            dataName=data.DataName,
+            moduleTypeId=data.ModuleTypeId,
+            detail=data.Detail,
+            dataStatus=data.DataStatus if data.DataStatus is not None else -1,
+            uploadPath=data.UploadPath,
+            exportPath=data.ExportPath,
+            fileSize=data.FileSize,
+            createUid=data.CreateUid,
+            createTime=data.CreateTime,
+            updateTime=data.UpdateTime,
+            classNum=data.ClassNum
+            )
+
+
 
 
 

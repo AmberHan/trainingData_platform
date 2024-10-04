@@ -72,21 +72,21 @@ class Project(SQLModel, table=True):
         sql_update_work_total = text("""
             update t_project set WorkTotalNum = (
             select count(*) from t_project_work where ProjectId = :project_id and IsDelete = 0)
-            where Id = :project_id
+            where id = :project_id
         """)
         session.execute(sql_update_work_total, {"project_id": project_id})
 
         sql_update_working_num = text("""
             update t_project set WorkingNum = (
             select count(*) from t_project_work where ProjectId = :project_id and WorkStatus = 0 and IsDelete = 0)
-            where Id = :project_id
+            where id = :project_id
         """)
         session.execute(sql_update_working_num, {"project_id": project_id})
 
         sql_update_complete_num = text("""
             update t_project set CompleteNum = (
             select count(*) from t_project_work where ProjectId = :project_id and WorkStatus = 1 and IsDelete = 0)
-            where Id = :project_id
+            where id = :project_id
         """)
         session.execute(sql_update_complete_num, {"project_id": project_id})
 

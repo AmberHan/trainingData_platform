@@ -21,7 +21,7 @@ class TestProjectWorkModel(unittest.TestCase):
     # def test_save_project_work(self):
     #     # 测试保存 ProjectWork
     #     project_work = ProjectWork(
-    #         Id="1",
+    #         id="1",
     #         ProjectId="P001",
     #         ModuleTypeId="M001",
     #         WorkName="Test Work",
@@ -30,14 +30,14 @@ class TestProjectWorkModel(unittest.TestCase):
     #     project_work.save(self.session)
     #
     #     # 从数据库中查询数据
-    #     result = self.session.query(ProjectWork).filter_by(Id="1").first()
+    #     result = self.session.query(ProjectWork).filter_by(id="1").first()
     #     self.assertIsNotNone(result)
     #     self.assertEqual(result.ProjectId, "P001")
     #
     # def test_select_by_id(self):
     #     # 测试根据 ID 查询 ProjectWork
     #     project_work = ProjectWork(
-    #         Id="2",
+    #         id="2",
     #         ProjectId="P002",
     #         ModuleTypeId="M002",
     #         WorkName="Work2",
@@ -53,7 +53,7 @@ class TestProjectWorkModel(unittest.TestCase):
     #     # 添加多条记录以测试分页查询
     #     for i in range(10):
     #         project_work = ProjectWork(
-    #             Id=str(i + 3),
+    #             id=str(i + 3),
     #             ProjectId=f"P00{i + 3}",
     #             ModuleTypeId=f"M00{i + 3}",
     #             WorkName=f"Work{i + 3}",
@@ -69,7 +69,7 @@ class TestProjectWorkModel(unittest.TestCase):
     # def test_name_exists(self):
     #     # 测试是否存在相同的工作名称
     #     project_work = ProjectWork(
-    #         Id="4",
+    #         id="4",
     #         ProjectId="P004",
     #         ModuleTypeId="M004",
     #         WorkName="Work4",

@@ -21,7 +21,7 @@ class TestModuleModel(unittest.TestCase):
     # def test_save_module(self):
     #     # 测试保存 Module
     #     module = Module(
-    #         Id="1",
+    #         id="1",
     #         ModuleName="Test Module",
     #         ModuleTypeId="MT001",
     #         FrameId="F001",
@@ -32,7 +32,7 @@ class TestModuleModel(unittest.TestCase):
     #     module.save(self.session)
     #
     #     # 从数据库中查询数据
-    #     result = self.session.query(Module).filter_by(Id="1").first()
+    #     result = self.session.query(Module).filter_by(id="1").first()
     #     self.assertIsNotNone(result)
     #     self.assertEqual(result.ModuleName, "Test Module")
     #     self.assertEqual(result.Detail, "Test Detail")
@@ -40,7 +40,7 @@ class TestModuleModel(unittest.TestCase):
     # def test_select_by_id(self):
     #     # 测试根据 ID 查询 Module
     #     module = Module(
-    #         Id="2",
+    #         id="2",
     #         ModuleName="Test Module 2",
     #         ModuleTypeId="MT002",
     #         FrameId="F002",

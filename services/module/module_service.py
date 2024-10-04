@@ -11,12 +11,22 @@ from pydantic import BaseModel
 from sqlmodel import SQLModel, Session
 from sqlmodels.moduleType import ModuleType
 
-class GetModuleTypeReply(SQLModel):
+class GetModuleTypeReply(BaseModel):
     id: str
-    ModuleTypeName: str
-    CreateWay: str
-    Icon: str
-    CreateTime: str
+    moduleTypeName: str
+    createWay: str
+    icon: str
+    createTime: str
+
+    @classmethod
+    def from_orm(cls, type: ModuleType) -> 'GetModuleTypeReply':
+        return GetModuleTypeReply(
+            id=type.id,
+            moduleTypeName=type.ModuleTypeName,
+            createWay=type.CreateWay,
+            icon=type.Icon,
+            createTime=type.CreateTime
+            )
 
 
 class StringIdReq(BaseModel):
@@ -67,13 +77,13 @@ def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:
     if not moduleR:
         return None
     # 查询框架
-    moduleF = ModuleFrame.select_by_id(db, moduleR.FrameId)
+    moduleF = ModuleFrame.select_by_id(db, moduleR.frameId)
     if not moduleF:
         return
-    moduleR.FrameName = moduleF.FrameName
+    moduleR.frameName = moduleF.FrameName
     # 查询类型
-    moduleT = ModuleType.select_by_id(db, moduleR.FrameId)
+    moduleT = ModuleType.select_by_id(db, moduleR.frameId)
     if not moduleT:
         return None
-    moduleR.ModuleTypeName = moduleF.ModuleTypeName
+    moduleR.ModuleTypeName = moduleT.ModuleTypeName
     return moduleR

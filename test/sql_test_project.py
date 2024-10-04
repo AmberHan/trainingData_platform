@@ -22,7 +22,7 @@ class TestProjectModel(unittest.TestCase):
     # def test_save_project(self):
     #     # 保存一条 Project 记录
     #     project = Project(
-    #         Id="1",
+    #         id="1",
     #         ProjectName="Test Project",
     #         ModuleTypeId="MT001",
     #         WorkTotalNum=5,
@@ -35,7 +35,7 @@ class TestProjectModel(unittest.TestCase):
     #     project.save(self.session)
     #
     #     # 从数据库中查询
-    #     result = self.session.query(Project).filter_by(Id="1").first()
+    #     result = self.session.query(Project).filter_by(id="1").first()
     #     self.assertIsNotNone(result)
     #     self.assertEqual(result.ProjectName, "Test Project")
     #     self.assertEqual(result.Detail, "Test Detail")
@@ -43,7 +43,7 @@ class TestProjectModel(unittest.TestCase):
     # def test_select_by_id(self):
     #     # 插入一条 Project 记录
     #     project = Project(
-    #         Id="2",
+    #         id="2",
     #         ProjectName="Project 2",
     #         ModuleTypeId="MT002",
     #         WorkTotalNum=10,
@@ -63,7 +63,7 @@ class TestProjectModel(unittest.TestCase):
     #     # 插入几条 Project 记录
     #     for i in range(10):
     #         project = Project(
-    #             Id=str(i + 3),
+    #             id=str(i + 3),
     #             ProjectName=f"Project {i + 3}",
     #             ModuleTypeId=f"MT00{i + 3}",
     #             WorkTotalNum=10,
@@ -82,7 +82,7 @@ class TestProjectModel(unittest.TestCase):
     # def test_delete_project(self):
     #     # 插入一条 Project 记录
     #     project = Project(
-    #         Id="11",
+    #         id="11",
     #         ProjectName="Project 11",
     #         ModuleTypeId="MT011",
     #         WorkTotalNum=5,
@@ -103,7 +103,7 @@ class TestProjectModel(unittest.TestCase):
     # def test_project_name_exists(self):
     #     # 插入一条 Project 记录
     #     project = Project(
-    #         Id="12",
+    #         id="12",
     #         ProjectName="Project 12",
     #         ModuleTypeId="MT012",
     #         WorkTotalNum=5,
@@ -141,14 +141,14 @@ class TestProjectModel(unittest.TestCase):
         # 创建虚拟表 t_project_work 并插入一些记录以模拟工作数更新
         self.session.execute(text("""
             CREATE TABLE IF NOT EXISTS t_project_work (
-                Id TEXT PRIMARY KEY,
+                id TEXT PRIMARY KEY,
                 ProjectId TEXT,
                 WorkStatus INTEGER,
                 IsDelete INTEGER
             )
         """))
         self.session.execute(text("""
-            INSERT INTO t_project_work (Id, ProjectId, WorkStatus, IsDelete)
+            INSERT INTO t_project_work (id, ProjectId, WorkStatus, IsDelete)
             VALUES ('W1', '13', 0, 0), ('W2', '13', 1, 0), ('W3', '13', 0, 1)
         """))
         self.session.commit()
