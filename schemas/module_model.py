@@ -14,26 +14,26 @@ class GetModuleListByPageReq(BaseModel):
 
 # data 返回实体
 class SaveModuleReq(BaseModel):
-    Id: Optional[str] = None
-    ModuleName: Optional[str] = None
-    ModuleTypeId: Optional[str] = None
-    FrameId: Optional[str] = None
-    Detail: Optional[str] = None
-    ModuleFile: Optional[str] = None
-    IsDelete: Optional[bool] = False
-    CreateUid: Optional[str] = None
-    CreateTime: Optional[str] = None
-    Sort: Optional[str] = None
+    id: Optional[str] = None
+    moduleName: Optional[str] = None
+    moduleTypeId: Optional[str] = None
+    frameId: Optional[str] = None
+    detail: Optional[str] = None
+    moduleFile: Optional[str] = None
+    isDelete: Optional[bool] = False
+    createUid: Optional[str] = None
+    createTime: Optional[str] = None
+    sort: Optional[str] = None
 
     # 附加 ModuleFrame
-    FrameName: Optional[str] = None
+    frameName: Optional[str] = None
     # 附加 ModuleType
-    ModuleTypeName: Optional[str] = None
-    Icon: Optional[str] = None
-    CreateWay: Optional[str] = None
+    moduleTypeName: Optional[str] = None
+    icon: Optional[str] = None
+    createWay: Optional[str] = None
 
     @classmethod
-    def from_module_orm(self, module: Module) -> 'SaveModuleReq':
+    def from_module_orm(cls, module: Module) -> 'SaveModuleReq':
         return SaveModuleReq(
             id=module.Id,
             moduleName=module.ModuleName,

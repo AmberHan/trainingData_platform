@@ -45,13 +45,13 @@ def get_module_list_by_page_impl(id: str, req: GetModuleListByPageReq, db: Sessi
         for i, p in enumerate(projects):
             saveModuleReq = SaveModuleReq.from_module_orm(p)
             try:
-                saveModuleReq.FrameName = ModuleFrame.select_by_id(db, p.FrameId).FrameName
+                saveModuleReq.frameName = ModuleFrame.select_by_id(db, p.FrameId).FrameName
                 moduleTypeUse = ModuleType.select_by_id(db, p.ModuleTypeId)
-                saveModuleReq.ModuleTypeName = moduleTypeUse.ModuleTypeName
-                saveModuleReq.Icon = moduleTypeUse.Icon
-                saveModuleReq.CreateWay = moduleTypeUse.CreateWay
+                saveModuleReq.moduleTypeName = moduleTypeUse.ModuleTypeName
+                saveModuleReq.icon = moduleTypeUse.Icon
+                saveModuleReq.createWay = moduleTypeUse.CreateWay
             except:
-                saveModuleReq.FrameName = "none"
+                saveModuleReq.frameName = "none"
             reply.list.append(saveModuleReq)
         return reply
     except Exception as e:

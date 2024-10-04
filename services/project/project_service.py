@@ -1,4 +1,4 @@
-from typing import Optional, List, Any, Self
+from typing import Optional, List
 from fastapi import HTTPException
 from pydantic import BaseModel
 
@@ -98,7 +98,7 @@ class ModuleType(BaseModel):
     icon: Optional[str] = None
     createTime: Optional[str] = None
 
-class User(BaseModel):
+class UserInfo(BaseModel):
     id: Optional[str] = None
     userName: Optional[str] = None
 
@@ -136,7 +136,7 @@ class SaveProjectWorkReq(BaseModel):
     param: Optional[ProjectWorkParam] = None
     module: Optional[Module] = None
     moduleType: Optional[ModuleType] = None
-    user: Optional[User] = None
+    user: Optional[UserInfo] = None
     project: Optional['SaveProjectReq'] = None  # Define SaveProjectReq similarly
     data: Optional[DataReply] = None
     projectWorkType: Optional[ProjectWorkTypeReply] = None
@@ -170,7 +170,7 @@ def get_project_list_by_page_impl(
             saveProjectReq.icon = module_type_reply.Icon
             saveProjectReq.moduleTypeName = module_type_reply.ModuleTypeName
             saveProjectReq.createWay = module_type_reply.CreateWay
-        user = User.select_by_id(p.CreateUid, db)
+        user = User.select_by_id(db, p.CreateUid)
         if user:
             saveProjectReq.userName = user.username
         reply.list.append(saveProjectReq)
