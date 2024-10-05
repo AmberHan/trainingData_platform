@@ -103,10 +103,12 @@ def delete_all_project_impl(
         ids: list,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ) -> GetProjectListByPageReply:
+        ):
     # 日志配置
     logger = logging.getLogger(__name__)
     try:
+        if len(ids) == 0:
+            raise HTTPException(status_code=400, detail="id不能为空")
         Project.delete_all(db, ids)
     except SQLAlchemyError as e:
         logger.error(f"Failed to save project: {e}")

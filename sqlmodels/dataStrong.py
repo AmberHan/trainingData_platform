@@ -1,5 +1,6 @@
 from typing import Optional, List
 
+from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -54,4 +55,4 @@ class DataStrong(SQLModel, table=True):
             data_strong.IsDelete = True
             session.commit()
         else:
-            raise Exception("DataStrong not found")
+            raise HTTPException(status_code=400, detail="DataStrong not found")

@@ -1,5 +1,6 @@
 from typing import Optional, List
 
+from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -64,4 +65,4 @@ class ProjectWork(SQLModel, table=True):
             project_work.IsDelete = True
             session.commit()
         else:
-            raise Exception("ProjectWork not found")
+            raise HTTPException(status_code=400, detail="ProjectWork not found")

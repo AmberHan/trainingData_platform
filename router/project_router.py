@@ -36,8 +36,6 @@ def delete_project(project_req: StringIdReq, db: Session = Depends(get_db)):
 
 @projectHandler.post("/deleteAllProject")
 def delete_all_projects(ids: DeleteListReq, db: Session = Depends(get_db)):
-    if len(ids.id) == 0:
-        return response_format(DeleteNoIDRequest, "id不能为空")
     reply = project_service.delete_all_project_impl(ids.id, db)
     return ret_format(reply)
 

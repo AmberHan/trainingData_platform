@@ -54,4 +54,4 @@ class Module(SQLModel, table=True):
             module.IsDelete = True
             session.commit()
         else:
-            raise Exception("Module not found")
+            raise HTTPException(status_code=400, detail="Module not found")

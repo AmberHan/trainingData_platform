@@ -1,5 +1,6 @@
 from typing import Optional, List
 
+from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -57,4 +58,4 @@ class Data(SQLModel, table=True):
             data_record.IsDelete = True
             session.commit()
         else:
-            raise Exception("Data not found")
+            raise HTTPException(status_code=400, detail="Data not found")

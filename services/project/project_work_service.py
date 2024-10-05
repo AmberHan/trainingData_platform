@@ -28,6 +28,8 @@ def delete_all_project_work_impl(
         ids: list,
         db: Session,
         ):
+    if len(ids) == 0:
+        raise HTTPException(status_code=400, detail="id不能为空")
     for id in ids:
         delete_project_work(id, db)
 
