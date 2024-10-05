@@ -1,7 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
-from sqlalchemy import func
+
 from sqlmodels.data import Data  # 替换为包含 Data 类的实际文件路径
+
 
 class TestDataModel(unittest.TestCase):
 
@@ -28,7 +30,7 @@ class TestDataModel(unittest.TestCase):
             Detail="Test Detail",
             CreateUid="U001",
             IsDelete=False
-        )
+            )
         data.save(self.session)
 
         # 从数据库中查询
@@ -46,7 +48,7 @@ class TestDataModel(unittest.TestCase):
             Detail="Detail 2",
             CreateUid="U002",
             IsDelete=False
-        )
+            )
         data.save(self.session)
 
         # 测试 select_by_id 方法
@@ -65,7 +67,7 @@ class TestDataModel(unittest.TestCase):
                 Detail=f"Detail {i + 3}",
                 CreateUid="U003",
                 IsDelete=False
-            )
+                )
             data.save(self.session)
 
         # 测试分页查询
@@ -84,7 +86,7 @@ class TestDataModel(unittest.TestCase):
             Detail="Detail 11",
             CreateUid="U003",
             IsDelete=False
-        )
+            )
         data.save(self.session)
 
         # 删除记录（软删除）
@@ -94,6 +96,7 @@ class TestDataModel(unittest.TestCase):
         result = Data.select_by_id(self.session, "11")
         self.assertIsNotNone(result)
         self.assertTrue(result.IsDelete)
+
 
 if __name__ == "__main__":
     unittest.main()

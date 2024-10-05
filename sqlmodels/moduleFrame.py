@@ -1,5 +1,7 @@
-from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
+
+from sqlmodel import SQLModel, Field, select, Session
+
 
 class ModuleFrame(SQLModel, table=True):
     __tablename__ = "t_module_frame"

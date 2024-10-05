@@ -11,9 +11,11 @@ from util.response_format import response_format
 def TimeNow() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+
 # 生成新的 UUID
 def NewId() -> str:
     return str(uuid.uuid4())
+
 
 def ret_format(reply):
     try:

@@ -1,6 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.projectWorkParam import ProjectWorkParam  # 这里替换为包含 ProjectWorkParam 类的文件路径
+
 
 class TestProjectWorkParamModel(unittest.TestCase):
 
@@ -29,7 +32,7 @@ class TestProjectWorkParamModel(unittest.TestCase):
             Impulse="High",
             Optimizer="Adam",
             IsUseDataExtend=True
-        )
+            )
         project_work_param.save(self.session)
 
         # 从数据库中查询数据
@@ -45,7 +48,7 @@ class TestProjectWorkParamModel(unittest.TestCase):
             ProjectWorkId="PW002",
             Evaluation="Average",
             LearningRate="0.05"
-        )
+            )
         project_work_param.save(self.session)
 
         result = ProjectWorkParam.select_by_id(self.session, "2")
@@ -60,12 +63,13 @@ class TestProjectWorkParamModel(unittest.TestCase):
             ProjectWorkId="PW003",
             Evaluation="Excellent",
             LearningRate="0.02"
-        )
+            )
         project_work_param.save(self.session)
 
         result = ProjectWorkParam.select_by_project_work_id(self.session, "PW003")
         self.assertIsNotNone(result)
         self.assertEqual(result.ProjectWorkId, "PW003")
+
 
 if __name__ == "__main__":
     unittest.main()

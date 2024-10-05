@@ -1,7 +1,10 @@
 import unittest
-from sqlmodel import create_engine, Session, SQLModel, select
+
 from sqlalchemy import text
+from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.project import Project  # 替换为包含 Project 类的文件路径
+
 
 class TestProjectModel(unittest.TestCase):
 
@@ -135,7 +138,7 @@ class TestProjectModel(unittest.TestCase):
             CreateUid="U005",
             Detail="Detail 13",
             IsDelete=False
-        )
+            )
         project.save(self.session)
 
         # 创建虚拟表 t_project_work 并插入一些记录以模拟工作数更新
@@ -159,8 +162,9 @@ class TestProjectModel(unittest.TestCase):
         # 查询并检查工作数量是否更新正确
         updated_project = Project.select_by_id(self.session, "13")
         self.assertEqual(updated_project.WorkTotalNum, 2)  # 2 条未删除的工作
-        self.assertEqual(updated_project.WorkingNum, 1)    # 1 条正在进行的工作
-        self.assertEqual(updated_project.CompleteNum, 1)   # 1 条已完成的工作
+        self.assertEqual(updated_project.WorkingNum, 1)  # 1 条正在进行的工作
+        self.assertEqual(updated_project.CompleteNum, 1)  # 1 条已完成的工作
+
 
 if __name__ == "__main__":
     unittest.main()

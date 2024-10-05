@@ -1,5 +1,7 @@
 from typing import Optional, List
+
 from pydantic import BaseModel
+
 from sqlmodels.data import Data as DataSql
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 
@@ -102,6 +104,7 @@ class DataStrong(BaseModel):
             dataId=data.DataId,
             strongParam=data.StrongParam,
             )
+
 
 class DataStrongParam(DataStrong):
     open_cross_validation: bool = False

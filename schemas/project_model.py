@@ -1,9 +1,12 @@
 # schemas/project.py
 from typing import Optional, List
+
 from pydantic import BaseModel
+
 from sqlmodels.project import Project
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
+
 
 # 假设你已经定义了 SaveProjectReq 模型
 # class SaveProjectReq(BaseModel):
@@ -50,7 +53,7 @@ class SaveProjectReq(BaseModel):
             createUid=project.CreateUid,
             detail=project.Detail,
             createTime=project.CreateTime
-        )
+            )
 
 
 class ProjectWork(BaseModel):
@@ -92,6 +95,7 @@ class ProjectWork(BaseModel):
             updateTime=project_work.UpdateTime
             )
 
+
 class ProjectWorkParam(BaseModel):
     id: Optional[str] = None
     projectId: Optional[str] = None
@@ -128,8 +132,6 @@ class ProjectWorkParam(BaseModel):
             )
 
 
-
-
 class GetProjectListByPageReq(BaseModel):
     page: Optional[int] = 1  # 默认值为 1
     size: Optional[int] = 5  # 默认值为 5
@@ -139,4 +141,3 @@ class GetProjectListByPageReq(BaseModel):
 class GetProjectListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectReq] = []
-

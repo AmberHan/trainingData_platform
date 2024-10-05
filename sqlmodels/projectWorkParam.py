@@ -1,5 +1,7 @@
-from sqlmodel import SQLModel, Field, Session, select
 from typing import Optional
+
+from sqlmodel import SQLModel, Field, Session, select
+
 
 class ProjectWorkParam(SQLModel, table=True):
     __tablename__ = "t_project_work_param"

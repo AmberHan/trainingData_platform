@@ -1,6 +1,9 @@
 import unittest
-from sqlmodel import create_engine, Session, SQLModel, select
+
+from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.projectWork import ProjectWork  # 你需要把 'your_model_file' 替换为包含 ProjectWork 类的文件路径
+
 
 class TestProjectWorkModel(unittest.TestCase):
 
@@ -89,7 +92,7 @@ class TestProjectWorkModel(unittest.TestCase):
             ModuleTypeId="M005",
             WorkName="Work5",
             CreateUid="U005"
-        )
+            )
         project_work.save(self.session)
 
         # 删除记录
@@ -98,6 +101,7 @@ class TestProjectWorkModel(unittest.TestCase):
         # 检查是否已删除
         result = ProjectWork.select_by_id(self.session, "5")
         self.assertIsNone(result)
+
 
 if __name__ == "__main__":
     unittest.main()

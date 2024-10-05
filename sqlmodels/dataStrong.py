@@ -1,6 +1,8 @@
+from typing import Optional, List
+
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
-from typing import Optional, List
+
 
 class DataStrong(SQLModel, table=True):
     __tablename__ = "t_data_strong"
@@ -10,13 +12,14 @@ class DataStrong(SQLModel, table=True):
     IsDelete: Optional[bool] = Field(default=False)
 
     @classmethod
-    def find_by_page(cls, session: Session, uid: str, page: int, size: int, like: Optional[str] = None) -> (List["DataStrong"], int):
+    def find_by_page(cls, session: Session, uid: str, page: int, size: int, like: Optional[str] = None) -> (
+    List["DataStrong"], int):
         query = select(cls).where(cls.IsDelete == False)
         if like:
             query = query.where(
                 (cls.ProjectName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-            )
+                )
 
         # 计算总数
         count_query = select(func.count()).select_from(query.subquery())

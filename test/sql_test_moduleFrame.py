@@ -1,6 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.moduleFrame import ModuleFrame  # 替换为包含 ModuleFrame 类的文件路径
+
 
 class TestModuleFrameModel(unittest.TestCase):
 
@@ -53,6 +56,7 @@ class TestModuleFrameModel(unittest.TestCase):
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0].FrameName, "Frame 3")
         self.assertEqual(results[1].FrameName, "Frame 4")
+
 
 if __name__ == "__main__":
     unittest.main()

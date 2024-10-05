@@ -1,6 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.module import Module  # 你需要将 'your_model_file' 替换为包含 Module 类的实际文件路径
+
 
 class TestModuleModel(unittest.TestCase):
 
@@ -68,7 +71,7 @@ class TestModuleModel(unittest.TestCase):
                 CreateUid="U003",
                 IsDelete=0,
                 Sort=str(i + 3)
-            )
+                )
             module.save(self.session)
 
         # 测试分页查询
@@ -89,7 +92,7 @@ class TestModuleModel(unittest.TestCase):
             CreateUid="U003",
             IsDelete=0,
             Sort="11"
-        )
+            )
         module.save(self.session)
 
         # 删除记录
@@ -99,6 +102,7 @@ class TestModuleModel(unittest.TestCase):
         result = Module.select_by_id(self.session, "11")
         self.assertIsNotNone(result)
         self.assertTrue(result.IsDelete)
+
 
 if __name__ == "__main__":
     unittest.main()

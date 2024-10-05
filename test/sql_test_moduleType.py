@@ -1,6 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.moduleType import ModuleType  # 替换为包含 ModuleType 类的文件路径
+
 
 class TestModuleTypeModel(unittest.TestCase):
 
@@ -26,7 +29,7 @@ class TestModuleTypeModel(unittest.TestCase):
             createWay="Automatic",
             icon="icon_a.png",
             createTime="2024-09-01"
-        )
+            )
         self.session.add(module_type)
         self.session.commit()
 
@@ -44,7 +47,7 @@ class TestModuleTypeModel(unittest.TestCase):
             createWay="Manual",
             icon="icon_b.png",
             createTime="2024-09-02"
-        )
+            )
         self.session.add(module_type)
         self.session.commit()
 
@@ -56,8 +59,10 @@ class TestModuleTypeModel(unittest.TestCase):
 
     def test_find_all(self):
         # 插入多个 ModuleType 记录
-        module_type_1 = ModuleType(id="3", moduleTypeName="Type C", createWay="Manual", icon="icon_c.png", createTime="2024-09-03")
-        module_type_2 = ModuleType(id="4", moduleTypeName="Type D", createWay="Automatic", icon="icon_d.png", createTime="2024-09-04")
+        module_type_1 = ModuleType(id="3", moduleTypeName="Type C", createWay="Manual", icon="icon_c.png",
+                                   createTime="2024-09-03")
+        module_type_2 = ModuleType(id="4", moduleTypeName="Type D", createWay="Automatic", icon="icon_d.png",
+                                   createTime="2024-09-04")
         self.session.add(module_type_1)
         self.session.add(module_type_2)
         self.session.commit()
@@ -67,6 +72,7 @@ class TestModuleTypeModel(unittest.TestCase):
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0].moduleTypeName, "Type C")
         self.assertEqual(results[1].moduleTypeName, "Type D")
+
 
 if __name__ == "__main__":
     unittest.main()

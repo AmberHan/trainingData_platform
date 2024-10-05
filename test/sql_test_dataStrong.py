@@ -1,7 +1,9 @@
 import unittest
-from sqlmodel import create_engine, Session, SQLModel, select
-from sqlalchemy import func
+
+from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.dataStrong import DataStrong  # 替换为包含 DataStrong 类的文件路径
+
 
 class TestDataStrongModel(unittest.TestCase):
 
@@ -26,7 +28,7 @@ class TestDataStrongModel(unittest.TestCase):
             DataId="D001",
             StrongParam="param1",
             IsDelete=False
-        )
+            )
         data_strong.save(self.session)
 
         # 从数据库中查询
@@ -83,6 +85,7 @@ class TestDataStrongModel(unittest.TestCase):
     #     result = DataStrong.select_by_id(self.session, "11")
     #     self.assertIsNotNone(result)
     #     self.assertTrue(result.IsDelete)
+
 
 if __name__ == "__main__":
     unittest.main()

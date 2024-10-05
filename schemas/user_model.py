@@ -1,12 +1,15 @@
 # schemas/user.py
 from typing import Optional
+
 from pydantic import BaseModel
+
 from sqlmodels.user import User
 
 
 class UserLoginReq(BaseModel):
     userName: str
     password: str
+
 
 class LoginUserInfo(BaseModel):
     id: str
@@ -18,11 +21,14 @@ class LoginUserInfo(BaseModel):
     position: Optional[str] = None
     email: Optional[str] = None
 
+
 class UserLoginReply(BaseModel):
     user_info: LoginUserInfo
 
+
 class GetUserByIdReq(BaseModel):
     user_id: str
+
 
 class GetUserByIdReply(BaseModel):
     username: str
@@ -41,6 +47,7 @@ class GetUserByIdReply(BaseModel):
     city_name: str
     source: int
 
+
 class UserInfo(BaseModel):
     id: Optional[str] = None
     userName: Optional[str] = None
@@ -51,7 +58,6 @@ class UserInfo(BaseModel):
             id=user.id,
             userName=user.username
             )
-
 
 
 class LoginRespWithToken(BaseModel):

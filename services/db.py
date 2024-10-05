@@ -1,7 +1,10 @@
 from datetime import datetime
+
 from sqlmodel import Session
-from sqlmodels.user import User
+
 from config.config import *
+from sqlmodels.user import User
+
 
 def get_db() -> Session:
     with Session(engine) as session:
@@ -12,6 +15,7 @@ def get_db() -> Session:
             raise e
         finally:
             session.close()
+
 
 def init_data_db():
     try:
@@ -24,7 +28,7 @@ def init_data_db():
                     username="basic",
                     password="EJvZ7rYJvtG/",
                     create_time=datetime.now()
-                )
+                    )
                 if not user.insert(session):
                     raise Exception("没有插入basic成功")
 

@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from services.db import get_db
+
 from common import const
 from common.const import CURRENT_USER_ID_KEY
 from schemas.module_model import GetModuleListByPageReq
+from services.db import get_db
 from services.module import module_service
 from util.util import ret_format
 
 moduleHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-m")
+
 
 @moduleHandler.post("/getModuleListByPage")
 async def get_module_list_by_page(req: GetModuleListByPageReq, db: Session = Depends(get_db)):
@@ -39,4 +41,3 @@ async def delete_module():
 @moduleHandler.post("/deleteAllModule")
 async def delete_all_module():
     return {"message": "Hello World"}
-

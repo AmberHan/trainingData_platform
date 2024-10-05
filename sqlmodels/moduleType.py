@@ -1,5 +1,6 @@
-from typing import List, Optional, Sequence
-from sqlmodel import Field, SQLModel, Session, select, func
+from typing import Optional, Sequence
+
+from sqlmodel import Field, SQLModel, Session, select
 
 
 class ModuleType(SQLModel, table=True):

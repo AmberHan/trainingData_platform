@@ -1,28 +1,55 @@
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
 from schemas.project_work_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
     GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReq, GetProjectWorkListByPageReply
 from schemas.req_model import StringIdReq
 from schemas.user_model import UserInfo
 from services.data import data_service
+from services.module import module_service
 from services.module.module_service import get_module_type_by_id, get_module_by_id
-from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.project import Project
+from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
+from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
 from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
-from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
-from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
-from sqlalchemy.orm import Session
-from services.module import module_service
 from util import util
 
 
+def delete_project_work_impl(
+        id: str,
+        db: Session,
+        ):
+    delete_project_work(id, db)
+
+
+def delete_all_project_work_impl(
+        ids: list,
+        db: Session,
+        ):
+    for id in ids:
+        delete_project_work(id, db)
+
+
+def delete_project_work(
+        id: str,
+        db: Session,
+        ):
+    project_work_sql = ProjectWorkSql()
+    project_work_sql.Id = id
+    project_work_sql.delete(db)
+
+    # 更新项目工作流数量
+    Project.flush_project_work_num(db, id)
+
 
 def save_project_work_impl(
-    uid: str,
-    req: SaveProjectWorkReq,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-):
+        uid: str,
+        req: SaveProjectWorkReq,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ):
     if not req.work.projectId:
         raise HTTPException(status_code=400, detail="未选择任何项目")
 
@@ -76,36 +103,12 @@ def save_project_work_impl(
     # 更新项目工作流数量
     Project.flush_project_work_num(db, req.work.projectId)
 
-def delete_project_work_impl(
-    id: str,
-    db: Session,
-):
-    delete_project_work(id, db)
-
-
-def delete_all_project_work_impl(
-    ids: list,
-    db: Session,
-):
-    for id in ids:
-        delete_project_work(id, db)
-
-def delete_project_work(
-    id: str,
-    db: Session,
-):
-    project_work_sql = ProjectWorkSql()
-    project_work_sql.Id = id
-    project_work_sql.delete(db)
-
-    # 更新项目工作流数量
-    Project.flush_project_work_num(db, id)
 
 def save_project_work(
-    uid: str,
-    req: SaveProjectWorkReq,
-    db: Session
-):
+        uid: str,
+        req: SaveProjectWorkReq,
+        db: Session
+        ):
     restart = True
     projectWork = ProjectWorkSql()
     if req.work.id is not None:
@@ -153,33 +156,35 @@ def save_project_work(
     paramMod.save(db)
 
     if restart:
-        #startWork(StringIdReq(id=projectWork.Id))
+        # startWork(StringIdReq(id=projectWork.Id))
         pass
 
 
 def get_project_work_by_id(
-    req: StringIdReq,
-    db: Session
-) -> SaveProjectWorkReq:
+        req: StringIdReq,
+        db: Session
+        ) -> SaveProjectWorkReq:
     work = ProjectWorkSql.select_by_id(db, req.id)
     ret = get_project_info(ProjectWork.from_orm(work), db)
     if ret is None:
         return None
     return ret
 
+
 def get_project_work_type_by_id(
-    req: StringIdReq,
-    db: Session
-) -> ProjectWorkTypeReply:
+        req: StringIdReq,
+        db: Session
+        ) -> ProjectWorkTypeReply:
     work_type = ProjectWorkType.select_by_id(db, req.id)
     if work_type is None:
         return None
     ret = ProjectWorkTypeReply.from_orm(work_type)
     return ret
 
+
 def get_project_work_type_list(
-    db: Session
-) -> ProjectWorkTypeReply:
+        db: Session
+        ) -> ProjectWorkTypeReply:
     work_types = ProjectWorkType.find_all(db)
     if work_types is None:
         return None
@@ -188,10 +193,11 @@ def get_project_work_type_list(
         l.list.append(ProjectWorkTypeReply.from_orm(work_type))
     return l
 
+
 def get_project_info(
-    req: ProjectWork,
-    db: Session
-) -> SaveProjectWorkReq:
+        req: ProjectWork,
+        db: Session
+        ) -> SaveProjectWorkReq:
     saveProjectWorkReq = SaveProjectWorkReq()
     work = ProjectWorkSql.select_by_id(db, req.id)
     if work is None:
@@ -235,11 +241,11 @@ def get_project_info(
 
 
 def get_project_work_list_by_page_impl(
-    uid: str,
-    req: GetProjectWorkListByPageReq,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-) -> GetProjectListByPageReply:
+        uid: str,
+        req: GetProjectWorkListByPageReq,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ) -> GetProjectListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
     if req.size < 5:
         req.size = 5

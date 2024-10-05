@@ -1,6 +1,7 @@
-from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
-from sqlalchemy import text, func
+
+from sqlalchemy import func
+from sqlmodel import SQLModel, Field, select, Session
 
 
 class DataFile(SQLModel, table=True):
@@ -14,12 +15,12 @@ class DataFile(SQLModel, table=True):
 
     @classmethod
     def find_by_page(cls, session: Session, data_id: str, file_type: int, page: int, size: int) -> (
-    List["DataFile"], int):
+            List["DataFile"], int):
         query = select(cls).where(cls.DataId == data_id)
         if file_type != 0:
             query = query.where(cls.FileType == file_type)
 
-    # 计算总数
+        # 计算总数
         count_query = select(func.count()).select_from(query.subquery())
         count = session.exec(count_query).first()
 

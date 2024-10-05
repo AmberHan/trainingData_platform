@@ -1,6 +1,9 @@
 import unittest
+
 from sqlmodel import create_engine, Session, SQLModel
+
 from sqlmodels.dic import Dic  # 替换为包含 Dic 类的文件路径
+
 
 class TestDicModel(unittest.TestCase):
 
@@ -28,7 +31,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description1",
             Sort=1,
             ParentId="0"
-        )
+            )
         result = Dic.insert(self.session, dic)
         self.assertTrue(result)
 
@@ -47,7 +50,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description2",
             Sort=2,
             ParentId="0"
-        )
+            )
         Dic.insert(self.session, dic)
 
         # 更新 Dic 记录
@@ -59,7 +62,7 @@ class TestDicModel(unittest.TestCase):
             Description="Updated Description2",
             Sort=5,
             ParentId="1"
-        )
+            )
         result = Dic.update(self.session, dic_update)
         self.assertTrue(result)
 
@@ -79,7 +82,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description3",
             Sort=3,
             ParentId="0"
-        )
+            )
         Dic.insert(self.session, dic)
 
         # 测试根据 ID 查询
@@ -98,7 +101,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description4",
             Sort=4,
             ParentId="0"
-        )
+            )
         Dic.insert(self.session, dic)
 
         # 删除记录
@@ -119,7 +122,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description5",
             Sort=5,
             ParentId="0"
-        )
+            )
         dic_2 = Dic(
             Id="6",
             Value="Value6",
@@ -128,7 +131,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description6",
             Sort=6,
             ParentId="0"
-        )
+            )
         dic_3 = Dic(
             Id="7",
             Value="Value7",
@@ -137,7 +140,7 @@ class TestDicModel(unittest.TestCase):
             Description="Description7",
             Sort=7,
             ParentId="0"
-        )
+            )
         Dic.insert(self.session, dic_1)
         Dic.insert(self.session, dic_2)
         Dic.insert(self.session, dic_3)
@@ -147,6 +150,7 @@ class TestDicModel(unittest.TestCase):
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0].Value, "Value5")
         self.assertEqual(results[1].Value, "Value6")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,19 +1,22 @@
-from fastapi import HTTPException
-from sqlalchemy.exc import SQLAlchemyError
-from sqlmodels.project import Project
-from sqlmodels.user import User
-from schemas.project_model import GetProjectListByPageReq, GetProjectListByPageReply, SaveProjectReq
-from sqlalchemy.orm import Session
-from services.module import module_service
-from util import util
 import logging
 
+from fastapi import HTTPException
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
+from schemas.project_model import GetProjectListByPageReq, GetProjectListByPageReply, SaveProjectReq
+from services.module import module_service
+from sqlmodels.project import Project
+from sqlmodels.user import User
+from util import util
+
+
 def get_project_list_by_page_impl(
-    uid: str,
-    req: GetProjectListByPageReq,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-) -> GetProjectListByPageReply:
+        uid: str,
+        req: GetProjectListByPageReq,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ) -> GetProjectListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
     if req.size < 5:
         req.size = 5
@@ -38,15 +41,13 @@ def get_project_list_by_page_impl(
     return reply
 
 
-
-
 # 保存项目信息
 def save_project_impl(
-    uid: str,
-    req: SaveProjectReq,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-):
+        uid: str,
+        req: SaveProjectReq,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ):
     project = Project()
     # 日志配置
     logger = logging.getLogger(__name__)
@@ -80,12 +81,13 @@ def save_project_impl(
         logger.error(f"Failed to save project: {e}")
         raise HTTPException(status_code=400, detail=e)
 
+
 # 删除项目信息
 def delete_project_impl(
-    id: str,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-):
+        id: str,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ):
     project = Project()
     # 日志配置
     logger = logging.getLogger(__name__)
@@ -96,11 +98,12 @@ def delete_project_impl(
         logger.error(f"Failed to save project: {e}")
         raise HTTPException(status_code=400, detail=e)
 
+
 def delete_all_project_impl(
-    ids: list,
-    db: Session,
-    # current_user_id: str = Depends(get_current_user_id)
-) -> GetProjectListByPageReply:
+        ids: list,
+        db: Session,
+        # current_user_id: str = Depends(get_current_user_id)
+        ) -> GetProjectListByPageReply:
     # 日志配置
     logger = logging.getLogger(__name__)
     try:

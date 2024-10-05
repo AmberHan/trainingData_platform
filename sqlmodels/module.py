@@ -1,7 +1,7 @@
-from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 
-from sqlalchemy import text, func
+from sqlalchemy import func
+from sqlmodel import SQLModel, Field, select, Session
 
 
 class Module(SQLModel, table=True):
@@ -19,7 +19,7 @@ class Module(SQLModel, table=True):
 
     @classmethod
     def find_by_page(cls, session: Session, uid: str, page: int, size: int, like: Optional[str] = None) -> (
-    List["Module"], int):
+            List["Module"], int):
         query = select(cls).where(cls.CreateUid == uid, cls.IsDelete == False)
 
         # 如果存在 like 参数，添加筛选条件
@@ -27,7 +27,7 @@ class Module(SQLModel, table=True):
             query = query.where(
                 (cls.ModuleName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-            ).order_by(cls.Sort)
+                ).order_by(cls.Sort)
 
         # 计数查询
         # 修正后的计数查询
@@ -43,7 +43,6 @@ class Module(SQLModel, table=True):
     @classmethod
     def select_by_id(cls, session: Session, id: str) -> Optional["Module"]:
         return session.get(cls, id)
-
 
     def save(self, session: Session):
         session.add(self)

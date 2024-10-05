@@ -1,10 +1,11 @@
 from fastapi.logger import logger
+from sqlmodel import Session
+
 from schemas.module_model import *
 from schemas.module_model import GetModuleListByPageReply, GetModuleListByPageReq, SaveModuleReq
 from schemas.req_model import StringIdReq
 from sqlmodels.module import Module
 from sqlmodels.moduleFrame import ModuleFrame
-from sqlmodel import Session
 from sqlmodels.moduleType import ModuleType
 
 
@@ -13,6 +14,7 @@ def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:
     if not module_type:
         return None
     return GetModuleTypeReply.from_orm(module_type)
+
 
 def get_module_frame_list(db: Session) -> GetModuleTypeReply:
     module_types = ModuleType.find_all(db)

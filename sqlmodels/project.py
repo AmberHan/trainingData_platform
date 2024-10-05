@@ -1,6 +1,7 @@
-from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
+
 from sqlalchemy import func, text
+from sqlmodel import SQLModel, Field, select, Session
 
 
 class Project(SQLModel, table=True):
@@ -17,7 +18,7 @@ class Project(SQLModel, table=True):
     CreateTime: Optional[str] = Field(default=None)
 
     @classmethod
-    def find_by_page(cls, uid:str, page: int, size: int, like: str, session: Session) -> (List["Project"], int):
+    def find_by_page(cls, uid: str, page: int, size: int, like: str, session: Session) -> (List["Project"], int):
         # 构建查询
         query = select(cls).where(cls.CreateUid == uid, cls.IsDelete == False)
 
@@ -26,7 +27,7 @@ class Project(SQLModel, table=True):
             query = query.where(
                 (cls.ProjectName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-            )
+                )
 
             # 计数查询：使用 func.count() 来计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -81,8 +82,7 @@ class Project(SQLModel, table=True):
     def project_name_exists(cls, session: Session, uid: str, project_name: str) -> bool:
         return session.exec(
             select(cls).where(cls.CreateUid == uid, cls.ProjectName == project_name, cls.IsDelete == False)
-        ).first() is not None
-
+            ).first() is not None
 
     def save(self, session: Session):
         session.add(self)

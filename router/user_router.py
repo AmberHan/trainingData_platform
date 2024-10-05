@@ -9,6 +9,7 @@ from util.util import ret_format
 
 userHandle = APIRouter(prefix=const.API_URL_PREFIX + "/api-u")
 
+
 # 用户管理模块
 @userHandle.post("/login")
 async def login(req: UserLoginReq, db: Session = Depends(get_db)):

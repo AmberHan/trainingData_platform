@@ -11,20 +11,24 @@ class GetProjectWorkListByPageReq(BaseModel):
     like: Optional[str] = None  # 可选字符串，默认为 None
     projectId: Optional[str] = None
 
+
 class GetProjectWorkTypeListReply(BaseModel):
     list: List["ProjectWorkTypeReply"] = []
+
 
 class ProjectWorkTypeReply(BaseModel):
     id: Optional[str] = None
     typeName: Optional[str] = None
     icon: Optional[str] = None
+
     @classmethod
     def from_orm(cls, projectWorkType: ProjectWorkType) -> 'ProjectWorkTypeReply':
         return ProjectWorkTypeReply(
             id=projectWorkType.Id,
             typeName=projectWorkType.TypeName,
             icon=projectWorkType.Icon
-        )
+            )
+
 
 class SaveProjectWorkReq(BaseModel):
     work: Optional[ProjectWork] = None

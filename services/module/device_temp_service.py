@@ -1,5 +1,7 @@
-from schemas.device_model import GetDeviceReply
 from fastapi.logger import logger
+
+from schemas.device_model import GetDeviceReply
+
 
 def get_device_temp_impl():
     try:

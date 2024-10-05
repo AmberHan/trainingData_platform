@@ -1,5 +1,7 @@
-from sqlmodel import SQLModel, Field, Session, select
 from typing import Optional, List
+
+from sqlmodel import SQLModel, Field, Session, select
+
 
 class Dic(SQLModel, table=True):
     __tablename__ = "t_dic"

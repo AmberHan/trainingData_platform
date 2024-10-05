@@ -35,7 +35,8 @@ def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
         logger.error(f"Failed to get data by page: {e}")
         raise Exception("Failed to fetch data")
 
-def get_data_by_id(req: StringIdReq, db: Session)->SaveDataReq:
+
+def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
     data = Data.select_by_id(db, req.id)
     if data is None:
         return None
@@ -48,18 +49,41 @@ def get_data_by_id(req: StringIdReq, db: Session)->SaveDataReq:
     return saveData
 
 
-def get_data_strong(req: DataStrong, db: Session)->DataStrongParam:
-    data = get_dataStrong(req, db)
+def get_data_strong_impl(req: DataStrong, db: Session) -> DataStrongParam:
+    data = get_data_strong(req, db)
     if data is not None:
         data_strong_param = parse_raw_as(DataStrongParam, data.StrongParam)
         data_strong_param.id = data.Id
         data_strong_param.dataId = data.DataId
         return data_strong_param
 
-def get_dataStrong(req: DataStrong, db: Session)->DataStrongSql:
+
+def get_data_strong(req: DataStrong, db: Session) -> DataStrongSql:
     if req.dataId:
         data = DataStrongSql.select_by_data_id(db, req.dataId)
         return data
     elif req.id:
         data = DataStrongSql.select_by_id(db, req.id)
         return data
+
+
+def delete_data_impl(
+        id: str,
+        db: Session,
+        ):
+    delete_data(id, db)
+
+
+def delete_all_data_impl(
+        ids: list,
+        db: Session,
+        ):
+    for id in ids:
+        delete_data(id, db)
+
+
+def delete_data(
+        id: str,
+        db: Session,
+        ):
+    pass

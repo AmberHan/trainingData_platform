@@ -1,7 +1,10 @@
+from typing import Optional, List
+
+from pydantic import BaseModel
+
 from sqlmodels.module import Module as ModuleSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
-from typing import Optional, List
-from pydantic import BaseModel
+
 
 class Module(BaseModel):
     id: Optional[str] = None
@@ -25,6 +28,7 @@ class Module(BaseModel):
             createTime=type.CreateTime
             )
 
+
 class ModuleType(BaseModel):
     id: Optional[str] = None
     moduleTypeName: Optional[str] = None
@@ -37,7 +41,6 @@ class GetModuleListByPageReq(BaseModel):
     page: Optional[int] = 1  # 默认值为 1
     size: Optional[int] = 5  # 默认值为 5
     like: Optional[str] = None  # 可选字符串，默认为 None
-
 
 
 # data 返回实体
@@ -73,15 +76,18 @@ class SaveModuleReq(BaseModel):
             isDelete=module.IsDelete,
             createUid=module.CreateUid,
             createTime=module.CreateTime,
-        )
+            )
+
 
 # 返回list数据列表
 class GetModuleListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveModuleReq] = []
 
+
 class GetModuleFrameListReply(BaseModel):
     list: List["GetModuleTypeReply"] = []
+
 
 class GetModuleTypeReply(BaseModel):
     id: str
@@ -99,7 +105,3 @@ class GetModuleTypeReply(BaseModel):
             icon=type.Icon,
             createTime=type.CreateTime
             )
-
-
-
-
