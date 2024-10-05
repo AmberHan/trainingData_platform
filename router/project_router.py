@@ -45,17 +45,17 @@ def get_project_work_list_by_page(req: GetProjectWorkListByPageReq, db: Session 
 
 @projectHandler.post("/saveProjectWork")
 def save_project_work(req: SaveProjectWorkReq, db: Session = Depends(get_db)):
-    reply = project_work_service.save_project_work_impl(req, db)
+    reply = project_work_service.save_project_work_impl(CURRENT_USER_ID_KEY, req, db)
     return ret_format(reply)
 
 @projectHandler.post("/deleteProjectWork")
-def delete_project_work(req: SaveProjectWorkReq, db: Session = Depends(get_db)):
-    reply = project_work_service.delete_project_work(req.work.id, db)
+def delete_project_work(req: StringIdReq, db: Session = Depends(get_db)):
+    reply = project_work_service.delete_project_work(req.id, db)
     return ret_format(reply)
 
 @projectHandler.post("/deleteAllProjectWork")
 def delete_all_project_works(ids: DeleteListReq, db: Session = Depends(get_db)):
-    reply = project_work_service.delete_all_project_work_impl(ids, db)
+    reply = project_work_service.delete_all_project_work_impl(ids.id, db)
     return ret_format(reply)
 
 @projectHandler.post("/getProjectWorkById")

@@ -43,27 +43,10 @@ class Project(SQLModel, table=True):
         return session.get(cls, id)
 
     @classmethod
-    def save(self, session: Session):
-        session.add(self)
-        session.commit()
-        print("hello")
-
-    @classmethod
-    def delete(self, session: Session):
-        # 此项目的删除并非删除而是把isDelete设置为true
-        project = self.select_by_id(session, self.Id)
-        if project:
-            project.IsDelete = True
-            session.commit()
-        else:
-            raise Exception("Project not found")
-
-
-    @classmethod
     def delete_all(cls, session: Session, ids: List[str]):
         projects = session.exec(select(cls).where(cls.Id.in_(ids))).all()
         if not projects:
-            raise Exception("No projects found for the given ids.")
+            raise Exception("No projects found for the given id.")
         for project in projects:
             project.IsDelete = True  # 软删除设置为 True
         session.commit()  # 提交删除操作
@@ -99,3 +82,18 @@ class Project(SQLModel, table=True):
         return session.exec(
             select(cls).where(cls.CreateUid == uid, cls.ProjectName == project_name, cls.IsDelete == False)
         ).first() is not None
+
+
+    def save(self, session: Session):
+        session.add(self)
+        session.commit()
+        print("hello")
+
+    def delete(self, session: Session):
+        # 此项目的删除并非删除而是把isDelete设置为true
+        project = self.select_by_id(session, self.Id)
+        if project:
+            project.IsDelete = True
+            session.commit()
+        else:
+            raise Exception("Project not found")

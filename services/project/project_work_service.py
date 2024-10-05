@@ -5,9 +5,8 @@ from schemas.req_model import StringIdReq
 from schemas.user_model import UserInfo
 from services.data import data_service
 from services.module.module_service import get_module_type_by_id, get_module_by_id
-from sqlmodels import projectWork as projectWorkSql
-from sqlmodels.project import Project
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
+from sqlmodels.project import Project
 from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
@@ -27,7 +26,7 @@ def save_project_work_impl(
     save_project_work(uid, req, db)
 
     # 更新项目工作流数量
-    Project.flush_project_work_num(db, req.work.ProjectId)
+    Project.flush_project_work_num(db, req.work.projectId)
 
 def delete_project_work_impl(
     id: str,
@@ -47,7 +46,7 @@ def delete_project_work(
     id: str,
     db: Session,
 ):
-    project_work_sql = projectWorkSql()
+    project_work_sql = ProjectWorkSql()
     project_work_sql.Id = id
     project_work_sql.delete(db)
 
@@ -61,7 +60,7 @@ def save_project_work(
 ) -> SaveProjectWorkReq:
     restart = True
     projectWork = ProjectWorkSql()
-    if req.work.id != "":
+    if req.work.id is not None:
         r = ProjectWorkSql.select_by_id(db, req.work.id)
         if r is not None:
             restart = False
@@ -73,22 +72,26 @@ def save_project_work(
         projectWork.CreateTime = util.TimeNow()
         projectWork.CreateTime = projectWork.CreateTime
     projectWork.ProjectId = req.work.projectId
-    projectWork.ModuleTypeId = req.work.ModuleTypeId
-    projectWork.ModuleFrameId = req.work.ModuleFrameId
-    projectWork.ProjectWorkTypeId = req.work.ProjectWorkTypeId
-    projectWork.WorkName = req.work.WorkName
-    projectWork.Detail = req.work.Detail
-    projectWork.DataId = req.work.DataId
-    projectWork.ModuleId = req.work.ModuleId
+    projectWork.ModuleTypeId = req.work.moduleTypeId
+    projectWork.ModuleFrameId = req.work.moduleFrameId
+    projectWork.ProjectWorkTypeId = req.work.projectWorkTypeId
+    projectWork.WorkName = req.work.workName
+    projectWork.Detail = req.work.detail
+    projectWork.DataId = req.work.dataId
+    projectWork.ModuleId = req.work.moduleId
     projectWork.UpdateTime = projectWork.CreateTime
     projectWork.save(db)
 
     # param
-    paramMod = ProjectWorkParamSql.select_by_project_work_id(projectWork.Id)
-    paramMod.Id = util.NewId()
-    paramMod.ProjectWorkId = projectWork.Id
-    paramMod.ProjectId = req.work.ProjectId
-    paramMod.ProjectId = req.param.ProjectId
+    paramMod = ProjectWorkParamSql.select_by_project_work_id(db, projectWork.Id)
+    if paramMod is not None:
+        paramMod.Id = util.NewId()
+        paramMod.ProjectWorkId = projectWork.Id
+    if req.work.projectId is not None:
+        paramMod.ProjectId = req.work.ProjectId
+    if req.param.projectId is not None:
+        paramMod.ProjectId = req.param.ProjectId
+
     paramMod.Evaluation = req.param.Evaluation
     paramMod.LearningRate = req.param.LearningRate
     paramMod.Impulse = req.param.Impulse
@@ -100,7 +103,7 @@ def save_project_work(
     paramMod.MaxIteration = req.param.MaxIteration
     paramMod.WeightSaveGap = req.param.WeightSaveGap
     paramMod.InitSuperParam = req.param.InitSuperParam
-    paramMod.Save()
+    paramMod.save(db)
 
     if restart:
         #startWork(StringIdReq(id=projectWork.Id))

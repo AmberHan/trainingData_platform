@@ -29,6 +29,7 @@ class ProjectWorkParam(SQLModel, table=True):
         statement = select(cls).where(cls.ProjectWorkId == project_work_id)
         return session.exec(statement).first()
 
+
     def save(self, session: Session):
         # 保存记录
         session.add(self)

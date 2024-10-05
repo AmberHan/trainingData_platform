@@ -47,10 +47,6 @@ class ProjectWork(SQLModel, table=True):
     def select_by_id(cls, session: Session, id: str) -> Optional["ProjectWork"]:
         return session.get(cls, id)
 
-    @classmethod
-    def save(self, session: Session):
-        session.add(self)
-        session.commit()
 
     @classmethod
     def name_exists(cls, session: Session, uid: str, work_name: str) -> bool:
@@ -58,7 +54,12 @@ class ProjectWork(SQLModel, table=True):
             select(cls).where(cls.CreateUid == uid, cls.WorkName == work_name, cls.IsDelete == False)
         ).first() is not None
 
-    @classmethod
+
+    def save(self, session: Session):
+        session.add(self)
+        session.commit()
+
+
     def delete(self, session: Session):
         project_work = self.select_by_id(session, self.Id)
         if project_work:
