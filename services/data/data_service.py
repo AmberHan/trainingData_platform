@@ -34,11 +34,11 @@ def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
         raise Exception("Failed to fetch data")
 
 def get_data_by_id(req: StringIdReq, db: Session)->SaveDataReq:
-    data = Data.select_by_id(db, req.Id)
+    data = Data.select_by_id(db, req.id)
     if data is None:
         return None
     saveData = SaveDataReq.from_orm(data)
-    m = get_module_type_by_id(module_service.StringIdReq(Id=data.ModuleTypeId), db)
+    m = get_module_type_by_id(module_service.StringIdReq(id=data.ModuleTypeId), db)
     saveData.moduleTypeName = m.moduleTypeName
     user = User.select_by_id(db, data.CreateUid)
     saveData.userName = user.username

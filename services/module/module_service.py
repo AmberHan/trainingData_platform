@@ -9,7 +9,7 @@ from sqlmodels.moduleType import ModuleType
 
 
 def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:
-    module_type = ModuleType.select_by_id(db, req.Id)
+    module_type = ModuleType.select_by_id(db, req.id)
     if not module_type:
         return None
     return GetModuleTypeReply.from_orm(module_type)
@@ -53,7 +53,7 @@ def get_module_list_by_page_impl(id: str, req: GetModuleListByPageReq, db: Sessi
 
 
 def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:
-    module = Module.select_by_id(db, req.Id)
+    module = Module.select_by_id(db, req.id)
     if not module:
         return None
     moduleR = SaveModuleReq.from_module_orm(module)

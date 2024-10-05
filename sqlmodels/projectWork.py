@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
-from sqlalchemy import text, func
+from sqlalchemy import func
 
 
 class ProjectWork(SQLModel, table=True):
@@ -47,6 +47,7 @@ class ProjectWork(SQLModel, table=True):
     def select_by_id(cls, session: Session, id: str) -> Optional["ProjectWork"]:
         return session.get(cls, id)
 
+    @classmethod
     def save(self, session: Session):
         session.add(self)
         session.commit()
@@ -57,6 +58,7 @@ class ProjectWork(SQLModel, table=True):
             select(cls).where(cls.CreateUid == uid, cls.WorkName == work_name, cls.IsDelete == False)
         ).first() is not None
 
+    @classmethod
     def delete(self, session: Session):
         project_work = self.select_by_id(session, self.Id)
         if project_work:

@@ -52,11 +52,13 @@ class DataFile(SQLModel, table=True):
         statement = select(cls).where(cls.DataId == data_id, cls.FileType == file_type)
         return session.exec(statement).all()
 
+    @classmethod
     def save(self, session: Session):
         # 保存记录
         session.add(self)
         session.commit()
 
+    @classmethod
     def delete(self, session: Session):
         # 根据 ID 删除记录
         statement = select(self.__class__).where(self.__class__.Id == self.Id)

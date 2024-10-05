@@ -42,11 +42,13 @@ class Project(SQLModel, table=True):
     def select_by_id(cls, session: Session, id: str) -> Optional["Project"]:
         return session.get(cls, id)
 
+    @classmethod
     def save(self, session: Session):
         session.add(self)
         session.commit()
         print("hello")
 
+    @classmethod
     def delete(self, session: Session):
         # 此项目的删除并非删除而是把isDelete设置为true
         project = self.select_by_id(session, self.Id)

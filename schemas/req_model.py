@@ -1,8 +1,10 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
 class StringIdReq(BaseModel):
-    Id: str
-
-class StringidReq(BaseModel):
     id: str
+
+class DeleteListReq(BaseModel):
+    id: List[str]
