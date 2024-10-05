@@ -75,16 +75,13 @@ class SaveModuleReq(BaseModel):
             createTime=module.CreateTime,
         )
 
-
-
-
-
-
 # 返回list数据列表
 class GetModuleListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveModuleReq] = []
 
+class GetModuleFrameListReply(BaseModel):
+    list: List["GetModuleTypeReply"] = []
 
 class GetModuleTypeReply(BaseModel):
     id: str

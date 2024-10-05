@@ -14,6 +14,14 @@ def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:
         return None
     return GetModuleTypeReply.from_orm(module_type)
 
+def get_module_frame_list(db: Session) -> GetModuleTypeReply:
+    module_types = ModuleType.find_all(db)
+    if not module_types:
+        return None
+    ret = GetModuleFrameListReply()
+    for module_type in module_types:
+        ret.list.append(GetModuleTypeReply.from_orm(module_type))
+    return ret
 
 
 def get_module_list_by_page_impl(id: str, req: GetModuleListByPageReq, db: Session):

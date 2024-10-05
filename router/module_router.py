@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from common.code import *
 from services.db import get_db
 from common import const
 from common.const import CURRENT_USER_ID_KEY
@@ -17,8 +16,9 @@ async def get_module_list_by_page(req: GetModuleListByPageReq, db: Session = Dep
 
 
 @moduleHandler.post("/getModuleFrameList")
-async def get_module_frame_list():
-    return {"message": "Hello World"}
+async def get_module_frame_list(db: Session = Depends(get_db)):
+    reply = module_service.get_module_frame_list(db)
+    return ret_format(reply)
 
 
 @moduleHandler.post("/getModuleTypeList")
