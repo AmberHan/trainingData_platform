@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodels.project import Project
 from sqlmodels.user import User
@@ -45,7 +46,7 @@ def save_project_impl(
     req: SaveProjectReq,
     db: Session,
     # current_user_id: str = Depends(get_current_user_id)
-) -> GetProjectListByPageReply:
+):
     project = Project()
     # 日志配置
     logger = logging.getLogger(__name__)
@@ -55,16 +56,16 @@ def save_project_impl(
             project = Project.select_by_id(db, req.id)
             if not project:
                 logger.error(f"Failed to find project with ID {req.id}")
-                return Exception("项目不存在")
+                raise HTTPException(status_code=400, detail="项目不存在")
 
             # 验证用户是否有权限操作
             if project.CreateUid != uid:
-                return Exception("无权操作")
+                raise HTTPException(status_code=400, detail="无权操作")
 
         # 如果是新项目，检查项目名称是否已存在
         else:
             if Project.project_name_exists(db, uid, req.projectName):
-                return Exception("项目名称已存在")
+                raise HTTPException(status_code=400, detail="项目名称已存在")
             # 生成新项目 ID 和创建时间
             project.Id = util.NewId()
             project.CreateTime = util.TimeNow()
@@ -77,15 +78,14 @@ def save_project_impl(
 
     except SQLAlchemyError as e:
         logger.error(f"Failed to save project: {e}")
-        return e  # 返回错误对象
-    return None
+        raise HTTPException(status_code=400, detail=e)
 
 # 删除项目信息
 def delete_project_impl(
     id: str,
     db: Session,
     # current_user_id: str = Depends(get_current_user_id)
-) -> GetProjectListByPageReply:
+):
     project = Project()
     # 日志配置
     logger = logging.getLogger(__name__)
@@ -94,8 +94,7 @@ def delete_project_impl(
         project.delete(db)
     except SQLAlchemyError as e:
         logger.error(f"Failed to save project: {e}")
-        return e  # 返回错误对象
-    return None
+        raise HTTPException(status_code=400, detail=e)
 
 def delete_all_project_impl(
     ids: list,
@@ -108,5 +107,4 @@ def delete_all_project_impl(
         Project.delete_all(db, ids)
     except SQLAlchemyError as e:
         logger.error(f"Failed to save project: {e}")
-        return e  # 返回错误对象
-    return None
+        raise HTTPException(status_code=400, detail=e)

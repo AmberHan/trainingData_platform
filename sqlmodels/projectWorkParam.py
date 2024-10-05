@@ -27,8 +27,26 @@ class ProjectWorkParam(SQLModel, table=True):
     def select_by_project_work_id(cls, session: Session, project_work_id: str) -> Optional["ProjectWorkParam"]:
         # 根据 ProjectWorkId 查找记录
         statement = select(cls).where(cls.ProjectWorkId == project_work_id)
-        return session.exec(statement).first()
-
+        result = session.exec(statement).first()
+        if result:
+            return result
+        else:
+            return cls(
+                Id=None,
+                ProjectId=None,
+                ProjectWorkId=None,
+                Evaluation=None,
+                LearningRate=None,
+                Impulse=None,
+                Optimizer=None,
+                IsUseDataExtend=None,
+                TrainDataCount=None,
+                ScallDataCount=None,
+                TestGap=None,
+                MaxIteration=None,
+                WeightSaveGap=None,
+                InitSuperParam=None
+                )
 
     def save(self, session: Session):
         # 保存记录

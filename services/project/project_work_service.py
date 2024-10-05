@@ -15,14 +15,62 @@ from sqlalchemy.orm import Session
 from services.module import module_service
 from util import util
 
-# 保存项目信息
+
+
 def save_project_work_impl(
     uid: str,
     req: SaveProjectWorkReq,
     db: Session,
     # current_user_id: str = Depends(get_current_user_id)
 ):
-    #todo 一堆校验
+    if not req.work.projectId:
+        raise HTTPException(status_code=400, detail="未选择任何项目")
+
+    if not req.work.projectWorkTypeId:
+        raise HTTPException(status_code=400, detail="请选择工作流类型")
+
+    if not req.work.moduleTypeId:
+        raise HTTPException(status_code=400, detail="项目类型不能为空")
+
+    if not req.work.moduleFrameId:
+        raise HTTPException(status_code=400, detail="请选择训练框架")
+
+    if not req.work.workName:
+        raise HTTPException(status_code=400, detail="请填写工作流名称")
+
+    if not req.work.dataId:
+        raise HTTPException(status_code=400, detail="请选择数据")
+
+    if not req.work.moduleId:
+        raise HTTPException(status_code=400, detail="请选择模型")
+
+    if not req.param.evaluation:
+        raise HTTPException(status_code=400, detail="请选择评估指标")
+
+    if not req.param.learningRate:
+        raise HTTPException(status_code=400, detail="请填写学习率")
+
+    if not req.param.optimizer:
+        raise HTTPException(status_code=400, detail="请选择优化器")
+
+    if not req.param.trainDataCount:
+        raise HTTPException(status_code=400, detail="请填写训练数据批处理数据量")
+
+    if not req.param.scallDataCount:
+        req.work.ScallDataCount = req.work.TrainDataCount
+
+    if not req.param.testGap:
+        raise HTTPException(status_code=400, detail="请填写测试周期间隔")
+
+    if not req.param.maxIteration:
+        raise HTTPException(status_code=400, detail="请填写最大迭代次数")
+
+    if not req.param.weightSaveGap:
+        raise HTTPException(status_code=400, detail="请填写权重保存周期")
+
+    if not req.param.initSuperParam:
+        req.param.initSuperParam = "1"
+
     save_project_work(uid, req, db)
 
     # 更新项目工作流数量
@@ -57,7 +105,7 @@ def save_project_work(
     uid: str,
     req: SaveProjectWorkReq,
     db: Session
-) -> SaveProjectWorkReq:
+):
     restart = True
     projectWork = ProjectWorkSql()
     if req.work.id is not None:
@@ -66,7 +114,7 @@ def save_project_work(
             restart = False
     else:
         if ProjectWorkSql.name_exists(db, uid, req.work.workName):
-            return
+            raise HTTPException(status_code=400, detail="工作流名称已存在")
         projectWork.Id = util.NewId()
         projectWork.CreateUid = uid
         projectWork.CreateTime = util.TimeNow()
@@ -84,25 +132,24 @@ def save_project_work(
 
     # param
     paramMod = ProjectWorkParamSql.select_by_project_work_id(db, projectWork.Id)
-    if paramMod is not None:
-        paramMod.Id = util.NewId()
-        paramMod.ProjectWorkId = projectWork.Id
+    paramMod.Id = util.NewId()
+    paramMod.ProjectWorkId = projectWork.Id
     if req.work.projectId is not None:
-        paramMod.ProjectId = req.work.ProjectId
+        paramMod.ProjectId = req.work.projectId
     if req.param.projectId is not None:
-        paramMod.ProjectId = req.param.ProjectId
+        paramMod.ProjectId = req.param.projectId
 
-    paramMod.Evaluation = req.param.Evaluation
-    paramMod.LearningRate = req.param.LearningRate
-    paramMod.Impulse = req.param.Impulse
-    paramMod.Optimizer = req.param.Optimizer
-    paramMod.IsUseDataExtend = req.param.IsUseDataExtend
-    paramMod.TrainDataCount = req.param.TrainDataCount
-    paramMod.ScallDataCount = req.param.ScallDataCount
-    paramMod.TestGap = req.param.TestGap
-    paramMod.MaxIteration = req.param.MaxIteration
-    paramMod.WeightSaveGap = req.param.WeightSaveGap
-    paramMod.InitSuperParam = req.param.InitSuperParam
+    paramMod.Evaluation = req.param.evaluation
+    paramMod.LearningRate = req.param.learningRate
+    paramMod.Impulse = req.param.impulse
+    paramMod.Optimizer = req.param.optimizer
+    paramMod.IsUseDataExtend = req.param.isUseDataExtend
+    paramMod.TrainDataCount = req.param.trainDataCount
+    paramMod.ScallDataCount = req.param.scallDataCount
+    paramMod.TestGap = req.param.testGap
+    paramMod.MaxIteration = req.param.maxIteration
+    paramMod.WeightSaveGap = req.param.weightSaveGap
+    paramMod.InitSuperParam = req.param.initSuperParam
     paramMod.save(db)
 
     if restart:
