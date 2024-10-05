@@ -1,4 +1,4 @@
-from sqlalchemy import text, func
+from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 from typing import Optional, List
 

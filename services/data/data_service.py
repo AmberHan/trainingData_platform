@@ -1,10 +1,12 @@
 from fastapi.logger import logger
+from pydantic import parse_raw_as
 from sqlalchemy.orm import Session
 
-from schemas.data_model import GetDataListByPageReq, SaveDataReq, GetDataListByPageReply
+from schemas.data_model import GetDataListByPageReq, SaveDataReq, GetDataListByPageReply, DataStrong, DataStrongParam
 from services.module import module_service
 from services.module.module_service import StringIdReq, get_module_type_by_id
 from sqlmodels.data import Data
+from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
 
@@ -44,3 +46,20 @@ def get_data_by_id(req: StringIdReq, db: Session)->SaveDataReq:
     user = User.select_by_id(db, data.CreateUid)
     saveData.userName = user.username
     return saveData
+
+
+def get_data_strong(req: DataStrong, db: Session)->DataStrongParam:
+    data = get_dataStrong(req, db)
+    if data is not None:
+        data_strong_param = parse_raw_as(DataStrongParam, data.StrongParam)
+        data_strong_param.id = data.Id
+        data_strong_param.dataId = data.DataId
+        return data_strong_param
+
+def get_dataStrong(req: DataStrong, db: Session)->DataStrongSql:
+    if req.dataId:
+        data = DataStrongSql.select_by_data_id(db, req.dataId)
+        return data
+    elif req.id:
+        data = DataStrongSql.select_by_id(db, req.id)
+        return data
