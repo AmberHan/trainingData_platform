@@ -1,7 +1,8 @@
 # schemas/user.py
 from typing import Optional
-
 from pydantic import BaseModel
+from sqlmodels.user import User
+
 
 class UserLoginReq(BaseModel):
     userName: str
@@ -39,3 +40,24 @@ class GetUserByIdReply(BaseModel):
     province_name: str
     city_name: str
     source: int
+
+class UserInfo(BaseModel):
+    id: Optional[str] = None
+    userName: Optional[str] = None
+
+    @classmethod
+    def from_orm(cls, user: User) -> 'UserInfo':
+        return UserInfo(
+            id=user.id,
+            userName=user.username
+            )
+
+
+
+class LoginRespWithToken(BaseModel):
+    user_info: LoginUserInfo
+    access_token: str
+    refresh_token: str
+    scope: str
+    token_type: str
+    expires_in: int

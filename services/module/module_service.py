@@ -1,36 +1,11 @@
 from fastapi.logger import logger
-
+from schemas.module_model import *
 from schemas.module_model import GetModuleListByPageReply, GetModuleListByPageReq, SaveModuleReq
-from sqlmodels.data import Data
+from schemas.req_model import StringIdReq
 from sqlmodels.module import Module
 from sqlmodels.moduleFrame import ModuleFrame
-from sqlmodels.user import User
-
-from fastapi import HTTPException
-from pydantic import BaseModel
-from sqlmodel import SQLModel, Session
+from sqlmodel import Session
 from sqlmodels.moduleType import ModuleType
-
-class GetModuleTypeReply(BaseModel):
-    id: str
-    moduleTypeName: str
-    createWay: str
-    icon: str
-    createTime: str
-
-    @classmethod
-    def from_orm(cls, type: ModuleType) -> 'GetModuleTypeReply':
-        return GetModuleTypeReply(
-            id=type.id,
-            moduleTypeName=type.ModuleTypeName,
-            createWay=type.CreateWay,
-            icon=type.Icon,
-            createTime=type.CreateTime
-            )
-
-
-class StringIdReq(BaseModel):
-    Id: str
 
 
 def get_module_type_by_id(req: StringIdReq, db: Session) -> GetModuleTypeReply:

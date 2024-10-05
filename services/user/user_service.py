@@ -1,19 +1,10 @@
 from sqlmodels.user import User
-from schemas.user_model import UserLoginReq, UserLoginReply, LoginUserInfo
+from schemas.user_model import UserLoginReq, UserLoginReply, LoginUserInfo, LoginRespWithToken
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from util.encrypt import encrypt_pwd
 from fastapi import status
 from datetime import datetime, timedelta
-from pydantic import BaseModel
-
-class LoginRespWithToken(BaseModel):
-    user_info: LoginUserInfo
-    access_token: str
-    refresh_token: str
-    scope: str
-    token_type: str
-    expires_in: int
 
 def user_login_impl(req: UserLoginReq, db: Session) -> LoginRespWithToken:
     # 参数验证
