@@ -2,7 +2,6 @@ from typing import Optional, List
 from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
-
 from schemas.module_model import SaveModuleReq
 from services.data import data_service
 from services.module.module_service import get_module_type_by_id, get_module_by_id, GetModuleTypeReply
@@ -215,6 +214,8 @@ class DataReply(BaseModel):
             classNum=data.ClassNum
             )
 
+class GetProjectWorkTypeListReply(BaseModel):
+    list: List["ProjectWorkTypeReply"] = []
 
 class ProjectWorkTypeReply(BaseModel):
     id: Optional[str] = None
@@ -399,6 +400,17 @@ def get_project_work_type_by_id(
         return None
     ret = ProjectWorkTypeReply.from_orm(work_type)
     return ret
+
+def get_project_work_type_list(
+    db: Session
+) -> ProjectWorkTypeReply:
+    work_types = ProjectWorkType.find_all(db)
+    if work_types is None:
+        return None
+    l = GetProjectWorkTypeListReply()
+    for work_type in work_types:
+        l.list.append(ProjectWorkTypeReply.from_orm(work_type))
+    return l
 
 def get_project_info(
     req: ProjectWork,
