@@ -15,5 +15,4 @@ async def get_id():
 
 @apiHandler.post("/getDeviceInfo")
 async def get_device_info():
-    reply = get_device_temp_impl()
-    return ret_format(reply)
+    return ret_format(lambda: get_device_temp_impl())

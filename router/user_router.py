@@ -13,5 +13,4 @@ userHandle = APIRouter(prefix=const.API_URL_PREFIX + "/api-u")
 # 用户管理模块
 @userHandle.post("/login")
 async def login(req: UserLoginReq, db: Session = Depends(get_db)):
-    reply = user_login_impl(req, db)
-    return ret_format(reply)
+    return ret_format(lambda: user_login_impl(req, db))
