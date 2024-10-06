@@ -90,7 +90,7 @@ def save_project_work_impl(
         req.work.ScallDataCount = req.work.TrainDataCount
 
     if not req.param.testGap:
-        raise HTTPException("请填写测试周期间隔")
+        raise Exception("请填写测试周期间隔")
 
     if not req.param.maxIteration:
         raise Exception("请填写最大迭代次数")
@@ -260,7 +260,6 @@ def get_project_work_list_by_page_impl(
     reply = GetProjectWorkListByPageReply(total=total)
     for i, p in enumerate(projectWorks):
         pw = ProjectWork.from_orm(p)
-        saveProjectWorkReq = get_project_info(pw, db)
-        reply.list.append(saveProjectWorkReq)
+        reply.list.append(get_project_info(pw, db))
 
     return reply
