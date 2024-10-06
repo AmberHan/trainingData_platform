@@ -1,6 +1,4 @@
 from fastapi import HTTPException
-from fastapi.logger import logger
-from pydantic import parse_raw_as
 from sqlalchemy.orm import Session
 
 from schemas.data_model import SaveDataReq, GetDataListByPageReply, DataStrong, DataStrongParam
@@ -34,8 +32,7 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
             reply.list.append(saveDataReq)
         return reply
     except Exception as e:
-        logger.error(f"Failed to get data by page: {e}")
-        raise Exception("Failed to fetch data")
+        raise HTTPException(status_code=400, detail=f"Failed to get data by page: {e}")
 
 
 def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
@@ -54,7 +51,7 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 def get_data_strong_impl(req: DataStrong, db: Session) -> DataStrongParam:
     data = get_data_strong(req, db)
     if data is not None:
-        data_strong_param = parse_raw_as(DataStrongParam, data.StrongParam)
+        data_strong_param = DataStrongParam.parse_raw(data.StrongParam)
         data_strong_param.id = data.Id
         data_strong_param.dataId = data.DataId
         return data_strong_param

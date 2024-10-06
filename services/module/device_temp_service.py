@@ -1,4 +1,4 @@
-from fastapi.logger import logger
+from fastapi import HTTPException
 
 from schemas.device_model import GetDeviceReply
 
@@ -14,5 +14,4 @@ def get_device_temp_impl():
         reply.mem.present = 10
         return reply
     except Exception as e:
-        logger.error(f"Failed to get data by page: {e}")
-        raise Exception("Failed to fetch data")
+        raise HTTPException(status_code=400, detail=f"Failed to fetch data: {e}")

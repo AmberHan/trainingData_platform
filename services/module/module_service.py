@@ -1,4 +1,4 @@
-from fastapi.logger import logger
+from fastapi import HTTPException
 from sqlmodel import Session
 
 from schemas.module_model import *
@@ -49,8 +49,7 @@ def get_module_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
             reply.list.append(saveModuleReq)
         return reply
     except Exception as e:
-        logger.error(f"Failed to get data by page: {e}")
-        raise Exception("Failed to fetch data")
+        raise HTTPException(status_code=400, detail=f"Failed to get data by page: {e}")
 
 
 def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:

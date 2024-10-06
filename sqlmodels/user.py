@@ -11,9 +11,8 @@ class User(SQLModel, table=True):
     createTime: str
     isDelete: bool = Field(default=False)
 
-    @classmethod
-    def insert(cls, user: 'User', session: Session) -> bool:
-        session.add(user)
+    def insert(self, session: Session) -> bool:
+        session.add(self)
         session.commit()
         return True
 

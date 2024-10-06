@@ -48,7 +48,7 @@ class Project(SQLModel, table=True):
     def delete_all(cls, session: Session, ids: List[str]):
         projects = session.exec(select(cls).where(cls.Id.in_(ids))).all()
         if not projects:
-            raise Exception("No projects found for the given id.")
+            raise HTTPException(status_code=400, detail="No projects found for the given id.")
         for project in projects:
             project.IsDelete = True  # 软删除设置为 True
         session.commit()  # 提交删除操作

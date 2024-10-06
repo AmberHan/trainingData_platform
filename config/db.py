@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import HTTPException
 from sqlmodel import Session
 
 from config.config import *
@@ -30,7 +31,7 @@ def init_data_db():
                     create_time=datetime.now()
                     )
                 if not user.insert(session):
-                    raise Exception("没有插入basic成功")
+                    raise HTTPException(status_code=400, detail="没有插入basic成功")
 
     except Exception as e:
-        print(f"fail to open sqlite: {e}")
+        raise HTTPException(status_code=400, detail=f"fail to open sqlite: {e}")

@@ -9,11 +9,3 @@ app.include_router(file_router.fileHandler)
 app.include_router(module_router.moduleHandler)
 app.include_router(project_router.projectHandler)
 app.include_router(data_router.dataHandler)
-
-
-# 定义中间件
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}

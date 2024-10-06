@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from common import const
 from schemas.user_model import UserLoginReq
-from services.db import get_db
+from config.db import get_db
 from services.user.user_service import user_login_impl
 from util.util import ret_format
 

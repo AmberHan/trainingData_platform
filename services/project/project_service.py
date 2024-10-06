@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -50,14 +48,11 @@ def save_project_impl(
         # current_user_id: str = Depends(get_current_user_id)
         ):
     project = Project()
-    # 日志配置
-    logger = logging.getLogger(__name__)
     try:
         # 判断是否是更新项目
         if req.id:
             project = Project.select_by_id(db, req.id)
             if not project:
-                logger.error(f"Failed to find project with ID {req.id}")
                 raise HTTPException(status_code=400, detail="项目不存在")
 
             # 验证用户是否有权限操作
@@ -79,8 +74,7 @@ def save_project_impl(
         project.save(db)
 
     except SQLAlchemyError as e:
-        logger.error(f"Failed to save project: {e}")
-        raise HTTPException(status_code=400, detail=e)
+        raise HTTPException(status_code=400, detail=f"Failed to save project: {e}")
 
 
 # 删除项目信息
@@ -90,13 +84,10 @@ def delete_project_impl(
         # current_user_id: str = Depends(get_current_user_id)
         ):
     project = Project()
-    # 日志配置
-    logger = logging.getLogger(__name__)
     try:
         project.Id = id
         project.delete(db)
     except SQLAlchemyError as e:
-        logger.error(f"Failed to save project: {e}")
         raise HTTPException(status_code=400, detail=e)
 
 
@@ -105,12 +96,9 @@ def delete_all_project_impl(
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
         ):
-    # 日志配置
-    logger = logging.getLogger(__name__)
     try:
         if len(ids) == 0:
             raise HTTPException(status_code=400, detail="id不能为空")
         Project.delete_all(db, ids)
     except SQLAlchemyError as e:
-        logger.error(f"Failed to save project: {e}")
         raise HTTPException(status_code=400, detail=e)
