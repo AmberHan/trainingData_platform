@@ -71,7 +71,7 @@ class TestModuleModel(unittest.TestCase):
                 CreateUid="U003",
                 IsDelete=0,
                 Sort=str(i + 3)
-                )
+            )
             module.save(self.session)
 
         # 测试分页查询
@@ -92,7 +92,7 @@ class TestModuleModel(unittest.TestCase):
             CreateUid="U003",
             IsDelete=0,
             Sort="11"
-            )
+        )
         module.save(self.session)
 
         # 删除记录

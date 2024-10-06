@@ -29,7 +29,7 @@ class TestModuleTypeModel(unittest.TestCase):
             createWay="Automatic",
             icon="icon_a.png",
             createTime="2024-09-01"
-            )
+        )
         self.session.add(module_type)
         self.session.commit()
 
@@ -47,7 +47,7 @@ class TestModuleTypeModel(unittest.TestCase):
             createWay="Manual",
             icon="icon_b.png",
             createTime="2024-09-02"
-            )
+        )
         self.session.add(module_type)
         self.session.commit()
 

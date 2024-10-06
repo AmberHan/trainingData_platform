@@ -53,7 +53,7 @@ class SaveProjectReq(BaseModel):
             createUid=project.CreateUid,
             detail=project.Detail,
             createTime=project.CreateTime
-            )
+        )
 
 
 class ProjectWork(BaseModel):
@@ -93,7 +93,7 @@ class ProjectWork(BaseModel):
             workStage=project_work.WorkStage,
             startTime=project_work.StartTime,
             updateTime=project_work.UpdateTime
-            )
+        )
 
 
 class ProjectWorkParam(BaseModel):
@@ -129,7 +129,7 @@ class ProjectWorkParam(BaseModel):
             maxIteration=param.MaxIteration,
             weightSaveGap=param.WeightSaveGap,
             initSuperParam=param.InitSuperParam
-            )
+        )
 
 
 class GetProjectListByPageReply(BaseModel):

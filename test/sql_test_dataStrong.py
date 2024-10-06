@@ -28,7 +28,7 @@ class TestDataStrongModel(unittest.TestCase):
             DataId="D001",
             StrongParam="param1",
             IsDelete=False
-            )
+        )
         data_strong.save(self.session)
 
         # 从数据库中查询

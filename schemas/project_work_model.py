@@ -21,7 +21,7 @@ class ProjectWorkTypeReply(BaseModel):
             id=work_type.Id,
             typeName=work_type.TypeName,
             icon=work_type.Icon
-            )
+        )
 
 
 class SaveProjectWorkReq(BaseModel):
@@ -53,7 +53,7 @@ class SaveProjectWorkReq(BaseModel):
             workStage=project_work.WorkStage,
             startTime=project_work.StartTime,
             updateTime=project_work.UpdateTime
-            )
+        )
 
 
 class GetProjectWorkListByPageReply(BaseModel):

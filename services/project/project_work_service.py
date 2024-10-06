@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
+from schemas.project_model import SaveProjectReq
 from schemas.project_work_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
     GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply
 from schemas.req_model import StringIdReq, ListByPageReq
@@ -21,16 +21,16 @@ from util import util
 def delete_project_work_impl(
         id: str,
         db: Session,
-        ):
+):
     delete_project_work(id, db)
 
 
 def delete_all_project_work_impl(
         ids: list,
         db: Session,
-        ):
+):
     if len(ids) == 0:
-        raise HTTPException(status_code=400, detail="id不能为空")
+        raise Exception("id不能为空")
     for id in ids:
         delete_project_work(id, db)
 
@@ -38,7 +38,7 @@ def delete_all_project_work_impl(
 def delete_project_work(
         id: str,
         db: Session,
-        ):
+):
     project_work_sql = ProjectWorkSql()
     project_work_sql.Id = id
     project_work_sql.delete(db)
@@ -52,51 +52,51 @@ def save_project_work_impl(
         req: SaveProjectWorkReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ):
+):
     if not req.work.projectId:
-        raise HTTPException(status_code=400, detail="未选择任何项目")
+        raise Exception("未选择任何项目")
 
     if not req.work.projectWorkTypeId:
-        raise HTTPException(status_code=400, detail="请选择工作流类型")
+        raise Exception("请选择工作流类型")
 
     if not req.work.moduleTypeId:
-        raise HTTPException(status_code=400, detail="项目类型不能为空")
+        raise Exception("项目类型不能为空")
 
     if not req.work.moduleFrameId:
-        raise HTTPException(status_code=400, detail="请选择训练框架")
+        raise Exception("请选择训练框架")
 
     if not req.work.workName:
-        raise HTTPException(status_code=400, detail="请填写工作流名称")
+        raise Exception("请填写工作流名称")
 
     if not req.work.dataId:
-        raise HTTPException(status_code=400, detail="请选择数据")
+        raise Exception("请选择数据")
 
     if not req.work.moduleId:
-        raise HTTPException(status_code=400, detail="请选择模型")
+        raise Exception("请选择模型")
 
     if not req.param.evaluation:
-        raise HTTPException(status_code=400, detail="请选择评估指标")
+        raise Exception("请选择评估指标")
 
     if not req.param.learningRate:
-        raise HTTPException(status_code=400, detail="请填写学习率")
+        raise Exception("请填写学习率")
 
     if not req.param.optimizer:
-        raise HTTPException(status_code=400, detail="请选择优化器")
+        raise Exception("请选择优化器")
 
     if not req.param.trainDataCount:
-        raise HTTPException(status_code=400, detail="请填写训练数据批处理数据量")
+        raise Exception("请填写训练数据批处理数据量")
 
     if not req.param.scallDataCount:
         req.work.ScallDataCount = req.work.TrainDataCount
 
     if not req.param.testGap:
-        raise HTTPException(status_code=400, detail="请填写测试周期间隔")
+        raise HTTPException("请填写测试周期间隔")
 
     if not req.param.maxIteration:
-        raise HTTPException(status_code=400, detail="请填写最大迭代次数")
+        raise Exception("请填写最大迭代次数")
 
     if not req.param.weightSaveGap:
-        raise HTTPException(status_code=400, detail="请填写权重保存周期")
+        raise Exception("请填写权重保存周期")
 
     if not req.param.initSuperParam:
         req.param.initSuperParam = "1"
@@ -111,7 +111,7 @@ def save_project_work(
         uid: str,
         req: SaveProjectWorkReq,
         db: Session
-        ):
+):
     restart = True
     projectWork = ProjectWorkSql()
     if req.work.id is not None:
@@ -120,7 +120,7 @@ def save_project_work(
             restart = False
     else:
         if ProjectWorkSql.name_exists(db, uid, req.work.workName):
-            raise HTTPException(status_code=400, detail="工作流名称已存在")
+            raise Exception("工作流名称已存在")
         projectWork.Id = util.NewId()
         projectWork.CreateUid = uid
         projectWork.CreateTime = util.TimeNow()
@@ -159,14 +159,14 @@ def save_project_work(
     paramMod.save(db)
 
     if restart:
-        # startWork(StringIdReq(id=projectWork.Id))
+        # todo startWork(StringIdReq(id=projectWork.Id))
         pass
 
 
 def get_project_work_by_id_impl(
         req: StringIdReq,
         db: Session
-        ) -> SaveProjectWorkReq:
+) -> SaveProjectWorkReq:
     work = ProjectWorkSql.select_by_id(db, req.id)
     ret = get_project_info(ProjectWork.from_orm(work), db)
     if ret is None:
@@ -177,7 +177,7 @@ def get_project_work_by_id_impl(
 def get_project_work_type_by_id(
         req: StringIdReq,
         db: Session
-        ) -> ProjectWorkTypeReply:
+) -> ProjectWorkTypeReply:
     work_type = ProjectWorkType.select_by_id(db, req.id)
     if work_type is None:
         return None
@@ -187,7 +187,7 @@ def get_project_work_type_by_id(
 
 def get_project_work_type_list_impl(
         db: Session
-        ) -> ProjectWorkTypeReply:
+) -> ProjectWorkTypeReply:
     work_types = ProjectWorkType.find_all(db)
     if work_types is None:
         return None
@@ -200,11 +200,11 @@ def get_project_work_type_list_impl(
 def get_project_info(
         req: ProjectWork,
         db: Session
-        ) -> SaveProjectWorkReq:
+) -> SaveProjectWorkReq:
     saveProjectWorkReq = SaveProjectWorkReq()
     work = ProjectWorkSql.select_by_id(db, req.id)
     if work is None:
-        raise HTTPException(status_code=404, detail="id不存在")
+        raise Exception("id不存在")
     saveProjectWorkReq.work = ProjectWork.from_orm(work)
 
     # 查询参数
@@ -248,7 +248,7 @@ def get_project_work_list_by_page_impl(
         req: ListByPageReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ) -> GetProjectWorkListByPageReply:
+) -> GetProjectWorkListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
     if req.size < 5:
         req.size = 5

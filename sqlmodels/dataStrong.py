@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -14,13 +13,13 @@ class DataStrong(SQLModel, table=True):
 
     @classmethod
     def find_by_page(cls, session: Session, uid: str, page: int, size: int, like: Optional[str] = None) -> (
-    List["DataStrong"], int):
+            List["DataStrong"], int):
         query = select(cls).where(cls.IsDelete == False)
         if like:
             query = query.where(
                 (cls.ProjectName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-                )
+            )
 
         # 计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -55,4 +54,4 @@ class DataStrong(SQLModel, table=True):
             data_strong.IsDelete = True
             session.commit()
         else:
-            raise HTTPException(status_code=400, detail="DataStrong not found")
+            raise Exception("DataStrong not found")

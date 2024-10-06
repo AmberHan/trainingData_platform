@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from schemas.data_model import SaveDataReq, GetDataListByPageReply
@@ -32,7 +31,7 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
             reply.list.append(saveDataReq)
         return reply
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to get data by page: {e}")
+        raise Exception(f"Failed to get data by page: {e}")
 
 
 def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
@@ -51,16 +50,16 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 def delete_data_impl(
         id: str,
         db: Session,
-        ):
+):
     delete_data(id, db)
 
 
 def delete_all_data_impl(
         ids: list,
         db: Session,
-        ):
+):
     if len(ids) == 0:
-        raise HTTPException(status_code=400, detail="id不能为空")
+        raise Exception("id不能为空")
     for id in ids:
         delete_data(id, db)
 
@@ -68,7 +67,7 @@ def delete_all_data_impl(
 def delete_data(
         id: str,
         db: Session,
-        ):
+):
     data_sql = DataSql()
     data_sql.Id = id
     data_sql.delete(db)

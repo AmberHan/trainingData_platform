@@ -27,7 +27,7 @@ class TestProjectWorkTypeModel(unittest.TestCase):
             Id="1",
             TypeName="Type A",
             Icon="icon_a.png"
-            )
+        )
         project_work_type.save(self.session)
 
         # 从数据库中查询数据
@@ -42,7 +42,7 @@ class TestProjectWorkTypeModel(unittest.TestCase):
             Id="2",
             TypeName="Type B",
             Icon="icon_b.png"
-            )
+        )
         project_work_type.save(self.session)
 
         # 查询 ProjectWorkType 记录

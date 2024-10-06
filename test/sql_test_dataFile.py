@@ -30,7 +30,7 @@ class TestDataFileModel(unittest.TestCase):
             Url="http://example.com/file1",
             FileType=1,
             DirPath="/path/to"
-            )
+        )
         data_file.save(self.session)
 
         # 从数据库中查询
@@ -47,7 +47,7 @@ class TestDataFileModel(unittest.TestCase):
             Url="http://example.com/file2",
             FileType=1,
             DirPath="/path/to"
-            )
+        )
         data_file.save(self.session)
 
         # 测试 select_by_id 方法
@@ -65,7 +65,7 @@ class TestDataFileModel(unittest.TestCase):
                 Url=f"http://example.com/file{i + 3}",
                 FileType=1,
                 DirPath="/path/to"
-                )
+            )
             data_file.save(self.session)
 
         # 测试分页查询
@@ -83,7 +83,7 @@ class TestDataFileModel(unittest.TestCase):
             Url="http://example.com/file11",
             FileType=1,
             DirPath="/path/to"
-            )
+        )
         data_file.save(self.session)
 
         # 删除记录

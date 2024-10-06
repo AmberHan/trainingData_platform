@@ -26,7 +26,7 @@ PRODUCT_TYPE_NAME = {
     ProductType.SDK: "算法",
     ProductType.APP: "应用",
     ProductType.SD_KEY: "算法密钥",
-    }
+}
 
 
 # 版本枚举

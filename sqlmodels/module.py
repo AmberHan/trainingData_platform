@@ -27,7 +27,7 @@ class Module(SQLModel, table=True):
             query = query.where(
                 (cls.ModuleName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-                ).order_by(cls.Sort)
+            ).order_by(cls.Sort)
 
         # 计数查询
         # 修正后的计数查询
@@ -54,4 +54,4 @@ class Module(SQLModel, table=True):
             module.IsDelete = True
             session.commit()
         else:
-            raise HTTPException(status_code=400, detail="Module not found")
+            raise Exception("Module not found")

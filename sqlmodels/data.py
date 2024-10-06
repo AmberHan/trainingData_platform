@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -30,7 +29,7 @@ class Data(SQLModel, table=True):
             query = query.where(
                 (cls.DataName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-                )
+            )
 
         # 计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -58,4 +57,4 @@ class Data(SQLModel, table=True):
             data_record.IsDelete = True
             session.commit()
         else:
-            raise HTTPException(status_code=400, detail="Data not found")
+            raise Exception("Data not found")

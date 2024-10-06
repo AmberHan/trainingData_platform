@@ -57,7 +57,7 @@ class UserInfo(BaseModel):
         return UserInfo(
             id=user.id,
             userName=user.username
-            )
+        )
 
 
 class LoginRespWithToken(BaseModel):

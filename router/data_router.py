@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from common import const
 from common.const import CURRENT_USER_ID_KEY
 from config.db import get_db
-from schemas.dataStrong_model import DataStrong
+from schemas.dataStrong_model import DataStrong, DataStrongParam
 from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq
 from services.data import data_service, dataStrong_service
 from util.response_format import response_format
@@ -15,6 +15,11 @@ dataHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-d")
 @dataHandler.post("/getDataListByPage")
 async def get_data_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.get_data_list_by_page_impl(CURRENT_USER_ID_KEY, req, db))
+
+
+@dataHandler.post("/saveDataStrong")
+async def save_data_strong(req: DataStrongParam, db: Session = Depends(get_db)):
+    return response_format(lambda: dataStrong_service.save_data_strong_impl(req, db))
 
 
 @dataHandler.post("/getDataStrong")

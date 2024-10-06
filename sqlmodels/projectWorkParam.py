@@ -48,7 +48,7 @@ class ProjectWorkParam(SQLModel, table=True):
                 MaxIteration=None,
                 WeightSaveGap=None,
                 InitSuperParam=None
-                )
+            )
 
     def save(self, session: Session):
         # 保存记录

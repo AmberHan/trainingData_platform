@@ -92,7 +92,7 @@ class TestProjectWorkModel(unittest.TestCase):
             ModuleTypeId="M005",
             WorkName="Work5",
             CreateUid="U005"
-            )
+        )
         project_work.save(self.session)
 
         # 删除记录

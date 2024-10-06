@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -33,7 +32,7 @@ class ProjectWork(SQLModel, table=True):
             query = query.where(
                 (cls.WorkName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-                )
+            )
 
         # 计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -53,7 +52,7 @@ class ProjectWork(SQLModel, table=True):
     def name_exists(cls, session: Session, uid: str, work_name: str) -> bool:
         return session.exec(
             select(cls).where(cls.CreateUid == uid, cls.WorkName == work_name, cls.IsDelete == False)
-            ).first() is not None
+        ).first() is not None
 
     def save(self, session: Session):
         session.add(self)
@@ -65,4 +64,4 @@ class ProjectWork(SQLModel, table=True):
             project_work.IsDelete = True
             session.commit()
         else:
-            raise HTTPException(status_code=400, detail="ProjectWork not found")
+            raise Exception("ProjectWork not found")

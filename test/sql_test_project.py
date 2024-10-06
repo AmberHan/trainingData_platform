@@ -138,7 +138,7 @@ class TestProjectModel(unittest.TestCase):
             CreateUid="U005",
             Detail="Detail 13",
             IsDelete=False
-            )
+        )
         project.save(self.session)
 
         # 创建虚拟表 t_project_work 并插入一些记录以模拟工作数更新

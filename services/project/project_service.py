@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -15,7 +14,7 @@ def get_project_list_by_page_impl(
         req: ListByPageReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ) -> GetProjectListByPageReply:
+) -> GetProjectListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
     if req.size < 5:
         req.size = 5
@@ -46,23 +45,23 @@ def save_project_impl(
         req: SaveProjectReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ):
+):
     project = Project()
     try:
         # 判断是否是更新项目
         if req.id:
             project = Project.select_by_id(db, req.id)
             if not project:
-                raise HTTPException(status_code=400, detail="项目不存在")
+                raise Exception("项目不存在")
 
             # 验证用户是否有权限操作
             if project.CreateUid != uid:
-                raise HTTPException(status_code=400, detail="无权操作")
+                raise Exception("无权操作")
 
         # 如果是新项目，检查项目名称是否已存在
         else:
             if Project.project_name_exists(db, uid, req.projectName):
-                raise HTTPException(status_code=400, detail="项目名称已存在")
+                raise Exception("项目名称已存在")
             # 生成新项目 ID 和创建时间
             project.Id = util.NewId()
             project.CreateTime = util.TimeNow()
@@ -74,7 +73,7 @@ def save_project_impl(
         project.save(db)
 
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=400, detail=f"Failed to save project: {e}")
+        raise Exception(f"Failed to save project: {e}")
 
 
 # 删除项目信息
@@ -82,23 +81,23 @@ def delete_project_impl(
         id: str,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ):
+):
     project = Project()
     try:
         project.Id = id
         project.delete(db)
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=400, detail=e)
+        raise Exception(e)
 
 
 def delete_all_project_impl(
         ids: list,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ):
+):
     try:
         if len(ids) == 0:
-            raise HTTPException(status_code=400, detail="id不能为空")
+            raise Exception("id不能为空")
         Project.delete_all(db, ids)
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=400, detail=e)
+        raise Exception(e)

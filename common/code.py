@@ -13,7 +13,7 @@ class Code:
             "status": self.status,
             "success": self.success,
             "msg": self.message
-            }
+        }
 
 
 # 预定义的错误码

@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-
 import util.util
 from schemas.device_model import GetDeviceReply
 
@@ -15,7 +13,7 @@ def get_device_temp_impl():
         reply.mem.present = 10
         return reply
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to fetch data: {e}")
+        raise Exception(f"Failed to fetch data: {e}")
 
 
 def get_id_impl():

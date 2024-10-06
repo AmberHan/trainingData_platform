@@ -1,6 +1,5 @@
 from typing import Optional, List
 
-from fastapi import HTTPException
 from sqlalchemy import func, text
 from sqlmodel import SQLModel, Field, select, Session
 
@@ -28,7 +27,7 @@ class Project(SQLModel, table=True):
             query = query.where(
                 (cls.ProjectName.ilike(f"%{like}%")) |
                 (cls.Detail.ilike(f"%{like}%"))
-                )
+            )
 
             # 计数查询：使用 func.count() 来计算总数
         count_query = select(func.count()).select_from(query.subquery())
@@ -48,7 +47,7 @@ class Project(SQLModel, table=True):
     def delete_all(cls, session: Session, ids: List[str]):
         projects = session.exec(select(cls).where(cls.Id.in_(ids))).all()
         if not projects:
-            raise HTTPException(status_code=400, detail="No projects found for the given id.")
+            raise Exception("No projects found for the given id.")
         for project in projects:
             project.IsDelete = True  # 软删除设置为 True
         session.commit()  # 提交删除操作
@@ -83,7 +82,7 @@ class Project(SQLModel, table=True):
     def project_name_exists(cls, session: Session, uid: str, project_name: str) -> bool:
         return session.exec(
             select(cls).where(cls.CreateUid == uid, cls.ProjectName == project_name, cls.IsDelete == False)
-            ).first() is not None
+        ).first() is not None
 
     def save(self, session: Session):
         session.add(self)
@@ -97,5 +96,4 @@ class Project(SQLModel, table=True):
             project.IsDelete = True
             session.commit()
         else:
-            raise HTTPException(status_code=400, detail="Project not found")
-
+            raise Exception("Project not found")
