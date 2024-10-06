@@ -5,6 +5,7 @@ from common import const
 from common.const import CURRENT_USER_ID_KEY
 from config.db import get_db
 from schemas.dataStrong_model import DataStrong, DataStrongParam
+from schemas.data_model import SaveDataForm
 from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq
 from services.data import data_service, dataStrong_service
 from util.response_format import response_format
@@ -25,6 +26,12 @@ async def save_data_strong(req: DataStrongParam, db: Session = Depends(get_db)):
 @dataHandler.post("/getDataStrong")
 async def get_data_strong(req: DataStrong, db: Session = Depends(get_db)):
     return response_format(lambda: dataStrong_service.get_data_strong_impl(req, db))
+
+
+@dataHandler.post("/saveData")
+async def get_data_strong(req: SaveDataForm, db: Session = Depends(get_db)):
+    return response_format(lambda: data_service.save_data(req, db))
+
 
 
 @dataHandler.post("/deleteData")

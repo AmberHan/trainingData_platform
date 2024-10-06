@@ -5,7 +5,17 @@ from pydantic import BaseModel
 from sqlmodels.data import Data as DataSql
 
 
-# data 返回实体
+# 保存data实体
+class SaveDataForm(BaseModel):
+    dataName: Optional[str] = None
+    detail: Optional[str] = None
+    fileSize: Optional[str] = None
+    isTest: Optional[bool] = False
+    moduleTypeId: Optional[str] = None
+    uploadPath: Optional[str] = None
+
+
+# data 表格实体
 class SaveDataReq(BaseModel):
     id: Optional[str] = None
     dataName: Optional[str] = None
