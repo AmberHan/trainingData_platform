@@ -5,7 +5,7 @@ from common import const
 from common.const import CURRENT_USER_ID_KEY
 from schemas.req_model import ListByPageReq
 from config.db import get_db
-from services.module import module_service
+from services.module import module_service, moduleFrame_service, moduleType_service
 from util.util import ret_format
 
 moduleHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-m")
@@ -18,12 +18,12 @@ async def get_module_list_by_page(req: ListByPageReq, db: Session = Depends(get_
 
 @moduleHandler.post("/getModuleFrameList")
 async def get_module_frame_list(db: Session = Depends(get_db)):
-    return ret_format(lambda: module_service.get_module_frame_list_impl(db))
+    return ret_format(lambda: moduleFrame_service.get_module_frame_list_impl(db))
 
 
 @moduleHandler.post("/getModuleTypeList")
 async def get_module_type_list(db: Session = Depends(get_db)):
-    return ret_format(lambda: module_service.get_module_type_list_impl(db))
+    return ret_format(lambda: moduleType_service.get_module_type_list_impl(db))
 
 
 @moduleHandler.post("/saveModule")

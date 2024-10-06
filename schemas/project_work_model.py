@@ -1,5 +1,6 @@
 from schemas.data_model import DataReply
-from schemas.module_model import Module, ModuleType
+from schemas.moduleType_model import ModuleType
+from schemas.module_model import Module
 from schemas.project_model import *
 from schemas.user_model import UserInfo
 from sqlmodels.projectWorkType import ProjectWorkType as ProjectWorkTypeSql

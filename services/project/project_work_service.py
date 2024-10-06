@@ -8,7 +8,8 @@ from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
 from services.data import data_service
 from services.module import module_service
-from services.module.module_service import get_module_type_by_id_impl, get_module_by_id
+from services.module.moduleType_service import get_module_type_by_id_impl
+from services.module.module_service import get_module_by_id
 from sqlmodels.project import Project
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql

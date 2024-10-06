@@ -1,12 +1,12 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from schemas.data_model import SaveDataReq, GetDataListByPageReply, DataStrong, DataStrongParam
+from schemas.data_model import SaveDataReq, GetDataListByPageReply
 from schemas.req_model import ListByPageReq
 from services.module import module_service
-from services.module.module_service import StringIdReq, get_module_type_by_id_impl
+from services.module.moduleType_service import get_module_type_by_id_impl
+from services.module.module_service import StringIdReq
 from sqlmodels.data import Data as DataSql
-from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
 
@@ -46,24 +46,6 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
     user = User.select_by_id(db, data.CreateUid)
     saveData.userName = user.username
     return saveData
-
-
-def get_data_strong_impl(req: DataStrong, db: Session) -> DataStrongParam:
-    data = get_data_strong(req, db)
-    if data is not None:
-        data_strong_param = DataStrongParam.parse_raw(data.StrongParam)
-        data_strong_param.id = data.Id
-        data_strong_param.dataId = data.DataId
-        return data_strong_param
-
-
-def get_data_strong(req: DataStrong, db: Session) -> DataStrongSql:
-    if req.dataId:
-        data = DataStrongSql.select_by_data_id(db, req.dataId)
-        return data
-    elif req.id:
-        data = DataStrongSql.select_by_id(db, req.id)
-        return data
 
 
 def delete_data_impl(

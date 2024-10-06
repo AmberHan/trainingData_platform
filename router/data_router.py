@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from common import const
 from common.const import CURRENT_USER_ID_KEY
-from schemas.data_model import DataStrong
+from schemas.dataStrong_model import DataStrong
 from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq
-from services.data import data_service
+from services.data import data_service, dataStrong_service
 from config.db import get_db
 # api接口
 from util.util import ret_format
@@ -20,7 +20,7 @@ async def get_data_list_by_page(req: ListByPageReq, db: Session = Depends(get_db
 
 @dataHandler.post("/getDataStrong")
 async def get_data_strong(req: DataStrong, db: Session = Depends(get_db)):
-    return ret_format(lambda: data_service.get_data_strong_impl(req, db))
+    return ret_format(lambda: dataStrong_service.get_data_strong_impl(req, db))
 
 
 @dataHandler.post("/deleteData")

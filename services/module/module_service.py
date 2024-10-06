@@ -1,28 +1,11 @@
 from fastapi import HTTPException
 from sqlmodel import Session
 
-from schemas.module_model import *
 from schemas.module_model import GetModuleListByPageReply, SaveModuleReq
 from schemas.req_model import StringIdReq, ListByPageReq
 from sqlmodels.module import Module as ModuleSql
 from sqlmodels.moduleFrame import ModuleFrame as ModuleFrameSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
-
-
-def get_module_type_by_id_impl(req: StringIdReq, db: Session) -> GetModuleTypeReply:
-    module_type = ModuleTypeSql.select_by_id(db, req.id)
-    if not module_type:
-        return None
-    return GetModuleTypeReply.from_orm(module_type)
-
-
-def get_module_type_list_impl(db: Session) -> GetModuleTypeListReply:
-    module_types = ModuleTypeSql.find_all(db)
-    ret = GetModuleTypeListReply()
-    if module_types:
-        for module_type in module_types:
-            ret.list.append(GetModuleTypeReply.from_orm(module_type))
-        return ret
 
 
 def get_module_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
@@ -68,12 +51,3 @@ def get_module_by_id(req: StringIdReq, db: Session) -> SaveModuleReq:
     if moduleT:
         moduleR.ModuleTypeName = moduleT.ModuleTypeName
     return moduleR
-
-
-def get_module_frame_list_impl(db: Session) -> GetModuleFrameListReply:
-    module_types = ModuleFrameSql.find_all(db)
-    if module_types:
-        ret = GetModuleFrameListReply()
-        for module_type in module_types:
-            ret.list.append(GetModuleFrameReply.from_orm(module_type))
-        return ret
