@@ -2,8 +2,7 @@ from fastapi import APIRouter
 
 from common import const
 from services.api.device_temp_service import get_device_temp_impl
-# api接口
-from util.util import ret_format
+from util.response_format import response_format
 
 apiHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-i")
 
@@ -15,4 +14,4 @@ async def get_id():
 
 @apiHandler.post("/getDeviceInfo")
 async def get_device_info():
-    return ret_format(lambda: get_device_temp_impl())
+    return response_format(lambda: get_device_temp_impl())
