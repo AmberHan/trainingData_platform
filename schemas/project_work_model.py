@@ -2,14 +2,7 @@ from schemas.data_model import DataReply
 from schemas.module_model import Module, ModuleType
 from schemas.project_model import *
 from schemas.user_model import UserInfo
-from sqlmodels.projectWorkType import ProjectWorkType
-
-
-class GetProjectWorkListByPageReq(BaseModel):
-    page: Optional[int] = 1  # 默认值为 1
-    size: Optional[int] = 5  # 默认值为 5
-    like: Optional[str] = None  # 可选字符串，默认为 None
-    projectId: Optional[str] = None
+from sqlmodels.projectWorkType import ProjectWorkType as ProjectWorkTypeSql
 
 
 class GetProjectWorkTypeListReply(BaseModel):
@@ -22,11 +15,11 @@ class ProjectWorkTypeReply(BaseModel):
     icon: Optional[str] = None
 
     @classmethod
-    def from_orm(cls, projectWorkType: ProjectWorkType) -> 'ProjectWorkTypeReply':
+    def from_orm(cls, work_type: ProjectWorkTypeSql) -> 'ProjectWorkTypeReply':
         return ProjectWorkTypeReply(
-            id=projectWorkType.Id,
-            typeName=projectWorkType.TypeName,
-            icon=projectWorkType.Icon
+            id=work_type.Id,
+            typeName=work_type.TypeName,
+            icon=work_type.Icon
             )
 
 

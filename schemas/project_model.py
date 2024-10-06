@@ -132,12 +132,6 @@ class ProjectWorkParam(BaseModel):
             )
 
 
-class GetProjectListByPageReq(BaseModel):
-    page: Optional[int] = 1  # 默认值为 1
-    size: Optional[int] = 5  # 默认值为 5
-    like: Optional[str] = None  # 可选字符串，默认为 None
-
-
 class GetProjectListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectReq] = []

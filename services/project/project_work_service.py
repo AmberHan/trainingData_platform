@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 
 from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
 from schemas.project_work_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
-    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReq, GetProjectWorkListByPageReply
-from schemas.req_model import StringIdReq
+    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply
+from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
 from services.data import data_service
 from services.module import module_service
-from services.module.module_service import get_module_type_by_id, get_module_by_id
+from services.module.module_service import get_module_type_by_id_impl, get_module_by_id
 from sqlmodels.project import Project
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
@@ -162,7 +162,7 @@ def save_project_work(
         pass
 
 
-def get_project_work_by_id(
+def get_project_work_by_id_impl(
         req: StringIdReq,
         db: Session
         ) -> SaveProjectWorkReq:
@@ -184,7 +184,7 @@ def get_project_work_type_by_id(
     return ret
 
 
-def get_project_work_type_list(
+def get_project_work_type_list_impl(
         db: Session
         ) -> ProjectWorkTypeReply:
     work_types = ProjectWorkType.find_all(db)
@@ -212,7 +212,7 @@ def get_project_info(
         saveProjectWorkReq.param = ProjectWorkParam.from_orm(param)
 
     # 模型类型
-    type = get_module_type_by_id(StringIdReq(id=work.ModuleTypeId), db)
+    type = get_module_type_by_id_impl(StringIdReq(id=work.ModuleTypeId), db)
     if type is not None:
         saveProjectWorkReq.moduleType = type
 
@@ -244,10 +244,10 @@ def get_project_info(
 
 def get_project_work_list_by_page_impl(
         uid: str,
-        req: GetProjectWorkListByPageReq,
+        req: ListByPageReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
-        ) -> GetProjectListByPageReply:
+        ) -> GetProjectWorkListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
     if req.size < 5:
         req.size = 5

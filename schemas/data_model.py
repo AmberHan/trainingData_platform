@@ -6,12 +6,6 @@ from sqlmodels.data import Data as DataSql
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 
 
-class GetDataListByPageReq(BaseModel):
-    page: Optional[int] = 1  # 默认值为 1
-    size: Optional[int] = 5  # 默认值为 5
-    like: Optional[str] = None  # 可选字符串，默认为 None
-
-
 # data 返回实体
 class SaveDataReq(BaseModel):
     id: Optional[str] = None

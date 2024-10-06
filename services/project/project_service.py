@@ -4,7 +4,8 @@ from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from schemas.project_model import GetProjectListByPageReq, GetProjectListByPageReply, SaveProjectReq
+from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
+from schemas.req_model import ListByPageReq
 from services.module import module_service
 from sqlmodels.project import Project
 from sqlmodels.user import User
@@ -13,7 +14,7 @@ from util import util
 
 def get_project_list_by_page_impl(
         uid: str,
-        req: GetProjectListByPageReq,
+        req: ListByPageReq,
         db: Session,
         # current_user_id: str = Depends(get_current_user_id)
         ) -> GetProjectListByPageReply:
@@ -28,7 +29,7 @@ def get_project_list_by_page_impl(
     reply = GetProjectListByPageReply(total=total)
     for i, p in enumerate(projects):
         saveProjectReq = SaveProjectReq.from_project_orm(p)
-        module_type_reply = module_service.get_module_type_by_id(module_service.StringIdReq(id=p.ModuleTypeId), db)
+        module_type_reply = module_service.get_module_type_by_id_impl(module_service.StringIdReq(id=p.ModuleTypeId), db)
 
         if module_type_reply:
             saveProjectReq.icon = module_type_reply.icon

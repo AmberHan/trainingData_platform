@@ -2,22 +2,19 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from common import const
-from common.code import *
 from common.const import CURRENT_USER_ID_KEY
-from schemas.project_model import GetProjectListByPageReq
-from schemas.project_work_model import GetProjectWorkListByPageReq, SaveProjectWorkReq
-from schemas.req_model import StringIdReq, DeleteListReq
+from schemas.project_work_model import SaveProjectWorkReq
+from schemas.req_model import StringIdReq, DeleteListReq, ListByPageReq
 from services.db import get_db
 from services.project import project_service, project_work_service
 from services.project.project_service import SaveProjectReq
-from util.response_format import response_format
 from util.util import ret_format
 
 projectHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-p")
 
 
 @projectHandler.post("/getProjectListByPage")
-def get_project_list_by_page(req: GetProjectListByPageReq, db: Session = Depends(get_db)):
+def get_project_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
     reply = project_service.get_project_list_by_page_impl(CURRENT_USER_ID_KEY, req, db)
     return ret_format(reply)
 
@@ -41,7 +38,7 @@ def delete_all_projects(ids: DeleteListReq, db: Session = Depends(get_db)):
 
 
 @projectHandler.post("/getProjectWorkListByPage")
-def get_project_work_list_by_page(req: GetProjectWorkListByPageReq, db: Session = Depends(get_db)):
+def get_project_work_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
     reply = project_work_service.get_project_work_list_by_page_impl(CURRENT_USER_ID_KEY, req, db)
     return ret_format(reply)
 
@@ -66,7 +63,7 @@ def delete_all_project_works(ids: DeleteListReq, db: Session = Depends(get_db)):
 
 @projectHandler.post("/getProjectWorkById")
 def get_project_work_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    reply = project_work_service.get_project_work_by_id(req, db)
+    reply = project_work_service.get_project_work_by_id_impl(req, db)
     return ret_format(reply)
 
 
@@ -112,7 +109,7 @@ def get_project_work_log(work_id: int):
 
 @projectHandler.post("/getProjectWorkTypeList")
 def get_project_work_type_list(db: Session = Depends(get_db)):
-    reply = project_work_service.get_project_work_type_list(db)
+    reply = project_work_service.get_project_work_type_list_impl(db)
     return ret_format(reply)
 
 

@@ -3,16 +3,17 @@ from fastapi.logger import logger
 from pydantic import parse_raw_as
 from sqlalchemy.orm import Session
 
-from schemas.data_model import GetDataListByPageReq, SaveDataReq, GetDataListByPageReply, DataStrong, DataStrongParam
+from schemas.data_model import SaveDataReq, GetDataListByPageReply, DataStrong, DataStrongParam
+from schemas.req_model import ListByPageReq
 from services.module import module_service
-from services.module.module_service import StringIdReq, get_module_type_by_id
+from services.module.module_service import StringIdReq, get_module_type_by_id_impl
 from sqlmodels.data import Data as DataSql
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
 
 
-def get_data_list_by_page_impl(id: str, req: GetDataListByPageReq, db: Session):
+def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
     try:
         # 查询分页数据
         if req.size < 5:
@@ -42,7 +43,7 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
     if data is None:
         return None
     saveData = SaveDataReq.from_orm(data)
-    m = get_module_type_by_id(module_service.StringIdReq(id=data.ModuleTypeId), db)
+    m = get_module_type_by_id_impl(module_service.StringIdReq(id=data.ModuleTypeId), db)
     if m is not None:
         saveData.moduleTypeName = m.moduleTypeName
     user = User.select_by_id(db, data.CreateUid)

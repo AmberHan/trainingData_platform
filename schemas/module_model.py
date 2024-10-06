@@ -3,6 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from sqlmodels.module import Module as ModuleSql
+from sqlmodels.moduleFrame import ModuleFrame as ModuleFrameSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 
 
@@ -35,12 +36,6 @@ class ModuleType(BaseModel):
     createWay: Optional[str] = None
     icon: Optional[str] = None
     createTime: Optional[str] = None
-
-
-class GetModuleListByPageReq(BaseModel):
-    page: Optional[int] = 1  # 默认值为 1
-    size: Optional[int] = 5  # 默认值为 5
-    like: Optional[str] = None  # 可选字符串，默认为 None
 
 
 # data 返回实体
@@ -85,7 +80,7 @@ class GetModuleListByPageReply(BaseModel):
     list: List[SaveModuleReq] = []
 
 
-class GetModuleFrameListReply(BaseModel):
+class GetModuleTypeListReply(BaseModel):
     list: List["GetModuleTypeReply"] = []
 
 
@@ -105,3 +100,19 @@ class GetModuleTypeReply(BaseModel):
             icon=type.Icon,
             createTime=type.CreateTime
             )
+
+
+class GetModuleFrameReply(BaseModel):
+    id: str
+    frameName: str
+
+    @classmethod
+    def from_orm(cls, frame: ModuleFrameSql) -> 'GetModuleFrameReply':
+        return GetModuleFrameReply(
+            id=frame.Id,
+            frameName=frame.FrameName
+            )
+
+
+class GetModuleFrameListReply(BaseModel):
+    list: List[GetModuleFrameReply] = []
