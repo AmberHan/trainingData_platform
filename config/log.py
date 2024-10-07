@@ -1,5 +1,7 @@
 import logging
 import os
+
+
 def setup_logger():
     # 配置日志
     log_dir = 'log'
@@ -9,5 +11,7 @@ def setup_logger():
                         format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
                         encoding='utf-8')
     return logging.getLogger(__name__)
+
+
 # 创建并导出日志记录器
 logger = setup_logger()
