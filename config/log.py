@@ -1,10 +1,12 @@
 import logging
 import os
 
+from config.config import config_path
+
 
 def setup_logger():
     # 配置日志
-    log_dir = 'log'
+    log_dir = config_path['LogConf']['LogPath']
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logging.basicConfig(filename=os.path.join(log_dir, 'error.log'), level=logging.ERROR,
