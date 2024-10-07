@@ -19,9 +19,10 @@ def upload_tar(file: UploadFile = File(...)):
     # 检查存储路径是否存在
     save_path = config['FileConf']['SavePath']
     if not os.path.exists(save_path):
-        # return jsonify({"error": "存储路径未配置"}), 400
-        return {"error": "存储路径未配置"}
-
+        try:
+            os.makedirs(save_path)  # 创建目录，包括中间目录
+        except OSError as e:
+            return {"error": f"存储路径创建失败: {str(e)}"}
     if file.filename == '':
         return {"error": "未选择文件"}
 
