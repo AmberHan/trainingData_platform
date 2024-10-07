@@ -187,7 +187,7 @@ def get_project_work_type_by_id(
 
 def get_project_work_type_list_impl(
         db: Session
-) -> ProjectWorkTypeReply:
+) -> GetProjectWorkTypeListReply:
     work_types = ProjectWorkType.find_all(db)
     if work_types is None:
         return None

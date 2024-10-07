@@ -43,12 +43,13 @@ class DataStrong(SQLModel, table=True):
         return session.exec(statement).first()
 
     def save(self, session: Session):
-        # 保存记录
-        session.add(self)
-        session.commit()
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            raise Exception("save failed")
 
     def delete(self, session: Session):
-        # 软删除记录，将 IsDelete 设为 True
         data_strong = self.select_by_id(session, self.Id)
         if data_strong:
             data_strong.IsDelete = True

@@ -46,9 +46,11 @@ class Data(SQLModel, table=True):
         return session.get(cls, id)
 
     def save(self, session: Session):
-        # 保存记录
-        session.add(self)
-        session.commit()
+        try:
+            session.add(self)
+            session.commit()
+        except:
+            raise Exception("save failed")
 
     def delete(self, session: Session):
         # 软删除记录，将 IsDelete 设为 True

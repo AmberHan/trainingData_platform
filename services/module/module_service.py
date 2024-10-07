@@ -7,7 +7,7 @@ from sqlmodels.moduleFrame import ModuleFrame as ModuleFrameSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 
 
-def get_module_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
+def get_module_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetModuleListByPageReply:
     try:
         # 查询分页数据
         if req.size < 5:

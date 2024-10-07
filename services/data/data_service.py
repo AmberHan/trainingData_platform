@@ -15,7 +15,7 @@ from util.file import unzip_file, untar_file, file_path_to_url
 from util.util import NewId, TimeNow, exec_command
 
 
-def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
+def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetDataListByPageReply:
     try:
         # 查询分页数据
         if req.size < 5:
@@ -29,9 +29,10 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session):
         for i, p in enumerate(projects):
             saveDataReq = SaveDataReq.from_orm(p)
             saveDataReq.userName = User.select_by_id(db, p.CreateUid).username
-            try:
-                saveDataReq.moduleTypeName = ModuleType.select_by_id(db, p.ModuleTypeId).ModuleTypeName
-            except:
+            moduleTypeName = ModuleType.select_by_id(db, p.ModuleTypeId).ModuleTypeName
+            if moduleTypeName is None:
+                saveDataReq.moduleTypeName = moduleTypeName
+            else:
                 saveDataReq.moduleTypeName = "none"
             reply.list.append(saveDataReq)
         return reply
@@ -142,6 +143,7 @@ def save_data(req: SaveDataForm, db: Session):
         raise
 
     return None
+
 
 def delete_data_impl(
         id: str,

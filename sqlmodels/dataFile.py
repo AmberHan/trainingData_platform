@@ -54,17 +54,21 @@ class DataFile(SQLModel, table=True):
         return session.exec(statement).all()
 
     def save(self, session: Session):
-        # 保存记录
-        session.add(self)
-        session.commit()
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            raise Exception("save failed")
 
     def delete(self, session: Session):
-        # 根据 ID 删除记录
-        statement = select(self.__class__).where(self.__class__.Id == self.Id)
-        result = session.exec(statement).first()
-        if result:
-            session.delete(result)
-            session.commit()
+        try:
+            statement = select(self.__class__).where(self.__class__.Id == self.Id)
+            result = session.exec(statement).first()
+            if result:
+                session.delete(result)
+                session.commit()
+        except Exception as e:
+            raise Exception("delete failed")
 
     @classmethod
     def delete_by_data_id(cls, session: Session, data_id: str):

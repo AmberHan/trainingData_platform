@@ -2,7 +2,7 @@ import util.util
 from schemas.device_model import GetDeviceReply
 
 
-def get_device_temp_impl():
+def get_device_temp_impl() -> GetDeviceReply:
     try:
         reply = GetDeviceReply()
         reply.cpu.num = 1
@@ -16,5 +16,5 @@ def get_device_temp_impl():
         raise Exception(f"Failed to fetch data: {e}")
 
 
-def get_id_impl():
+def get_id_impl() -> str:
     return util.util.NewId()
