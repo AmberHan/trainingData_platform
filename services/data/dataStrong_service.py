@@ -17,15 +17,18 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     if req.dataId == "" or None:
         raise Exception("未选择任何数据,DataId不能为空")
 
+    # TODO 此处可以优化
     dataStrongSql = DataStrongSql()
     dataStrongSql.DataId = req.dataId
     dataStrongSql.Id = req.id
     dataStrongSql.StrongParam = model_to_string(req)
-    save_data_strong(dataStrongSql, db)
 
-    # todo 文件分类迁移
+    dataId = save_data_strong(dataStrongSql, db)
+
+    # 文件分类迁移
     # 添加清洗文件夹的区分
-    res = DataFile.find_all_by_data_id(db, "1babdf32-c210-4152-973b-cc811c697f4b")
+    # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
+    res = DataFile.find_all_by_data_id(db, dataId)
     # 查找 'images' 在路径中的位置
     images_dir_index = res[0].FilePath.find('/images/')
 
@@ -106,23 +109,22 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
 
 
 def save_data_strong(req: DataStrongSql, db: Session):
-    # data = DataSql.select_by_id(db, req.DataId)
-    # if data is None:
-    #     raise Exception("fail to model.Data.SelectById")
-    # dataStrong = DataStrongSql.select_by_data_id(db, req.DataId)
-    # if dataStrong is None:
-    #     req.Id = util.util.NewId()
-    # else:
-    #     req.Id = dataStrong.Id
-    # req.save(db)
-    #
-    # # 删除文件
-    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 1, req.DataId)
-    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 2, req.DataId)
-    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 3, req.DataId)
-    #
-    # print(req.DataId)
-    pass
+    data = DataSql.select_by_id(db, req.DataId)
+    if data is None:
+        raise Exception("fail to model.Data.SelectById")
+    dataStrong = DataStrongSql.select_by_data_id(db, req.DataId)
+    if dataStrong is None:
+        req.Id = util.util.NewId()
+    else:
+        req.Id = dataStrong.Id
+    req.save(db)
+
+    # 删除文件
+    dataFileSql.DataFile.delete_by_type_and_data_id(db, 1, req.DataId)
+    dataFileSql.DataFile.delete_by_type_and_data_id(db, 2, req.DataId)
+    dataFileSql.DataFile.delete_by_type_and_data_id(db, 3, req.DataId)
+
+    return req.DataId
 
 
 

@@ -11,8 +11,8 @@ from sqlmodels.data import Data as DataSql, Data
 from sqlmodels.dataFile import DataFile
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
-from util.file import unzip_file, untar_file
-from util.util import NewId, TimeNow
+from util.file import unzip_file, untar_file, file_path_to_url
+from util.util import NewId, TimeNow, exec_command
 
 
 def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetDataListByPageReply:
@@ -54,8 +54,9 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 
 
 # data管理保存
-def save_data_file(data_file_req: DataFile, db: Session):
-    data_file_req.save(db)
+
+
+
 
 
 def save_data(req: SaveDataForm, db: Session):
@@ -103,46 +104,65 @@ def save_data(req: SaveDataForm, db: Session):
     mod.UpdateTime = TimeNow()
     mod.save(db)
 
+
+    print(file_path)
     # 获取文件列表并保存入库
-    # try:
-    #     res = exec_command(f"ls {file_path}*")
-    #     if res:
-    #         res_list = res[0].strip().split("\n")
-    #         class_num = 0
+    try:
+        res_list = ['images', 'labels']
+        class_num = 0
     #
-    #         for val in res_list:
-    #             if not val:
-    #                 continue
-    #             res_l = val.split("\n")
-    #             class_num += 1
+        for val in res_list:
+            if not val:
+                continue
+            class_num += 1
+
+        # 获取 images 文件夹下的所有文件
+        image_files = get_files_from_directory(file_path, 'images')
+
+        # 获取 labels 文件夹下的所有文件
+        label_files = get_files_from_directory(file_path, 'labels')
     #
-    #             for k, v in enumerate(res_l):
-    #                 img_path = ""
-    #                 dir_path = ""
-    #                 if k == 0:
-    #                     # imgPath
-    #                     img_path = v.strip(":") + "/"
-    #                     dir_path = v[len(file_path):].strip(":")
-    #                 else:
-    #                     # img
-    #                     img_file = img_path + v
-    #                     # 保存文件
-    #                     data_file_req = DataFile(
-    #                         DataId=mod.Id,
-    #                         FilePath=img_file,
-    #                         Url=file_path_to_url(img_file),
-    #                         DirPath=dir_path)
-    #                     save_data_file(data_file_req, db)
-    #
+        for k, v in enumerate(image_files):
+                # 保存图片
+                data_file = DataFile()
+                data_file.Id = NewId()
+                data_file.DataId=mod.Id
+                data_file.FilePath=v
+                data_file.FileType="png"
+                data_file.Url=file_path_to_url(v)
+                data_file.DirPath="images"
+                data_file.save(db)
+                # 保存文件
+                data_file2 = DataFile()
+                data_file2.Id = NewId()
+                data_file2.DataId = mod.Id
+                data_file2.FilePath = label_files[k]
+                data_file2.FileType = "txt"
+                data_file2.Url = file_path_to_url(label_files[k])
+                data_file2.DirPath = "labels"
+                data_file2.save(db)
     #         # 修改类型数量
-    #         mod.ClassNum = class_num
-    #         mod.save(db)
-    # except Exception as e:
-    #     print(f"Error processing files: {str(e)}")
-    #     raise
+        mod.ClassNum = class_num
+        mod.save(db)
+    except Exception as e:
+        print(f"Error processing files: {str(e)}")
+        raise
 
     return None
 
+def get_files_from_directory(base_dir, subfolder_name):
+    """
+    在 base_dir 目录下递归查找指定子文件夹 subfolder_name 中的所有文件
+    """
+    file_list = []
+    for root, dirs, files in os.walk(base_dir):
+        if subfolder_name in dirs:
+            folder_path = os.path.join(root, subfolder_name)
+            for file_name in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file_name)
+                if os.path.isfile(file_path):
+                    file_list.append(file_path)
+    return file_list
 
 def delete_data_impl(
         id: str,
