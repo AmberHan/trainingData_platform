@@ -1,8 +1,7 @@
-import zipfile
 import tarfile
-import os
+import zipfile
 
-from config.file_path import config
+from config.config import config_path
 
 
 def unzip_file(zip_path, extract_to):
@@ -57,8 +56,8 @@ import os
 
 # file_urls
 def file_path_to_url(file_path: str) -> str:
-    save_path = config['FileConf']['SavePath']
-    uri = config['FileConf']['Uri']
+    save_path = config_path['FileConf']['SavePath']
+    uri = config_path['FileConf']['Uri']
 
     if len(file_path) > len(save_path) and file_path.startswith(save_path):
         file_path = uri + file_path[len(save_path):]

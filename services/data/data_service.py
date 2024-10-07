@@ -11,8 +11,8 @@ from sqlmodels.data import Data as DataSql, Data
 from sqlmodels.dataFile import DataFile
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
-from util.file import unzip_file, untar_file, file_path_to_url
-from util.util import NewId, TimeNow, exec_command
+from util.file import unzip_file, untar_file
+from util.util import NewId, TimeNow
 
 
 def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetDataListByPageReply:
@@ -56,7 +56,6 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 # data管理保存
 def save_data_file(data_file_req: DataFile, db: Session):
     data_file_req.save(db)
-
 
 
 def save_data(req: SaveDataForm, db: Session):
@@ -105,42 +104,42 @@ def save_data(req: SaveDataForm, db: Session):
     mod.save(db)
 
     # 获取文件列表并保存入库
-    try:
-        res = exec_command(f"ls {file_path}*")
-        if res:
-            res_list = res[0].strip().split("\n")
-            class_num = 0
-
-            for val in res_list:
-                if not val:
-                    continue
-                res_l = val.split("\n")
-                class_num += 1
-
-                for k, v in enumerate(res_l):
-                    img_path = ""
-                    dir_path = ""
-                    if k == 0:
-                        # imgPath
-                        img_path = v.strip(":") + "/"
-                        dir_path = v[len(file_path):].strip(":")
-                    else:
-                        # img
-                        img_file = img_path + v
-                        # 保存文件
-                        data_file_req = DataFile(
-                            DataId=mod.Id,
-                            FilePath=img_file,
-                            Url=file_path_to_url(img_file),
-                            DirPath=dir_path)
-                        save_data_file(data_file_req, db)
-
-            # 修改类型数量
-            mod.ClassNum = class_num
-            mod.save(db)
-    except Exception as e:
-        print(f"Error processing files: {str(e)}")
-        raise
+    # try:
+    #     res = exec_command(f"ls {file_path}*")
+    #     if res:
+    #         res_list = res[0].strip().split("\n")
+    #         class_num = 0
+    #
+    #         for val in res_list:
+    #             if not val:
+    #                 continue
+    #             res_l = val.split("\n")
+    #             class_num += 1
+    #
+    #             for k, v in enumerate(res_l):
+    #                 img_path = ""
+    #                 dir_path = ""
+    #                 if k == 0:
+    #                     # imgPath
+    #                     img_path = v.strip(":") + "/"
+    #                     dir_path = v[len(file_path):].strip(":")
+    #                 else:
+    #                     # img
+    #                     img_file = img_path + v
+    #                     # 保存文件
+    #                     data_file_req = DataFile(
+    #                         DataId=mod.Id,
+    #                         FilePath=img_file,
+    #                         Url=file_path_to_url(img_file),
+    #                         DirPath=dir_path)
+    #                     save_data_file(data_file_req, db)
+    #
+    #         # 修改类型数量
+    #         mod.ClassNum = class_num
+    #         mod.save(db)
+    # except Exception as e:
+    #     print(f"Error processing files: {str(e)}")
+    #     raise
 
     return None
 
