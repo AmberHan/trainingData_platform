@@ -33,7 +33,7 @@ class DataFile(SQLModel, table=True):
     @classmethod
     def find_all_by_data_id(cls, session: Session, data_id: str) -> List["DataFile"]:
         # 根据 data_id 查找所有文件
-        statement = select(cls.DirPath, cls.FileType).where(cls.DataId == data_id)
+        statement = select(cls).where(cls.DataId == data_id)
         return session.exec(statement).all()
 
     @classmethod

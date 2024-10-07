@@ -63,3 +63,27 @@ def file_path_to_url(file_path: str) -> str:
         file_path = uri + file_path[len(save_path):]
 
     return file_path
+
+a = file_path_to_url("aa")
+
+
+
+# 解析images和labels文件
+def get_files_from_images_and_labels(directory):
+    images_files = []
+    labels_files = []
+
+    # 遍历所有子目录
+    for root, dirs, files in os.walk(directory):
+        # 判断当前目录是否是二级目录下的 "images" 或 "labels"
+        if root.endswith("images"):
+            for file in files:
+                # 把images目录下的文件路径存储到images_files
+                images_files.append(os.path.join(root, file))
+
+        if root.endswith("labels"):
+            for file in files:
+                # 把labels目录下的文件路径存储到labels_files
+                labels_files.append(os.path.join(root, file))
+
+    return images_files, labels_files

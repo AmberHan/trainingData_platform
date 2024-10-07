@@ -1,7 +1,7 @@
 config_path = {
     'HostConf': {  # 端口
         'host': '0.0.0.0',
-        'port': 9988
+        'port': 8080
     },
     'FileConf': {  # 文件上传
         'SavePath': './upload_files',  # 替换为你的存储路径
