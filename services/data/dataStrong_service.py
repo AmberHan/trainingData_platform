@@ -30,9 +30,9 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
     res = DataFile.find_all_by_data_id(db, dataId)
     # 查找 'images' 在路径中的位置
-    # images_dir_index = res[0].FilePath.find('/images/')
-    # images_dir_index = config_path['FileConf']['SaveDataSetsPath']
-    images_dir_index = find_parent_directory(res[0].FilePath, '/images/')
+    # images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
+    # images_parent_dir = find_parent_directory(res[0].FilePath, '/images/')
+    images_dir_index = res[0].FilePath.find('/images/')
 
     # 如果找到了 'images'，则提取到 'images' 之前的部分
     if images_dir_index != -1:
