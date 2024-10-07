@@ -23,17 +23,17 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetD
         if req.page < 1:
             req.page = 1
 
-            # 调用封装好的分页方法
+        # 调用封装好的分页方法
         projects, total = DataSql.find_by_page(id, req.page, req.size, req.like, db)
         reply = GetDataListByPageReply(total=total)
         for i, p in enumerate(projects):
             saveDataReq = SaveDataReq.from_orm(p)
-            saveDataReq.userName = User.select_by_id(db, p.CreateUid).username
-            moduleTypeName = ModuleType.select_by_id(db, p.ModuleTypeId).ModuleTypeName
-            if moduleTypeName is None:
-                saveDataReq.moduleTypeName = moduleTypeName
-            else:
-                saveDataReq.moduleTypeName = "none"
+            user = User.select_by_id(db, p.CreateUid)
+            if user is not None:
+                saveDataReq.userName = user.username
+            moduleType = ModuleType.select_by_id(db, p.ModuleTypeId)
+            if moduleType is not None:
+                saveDataReq.moduleTypeName = moduleType.ModuleTypeName
             reply.list.append(saveDataReq)
         return reply
     except Exception as e:

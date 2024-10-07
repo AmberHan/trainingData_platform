@@ -17,10 +17,6 @@ async def upload():
     return {"message": "Hello World"}
 
 
-# @fileHandler.post("/file/uploadTar")
-# async def upload_tar():
-#     return {"message": "Hello World"}
-
 @fileHandler.post("/file/uploadTar")
 async def upload_tar(file: UploadFile = File(...)):
     return response_format(lambda: file_service.upload_tar(file))
