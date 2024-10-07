@@ -5,12 +5,11 @@ from fastapi import UploadFile, File
 
 from config.config import config_path
 from schemas.file_model import FileReply, ChunkUploadResult
-from util.file import get_file_size
-from util.util import NewId
+from util.file import get_file_size, get_unique_path
 
 
 def upload_tar_impl(file: UploadFile = File(...)):
-    file_path, is_complete = upload_data(file)
+    file_path, is_complete = upload_data(config_path['FileConf']['SaveDataPath'], file)
     if is_complete:
         return FileReply(
             path=file_path,
@@ -21,7 +20,7 @@ def upload_tar_impl(file: UploadFile = File(...)):
 
 
 def upload_impl(file: UploadFile = File(...)):
-    file_path, is_complete = upload_data(file)
+    file_path, is_complete = upload_data(config_path['FileConf']['SaveModelPath'], file)
     if is_complete:
         return ChunkUploadResult(
             path=file_path,
@@ -29,8 +28,8 @@ def upload_impl(file: UploadFile = File(...)):
         )
 
 
-def upload_data(file: UploadFile = File(...)):
-    file_path, ok = get_path(file.filename)
+def upload_data(save_dir, file: UploadFile = File(...)):
+    file_path, ok = get_unique_path(save_dir, file.filename)
     if not ok:
         return file_path, ok
     # 保存文件
@@ -42,18 +41,4 @@ def upload_data(file: UploadFile = File(...)):
     return file_path, True
 
 
-def get_path(file_name: str) -> (str, bool):
-    save_dir = config_path['FileConf']['SavePath']
-    if not os.path.exists(save_dir):
-        try:
-            os.makedirs(save_dir)
-        except OSError as e:
-            return f"存储路径创建失败: {str(e)}", False
 
-    _, file_ext = os.path.splitext(file_name)
-    if file_ext == "":
-        return "没有后缀", False
-    save_path = os.path.join(save_dir, file_name)
-    if os.path.exists(save_path):
-        return os.path.join(save_dir, NewId() + file_ext), True
-    return save_path, True

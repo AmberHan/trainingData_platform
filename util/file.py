@@ -56,7 +56,7 @@ import os
 
 # file_urls
 def file_path_to_url(file_path: str) -> str:
-    save_path = config_path['FileConf']['SavePath']
+    save_path = config_path['FileConf']['SaveDataPath']
     uri = config_path['FileConf']['Uri']
 
     if len(file_path) > len(save_path) and file_path.startswith(save_path):
@@ -64,8 +64,8 @@ def file_path_to_url(file_path: str) -> str:
 
     return file_path
 
-a = file_path_to_url("aa")
 
+a = file_path_to_url("aa")
 
 
 # 解析images和labels文件
@@ -87,3 +87,34 @@ def get_files_from_images_and_labels(directory):
                 labels_files.append(os.path.join(root, file))
 
     return images_files, labels_files
+
+
+def find_parent_directory(path, folder_name):
+    # 规范化路径
+    norm_path = os.path.normpath(path)
+    # 将路径按路径分隔符分割成多个部分
+    parts = norm_path.split(os.sep)
+
+    # 查找包含指定文件夹的部分
+    for i, part in enumerate(parts):
+        if part == folder_name:
+            images_directory = os.sep.join(parts[:i])
+            return images_directory
+
+    return None
+
+
+def get_unique_path(save_dir, file_name: str) -> (str, bool):
+    if not os.path.exists(save_dir):
+        try:
+            os.makedirs(save_dir)
+        except OSError as e:
+            return f"存储路径创建失败: {str(e)}", False
+
+    _, file_ext = os.path.splitext(file_name)
+    if file_ext == "":
+        return "没有后缀", False
+    save_path = os.path.join(save_dir, file_name)
+    if os.path.exists(save_path):
+        return os.path.join(save_dir, NewId() + file_ext), True
+    return save_path, True

@@ -6,11 +6,11 @@ from sqlalchemy.orm import Session
 
 import util.util
 from schemas.dataStrong_model import DataStrong, DataStrongParam
-from sqlmodels import dataFile as dataFileSql
 from sqlmodels.data import Data as DataSql
 from sqlmodels.dataFile import DataFile
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from util.convert import model_to_string
+from util.file import find_parent_directory
 
 
 def save_data_strong_impl(req: DataStrongParam, db: Session):
@@ -30,7 +30,9 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
     res = DataFile.find_all_by_data_id(db, dataId)
     # 查找 'images' 在路径中的位置
-    images_dir_index = res[0].FilePath.find('/images/')
+    # images_dir_index = res[0].FilePath.find('/images/')
+    # images_dir_index = config_path['FileConf']['SaveDataSetsPath']
+    images_dir_index = find_parent_directory(res[0].FilePath, '/images/')
 
     # 如果找到了 'images'，则提取到 'images' 之前的部分
     if images_dir_index != -1:
@@ -38,7 +40,8 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
         print(f"Images 目录: {images_parent_dir}")
     else:
         print("未找到 'images' 目录")
-    split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num), images_parent_dir)
+    split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
+                         images_parent_dir)
 
 
 def move_file_to_folder(file_path, destination_folder):
@@ -60,9 +63,8 @@ def move_file_to_folder(file_path, destination_folder):
     except Exception as e:
         print(f"未知错误: {str(e)}")
 
+
 def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
-
-
     # 按照文件类型分类
     png_files = [file for file in res if file.FileType == 'png']
     txt_files = [file for file in res if file.FileType == 'txt']
@@ -105,9 +107,6 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         move_file_to_folder(value.FilePath, folder)
 
 
-
-
-
 def save_data_strong(req: DataStrongSql, db: Session):
     data = DataSql.select_by_id(db, req.DataId)
     if data is None:
@@ -125,8 +124,6 @@ def save_data_strong(req: DataStrongSql, db: Session):
     # dataFileSql.DataFile.delete_by_type_and_data_id(db, 3, req.DataId)
 
     return req.DataId
-
-
 
 
 def get_data_strong_impl(req: DataStrong, db: Session) -> DataStrongParam:

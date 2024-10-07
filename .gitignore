@@ -2,4 +2,6 @@
 .idea
 db
 log
-upload_files
+data
+datasets
+model
