@@ -120,9 +120,9 @@ def save_data_strong(req: DataStrongSql, db: Session):
     req.save(db)
 
     # 删除文件
-    dataFileSql.DataFile.delete_by_type_and_data_id(db, 1, req.DataId)
-    dataFileSql.DataFile.delete_by_type_and_data_id(db, 2, req.DataId)
-    dataFileSql.DataFile.delete_by_type_and_data_id(db, 3, req.DataId)
+    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 1, req.DataId)
+    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 2, req.DataId)
+    # dataFileSql.DataFile.delete_by_type_and_data_id(db, 3, req.DataId)
 
     return req.DataId
 

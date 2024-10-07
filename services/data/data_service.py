@@ -59,7 +59,7 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 
 
 
-def save_data(req: SaveDataForm, db: Session):
+def save_data(uid:str, req: SaveDataForm, db: Session):
     if not os.path.exists(req.uploadPath):
         raise Exception("文件不存在，请重新上传")
 
@@ -93,7 +93,7 @@ def save_data(req: SaveDataForm, db: Session):
     # else:
     mod.Id = NewId()
     mod.CreateTime = TimeNow()
-
+    mod.CreateUid = uid
     mod.DataName = req.dataName
     mod.ModuleTypeId = req.moduleTypeId
     mod.Detail = req.detail
