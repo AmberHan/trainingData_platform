@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from common import const
 from common.const import CURRENT_USER_ID_KEY
 from config.db import get_db
+from schemas.module_model import SaveModuleReq
 from schemas.req_model import ListByPageReq
 from services.module import module_service, moduleFrame_service, moduleType_service
 from util.response_format import response_format
@@ -27,8 +28,8 @@ async def get_module_type_list(db: Session = Depends(get_db)):
 
 
 @moduleHandler.post("/saveModule")
-async def saveModule():
-    return {"message": "Hello World"}
+async def saveModule(req: SaveModuleReq, db: Session = Depends(get_db)):
+    return response_format(lambda: module_service.save_module_impl(CURRENT_USER_ID_KEY, req, db))
 
 
 @moduleHandler.post("/deleteModule")
