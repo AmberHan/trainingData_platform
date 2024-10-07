@@ -5,3 +5,7 @@ class FileReply(BaseModel):
     path: str
     url: str
     fileSize: str
+
+class ChunkUploadResult(BaseModel):
+    path: str
+    isComplete: bool
