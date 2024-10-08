@@ -5,6 +5,7 @@ import zipfile
 
 from config.config import config_path
 from util.util import NewId
+import csv
 
 
 def unzip_file(zip_path, extract_to):
@@ -134,7 +135,6 @@ def get_all_subfolders(base_dir):
     return subfolders
 
 
-
 # 目录移动
 def move_file_to_folder(file_path, destination_folder):
     try:
@@ -154,6 +154,7 @@ def move_file_to_folder(file_path, destination_folder):
         print(f"错误: 操作系统错误。无法移动文件 {file_path}. 错误信息: {str(os_error)}")
     except Exception as e:
         print(f"未知错误: {str(e)}")
+
 
 # 复制迁移
 def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
@@ -204,3 +205,12 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
 
         # 将文件移动到相应的文件夹
         move_file_to_folder(value.FilePath, folder)
+
+
+def get_last_row_csv(file_path):
+    with open(file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        last_row = None
+        for row in reader:
+            last_row = row
+        return last_row

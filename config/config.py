@@ -1,18 +1,24 @@
+# 路径端口配置
 config_path = {
-    'HostConf': {  # 端口
+    'HostConf': {  # 监听端口
         'host': '0.0.0.0',
-        'port': 8080
+        'port': 9988
     },
     'FileConf': {  # 文件上传
         'SaveDataPath': './data',  # 替换为你的数据存储路径
         'SaveDataSetsPath': './datasets',  # 替换为数据迁移路径
         'SaveModelPath': './model',  # 替换为你的模型存储路径
+        'SaveRunPath': './run',  # 替换为训练产出路径
         'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
-    'DbConf': {  # 数据库
-        'DbPath': "./db/atp.db",
+    'SysConf': {  # 系统设置
+        'DbPath': "./db/atp.db",  # 数据库路径
+        'LogPath': "./log",  # 日志路径
     },
-    'LogConf': {  # 日志
-        'LogPath': "./log",
-    },
+}
+
+# docker指令
+config_command = {
+    'startCommand': 'xxx',
+    'stopCommand': 'xxx',
 }

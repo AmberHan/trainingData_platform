@@ -7,7 +7,7 @@ from sqlmodel import create_engine
 from config.config import config_path
 from sqlmodels.user import User
 
-engine = create_engine(f"sqlite:///{config_path['DbConf']['DbPath']}", connect_args={"check_same_thread": False},
+engine = create_engine(f"sqlite:///{config_path['SysConf']['DbPath']}", connect_args={"check_same_thread": False},
                        echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
