@@ -1,3 +1,5 @@
+import math
+import shutil
 import tarfile
 import zipfile
 
@@ -120,6 +122,8 @@ def get_unique_path(save_dir, file_name: str) -> (str, bool):
         return os.path.join(save_dir, NewId() + file_ext), True
     return save_path, True
 
+
+# 获取子目录list
 def get_all_subfolders(base_dir):
     # 获取 base_dir 下所有的文件夹名称
     subfolders = ""
@@ -128,3 +132,75 @@ def get_all_subfolders(base_dir):
     else:
         subfolders = [f for f in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, f))]
     return subfolders
+
+
+
+# 目录移动
+def move_file_to_folder(file_path, destination_folder):
+    try:
+        # 检查目标文件夹是否存在，如果不存在则创建
+        if not os.path.exists(destination_folder):
+            os.makedirs(destination_folder)
+
+        # 移动文件
+        shutil.copy(file_path, os.path.join(destination_folder, os.path.basename(file_path)))
+        print(f"文件已成功移动到 {destination_folder}")
+
+    except FileNotFoundError as fnf_error:
+        print(f"错误: 找不到文件 {file_path}. 错误信息: {str(fnf_error)}")
+    except PermissionError as perm_error:
+        print(f"错误: 没有权限移动文件 {file_path}. 错误信息: {str(perm_error)}")
+    except OSError as os_error:
+        print(f"错误: 操作系统错误。无法移动文件 {file_path}. 错误信息: {str(os_error)}")
+    except Exception as e:
+        print(f"未知错误: {str(e)}")
+
+# 复制迁移
+def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
+    # 按照文件类型分类
+    png_files = [file for file in res if file.FileType == 'png']
+    txt_files = [file for file in res if file.FileType == 'txt']
+
+    # 计算文件划分的数量
+    total_files = len(png_files) + len(txt_files)
+
+    if total_files == 0:
+        raise ValueError("没有可用的PNG文件进行划分")
+
+        # 按比例计算验证集、测试集和训练集的数量
+    validation_count = math.ceil(total_files * validation_num / 100)
+    test_count = math.ceil(total_files * test_data_num / 100)
+    training_count = total_files - validation_count - test_count
+
+    if validation_count + test_count + training_count > total_files:
+        raise ValueError("文件数量不足，无法按照比例划分")
+
+    # 将文件分配到不同文件夹
+    print(validation_count)
+    print(test_count)
+    print(training_count)
+    subfolder = "images"
+    folder = ""
+
+    # 取最长的字符串加1
+    sub_dir = get_all_subfolders(base_dir)
+    train_folders = [folder for folder in sub_dir if 'train' in folder.lower()]
+    str_add = '1' * len(train_folders)
+
+    for index, value in enumerate(res):
+        # 根据文件类型设置路径
+        if value.FileType == "png":
+            subfolder = "images"
+        else:
+            subfolder = "labels"
+
+        # 根据索引确定文件存放的文件夹
+        if index < validation_count:
+            folder = os.path.join(base_dir, "valid" + str_add, subfolder)
+        elif index < validation_count + test_count:
+            folder = os.path.join(base_dir, "test" + str_add, subfolder)
+        else:
+            folder = os.path.join(base_dir, "train" + str_add, subfolder)
+
+        # 将文件移动到相应的文件夹
+        move_file_to_folder(value.FilePath, folder)
