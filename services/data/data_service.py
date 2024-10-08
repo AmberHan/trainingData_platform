@@ -82,6 +82,25 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
         print(f"Failed to unzip {tar_zip_path}: {str(e)}")
         raise Exception("解压失败，请重新上传合法的压缩包")
 
+
+    image_files = get_files_from_directory(file_path, 'images')
+
+    # 获取 labels 文件夹下的所有文件
+    label_files = get_files_from_directory(file_path, 'labels')
+
+    if len(image_files) != len(label_files):
+        # 找出没有对应label的image文件
+        unmatched_images = []
+        for img in image_files:
+            # 假设图像是 .png 文件，对应的标签文件是 .txt
+            label_name = img.replace("images", "labels").replace(".jpg", ".txt")
+
+            # 检查转换后的标签是否在 label_files 中
+            if label_name not in label_files:
+                unmatched_images.append(img)
+        res = ", ".join(unmatched_images)
+        raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
+
     # 保存数据
     mod = Data()
 
@@ -115,12 +134,6 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
             if not val:
                 continue
             class_num += 1
-
-        # 获取 images 文件夹下的所有文件
-        image_files = get_files_from_directory(file_path, 'images')
-
-        # 获取 labels 文件夹下的所有文件
-        label_files = get_files_from_directory(file_path, 'labels')
     #
         for k, v in enumerate(image_files):
                 # 保存图片
