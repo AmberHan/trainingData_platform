@@ -5,7 +5,7 @@ import zipfile
 
 from config.config import config_path
 from util.util import NewId
-
+import yaml
 
 def unzip_file(zip_path, extract_to):
     """
@@ -158,11 +158,11 @@ def move_file_to_folder(file_path, destination_folder):
 # 复制迁移
 def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
     # 按照文件类型分类
-    png_files = [file for file in res if file.FileType == 'png']
-    txt_files = [file for file in res if file.FileType == 'txt']
+    png_files = [file.FilePath for file in res if file.FileType == 'png']
+    # txt_files = [file.FilePath for file in res if file.FileType == 'txt']
 
     # 计算文件划分的数量
-    total_files = len(png_files) + len(txt_files)
+    total_files = len(png_files)
 
     if total_files == 0:
         raise ValueError("没有可用的PNG文件进行划分")
@@ -183,24 +183,51 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
     folder = ""
 
     # 取最长的字符串加1
-    sub_dir = get_all_subfolders(base_dir)
-    train_folders = [folder for folder in sub_dir if 'train' in folder.lower()]
-    str_add = '1' * len(train_folders)
+    # sub_dir = get_all_subfolders(base_dir)
+    # train_folders = [folder for folder in sub_dir if 'train' in folder.lower()]
+    # str_add = '1' * len(train_folders)
+    if os.path.exists(base_dir):
+        # 删除目录及其内容
+        shutil.rmtree(base_dir)
 
-    for index, value in enumerate(res):
-        # 根据文件类型设置路径
-        if value.FileType == "png":
-            subfolder = "images"
-        else:
-            subfolder = "labels"
+
+    for index, value in enumerate(png_files):
 
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
-            folder = os.path.join(base_dir, "valid" + str_add, subfolder)
+            folder = os.path.join(base_dir, "valid", "images")
         elif index < validation_count + test_count:
-            folder = os.path.join(base_dir, "test" + str_add, subfolder)
+            folder = os.path.join(base_dir, "test", "images")
         else:
-            folder = os.path.join(base_dir, "train" + str_add, subfolder)
+            folder = os.path.join(base_dir, "train", "images")
 
         # 将文件移动到相应的文件夹
-        move_file_to_folder(value.FilePath, folder)
+        move_file_to_folder(value, folder)
+
+        # 根据索引确定文件存放的文件夹
+        if index < validation_count:
+            folder = os.path.join(base_dir, "valid", "labels")
+        elif index < validation_count + test_count:
+            folder = os.path.join(base_dir, "test", "labels")
+        else:
+            folder = os.path.join(base_dir, "train", "labels")
+
+        # 将文件移动到相应的文件夹
+        move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
+    data_yaml = {
+        'train': os.path.join(base_dir, "train"),
+        'test': os.path.join(base_dir, "test"),
+        'valid': os.path.join(base_dir, "valid"),
+    }
+
+    dir_path = os.path.join("./data", res[0].DataId)
+    # 如果目录不存在，则创建目录
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    generate_yaml(data_yaml, os.path.join(dir_path, "data.yaml"))
+
+
+def generate_yaml(data, file_path):
+    # 将数据写入 YAML 文件
+    with open(file_path, 'w') as file:
+        yaml.dump(data, file, default_flow_style=False, allow_unicode=True)
