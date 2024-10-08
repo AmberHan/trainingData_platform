@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from common import const
 from common.const import CURRENT_USER_ID_KEY
 from config.db import get_db
-from schemas.project_work_model import SaveProjectWorkReq
+from schemas.projectWork_model import SaveProjectWorkReq
 from schemas.req_model import StringIdReq, DeleteListReq, ListByPageReq
-from services.project import project_service, project_work_service
+from services.project import project_service, projectWork_service, projectWorkReport_service
 from services.project.project_service import SaveProjectReq
 from util.response_format import response_format
 
@@ -36,32 +36,32 @@ def delete_all_projects(ids: DeleteListReq, db: Session = Depends(get_db)):
 @projectHandler.post("/getProjectWorkListByPage")
 def get_project_work_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
     return response_format(
-        lambda: project_work_service.get_project_work_list_by_page_impl(CURRENT_USER_ID_KEY, req, db))
+        lambda: projectWork_service.get_project_work_list_by_page_impl(CURRENT_USER_ID_KEY, req, db))
 
 
 @projectHandler.post("/saveProjectWork")
 def save_project_work(req: SaveProjectWorkReq, db: Session = Depends(get_db)):
-    return response_format(lambda: project_work_service.save_project_work_impl(CURRENT_USER_ID_KEY, req, db))
+    return response_format(lambda: projectWork_service.save_project_work_impl(CURRENT_USER_ID_KEY, req, db))
 
 
 @projectHandler.post("/deleteProjectWork")
 def delete_project_work(req: StringIdReq, db: Session = Depends(get_db)):
-    return response_format(lambda: project_work_service.delete_project_work_impl(req.id, db))
+    return response_format(lambda: projectWork_service.delete_project_work_impl(req.id, db))
 
 
 @projectHandler.post("/deleteAllProjectWork")
 def delete_all_project_works(ids: DeleteListReq, db: Session = Depends(get_db)):
-    return response_format(lambda: project_work_service.delete_all_project_work_impl(ids.id, db))
+    return response_format(lambda: projectWork_service.delete_all_project_work_impl(ids.id, db))
 
 
 @projectHandler.post("/getProjectWorkTypeList")
 def get_project_work_type_list(db: Session = Depends(get_db)):
-    return response_format(lambda: project_work_service.get_project_work_type_list_impl(db))
+    return response_format(lambda: projectWork_service.get_project_work_type_list_impl(db))
 
 
 @projectHandler.post("/getProjectWorkById")
 def get_project_work_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    return response_format(lambda: project_work_service.get_project_work_by_id_impl(req, db))
+    return response_format(lambda: projectWork_service.get_project_work_by_id_impl(req, db))
 
 
 @projectHandler.post("/flushProjectWorkNum")
@@ -85,8 +85,8 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session = Depends(get
 
 
 @projectHandler.post("/getProjectWorkReport")
-def get_project_work_report(project_id: int):
-    pass
+def get_project_work_report(req: StringIdReq, db: Session = Depends(get_db)):
+    return response_format(lambda: projectWorkReport_service.get_project_work_report_by_id_impl(req, db))
 
 
 @projectHandler.post("/startWork")

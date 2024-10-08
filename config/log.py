@@ -6,11 +6,12 @@ from config.config import config_path
 
 def setup_logger():
     # 配置日志
-    log_dir = config_path['LogConf']['LogPath']
+    log_dir = config_path['SysConf']['LogPath']
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logging.basicConfig(filename=os.path.join(log_dir, 'error.log'), level=logging.ERROR,
                         format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                        # encoding='utf-8'
                         )
     return logging.getLogger(__name__)
 
