@@ -5,12 +5,13 @@ import shutil
 from sqlalchemy.orm import Session
 
 import util.util
+from config.config import config_path
 from schemas.dataStrong_model import DataStrong, DataStrongParam
 from sqlmodels.data import Data as DataSql
 from sqlmodels.dataFile import DataFile
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from util.convert import model_to_string
-from util.file import find_parent_directory
+from util.file import find_parent_directory, get_all_subfolders
 
 
 def save_data_strong_impl(req: DataStrongParam, db: Session):
@@ -30,16 +31,19 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
     res = DataFile.find_all_by_data_id(db, dataId)
     # 查找 'images' 在路径中的位置
-    # images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
+    images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
+    # 统一文件名dataId表示
+    images_parent_dir += ("/" + dataId)
     # images_parent_dir = find_parent_directory(res[0].FilePath, '/images/')
-    images_dir_index = res[0].FilePath.find('/images/')
+    # images_dir_index = res[0].FilePath.find('/images/')
+
 
     # 如果找到了 'images'，则提取到 'images' 之前的部分
-    if images_dir_index != -1:
-        images_parent_dir = res[0].FilePath[:images_dir_index + len('images')]
-        print(f"Images 目录: {images_parent_dir}")
-    else:
-        print("未找到 'images' 目录")
+    # if images_dir_index != -1:
+    #     images_parent_dir = res[0].FilePath[:images_dir_index + len('images')]
+    #     print(f"Images 目录: {images_parent_dir}")
+    # else:
+    #     print("未找到 'images' 目录")
     split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
                          images_parent_dir)
 
@@ -89,19 +93,26 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
     print(training_count)
     subfolder = "images"
     folder = ""
+
+    # 取最长的字符串加1
+    sub_dir = get_all_subfolders(base_dir)
+    train_folders = [folder for folder in sub_dir if 'train' in folder.lower()]
+    str_add = '1' * len(train_folders)
+
     for index, value in enumerate(res):
         # 根据文件类型设置路径
         if value.FileType == "png":
             subfolder = "images"
         else:
             subfolder = "labels"
+
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
-            folder = os.path.join(base_dir, "valid", subfolder)
+            folder = os.path.join(base_dir, "valid" + str_add, subfolder)
         elif index < validation_count + test_count:
-            folder = os.path.join(base_dir, "test", subfolder)
+            folder = os.path.join(base_dir, "test" + str_add, subfolder)
         else:
-            folder = os.path.join(base_dir, "train", subfolder)
+            folder = os.path.join(base_dir, "train" + str_add, subfolder)
 
         # 将文件移动到相应的文件夹
         move_file_to_folder(value.FilePath, folder)

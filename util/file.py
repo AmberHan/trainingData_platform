@@ -2,6 +2,7 @@ import tarfile
 import zipfile
 
 from config.config import config_path
+from util.util import NewId
 
 
 def unzip_file(zip_path, extract_to):
@@ -118,3 +119,12 @@ def get_unique_path(save_dir, file_name: str) -> (str, bool):
     if os.path.exists(save_path):
         return os.path.join(save_dir, NewId() + file_ext), True
     return save_path, True
+
+def get_all_subfolders(base_dir):
+    # 获取 base_dir 下所有的文件夹名称
+    subfolders = ""
+    if not os.path.exists(base_dir):
+        print(f"Base directory '{base_dir}' does not exist.")
+    else:
+        subfolders = [f for f in os.listdir(base_dir) if os.path.isdir(os.path.join(base_dir, f))]
+    return subfolders
