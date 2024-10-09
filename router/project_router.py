@@ -96,8 +96,9 @@ def start_work(work_id: StringIdReq, db: Session = Depends(get_db)):
 
 
 @projectHandler.post("/stopWork")
-def stop_work(work_id: int):
-    pass
+def stop_work(work_id: StringIdReq, db: Session = Depends(get_db)):
+    return response_format(lambda: projectWork_service.stop_work(work_id, db))
+
 
 
 @projectHandler.post("/getProjectWorkLog")

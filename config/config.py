@@ -19,8 +19,10 @@ config_path = {
     },
 }
 
-def start_into(data_id: str):
-    return f"docker run --rm --name helmet_train_work_{data_id} -it --ipc=host -v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all ultralytics/ultralytics:8.2.0 yolo detect train data=/app/data/{data_id}/data.yaml model=/app/model/yolov8s.pt project=/app/runs/{data_id}=train epochs=10 imgsz=640 device=0 lr0=0.01 batch=16 > train.log"
+def start_into(data_id: str, work_id: str):
+    # 由workid和data_id组成
+    return(f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host -v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all ultralytics/ultralytics:8.2.0 yolo detect train data=/app/data/{data_id}/data.yaml model=/app/model/yolov8s.pt project=/app/runs/{work_id}=train epochs=10 imgsz=640 device=0 lr0=0.01 batch=16 > train.log")
+
 
 # docker指令
 config_command = {

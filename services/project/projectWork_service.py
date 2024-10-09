@@ -1,4 +1,5 @@
 import subprocess
+import time
 
 from sqlalchemy.orm import Session
 
@@ -161,8 +162,9 @@ def save_project_work(
     paramMod.save(db)
 
     if restart:
-        # todo startWork(StringIdReq(id=projectWork.Id))
-        pass
+        # startWork(StringIdReq(id=projectWork.Id))
+        res_value = StringIdReq(id=projectWork.Id)
+        start_work(res_value, db)
 
 
 def get_project_work_by_id_impl(
@@ -287,14 +289,38 @@ def exec_work(command: str):
     except Exception as e:  # 捕获其他所有异常
         print(f"An error occurred: {str(e)}")
 
-def run_work(work_id: str, command: str):
+def run_work(command: str):
     # 检查进程是否已启动
     exec_work(command)
 
 
+# 开始任务
 def start_work(req: StringIdReq, db: Session):
     # TODO 开始运行完后的结果获取
     res_work = ProjectWorkSql.select_by_id(db, req.id)
+    res_work.WorkStatus = 0
+    res_work.save(db)
     # 启动一个新的线程执行工作
-    work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
+    # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
+    command = config.config.start_into(res_work.DataId, req.id)
+    work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()
+
+# 停止任务
+def stop_work(req: StringIdReq, db: Session):
+    work = ProjectWorkSql.select_by_id(db, req.id)
+    if work.WorkStatus == 2:
+        raise Exception("任务暂未开启！")
+    else:
+        work.WorkStatus = 2
+        work.save(db)
+    # 关闭pid
+    # 设置配置文件路径
+    conf_path = "/data/disk2/yolov8/app/"
+    # 等待 500 毫秒
+    time.sleep(0.5)
+    # 构建 shell 命令
+    command = f"ps -ef | grep {conf_path}config.py | grep -v grep | awk '{{print $2}}' | xargs kill -9"
+    exec_work(command)
+    # work获取
+    Project.flush_project_work_num(db, work.ProjectId)

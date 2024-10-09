@@ -55,7 +55,7 @@ class ProjectWork(SQLModel, table=True):
         ).first() is not None
 
     def save(self, session: Session):
-        session.add(self)
+        session.merge(self)
         session.commit()
 
     def delete(self, session: Session):
