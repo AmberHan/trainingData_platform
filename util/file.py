@@ -158,11 +158,10 @@ def move_file_to_folder(file_path, destination_folder):
 # 复制迁移
 def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
     # 按照文件类型分类
-    png_files = [file for file in res if file.FileType == 'png']
-    txt_files = [file for file in res if file.FileType == 'txt']
+    png_files = [file.FilePath for file in res if file.FileType == 'png']
 
     # 计算文件划分的数量
-    total_files = len(png_files) + len(txt_files)
+    total_files = len(png_files)
 
     if total_files == 0:
         raise ValueError("没有可用的PNG文件进行划分")
@@ -176,9 +175,6 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         raise ValueError("文件数量不足，无法按照比例划分")
 
     # 将文件分配到不同文件夹
-    print(validation_count)
-    print(test_count)
-    print(training_count)
     subfolder = "images"
     folder = ""
 
@@ -220,7 +216,7 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         'valid': os.path.join(base_dir, "valid"),
     }
 
-    dir_path = os.path.join("./data", res[0].DataId)
+    dir_path = os.path.join(config_path['FileConf']['SaveYamlDataPath'], res[0].DataId)
     # 如果目录不存在，则创建目录
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)

@@ -16,7 +16,7 @@ def get_project_work_report_by_id_impl(
     work = ProjectWorkSql.select_by_id(db, req.id)
     if work is None:
         raise Exception("Project Work Not Found")
-    # todo 确定路径
+    # todo 确定路径, 转移路径
     # save_path = './testFile/results.csv'
     save_path = os.path.join(config_path['SysConf']['LogPath'], work.ProjectId, work.Id, "results.csv")
     row = get_last_row_csv(save_path)

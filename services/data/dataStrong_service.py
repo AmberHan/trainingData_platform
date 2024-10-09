@@ -30,16 +30,6 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
     # 统一文件名dataId表示
     images_parent_dir += ("/" + dataId)
-    # images_parent_dir = find_parent_directory(res[0].FilePath, '/images/')
-    # images_dir_index = res[0].FilePath.find('/images/')
-
-
-    # 如果找到了 'images'，则提取到 'images' 之前的部分
-    # if images_dir_index != -1:
-    #     images_parent_dir = res[0].FilePath[:images_dir_index + len('images')]
-    #     print(f"Images 目录: {images_parent_dir}")
-    # else:
-    #     print("未找到 'images' 目录")
     split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
                          images_parent_dir)
 
