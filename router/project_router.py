@@ -90,8 +90,9 @@ def get_project_work_report(req: StringIdReq, db: Session = Depends(get_db)):
 
 
 @projectHandler.post("/startWork")
-def start_work(work_id: int):
-    pass
+def start_work(work_id: StringIdReq, db: Session = Depends(get_db)):
+    return response_format(lambda: projectWork_service.start_work(work_id, db))
+
 
 
 @projectHandler.post("/stopWork")
