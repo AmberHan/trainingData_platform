@@ -315,7 +315,7 @@ def stop_work(req: StringIdReq, db: Session):
         work.WorkStatus = 2
         work.save(db)
     # 关闭pid
-    # 设置配置文件路径
+    # 设置配置文件路径 TODO 设置动态从前端获取
     conf_path = "/data/disk2/yolov8/app/"
     # 等待 500 毫秒
     time.sleep(0.5)

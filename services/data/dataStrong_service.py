@@ -26,7 +26,7 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # 添加清洗文件夹的区分
     # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
     res = DataFile.find_all_by_data_id(db, dataId)
-    # 查找 'images' 在路径中的位置
+    # 保存DataSets 在路径中的位置
     images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
     # 统一文件名dataId表示
     images_parent_dir += ("/" + dataId)

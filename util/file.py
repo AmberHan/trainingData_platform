@@ -1,3 +1,4 @@
+import json
 import math
 import shutil
 import tarfile
@@ -239,3 +240,24 @@ def get_last_row_csv(file_path):
         for row in reader:
             last_row = row
         return last_row
+
+def read_json_file(file_path): # 读取文件内容并进行异常处理
+    try:
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"文件 {file_path} 不存在")
+
+        if os.path.getsize(file_path) == 0:
+            raise ValueError(f"文件 {file_path} 为空")
+
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)  # 将 JSON 文件内容解析为 Python 字典
+    except FileNotFoundError as e:
+        print(f"错误: {e}")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"JSON 解码错误: {e}")
+        return {}
+    except Exception as e:
+        print(f"其他错误: {e}")
+        return {}
+    return data
