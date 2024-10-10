@@ -1,14 +1,15 @@
+import csv
 import json
 import math
 import shutil
 import tarfile
 import zipfile
 
+import yaml
+
 from config.config import config_path
 from schemas.projectWork_model import StageReply, LossReply
 from util.util import NewId, TimeNow
-import yaml
-import csv
 
 
 def unzip_file(zip_path, extract_to):
@@ -245,8 +246,6 @@ def get_last_row_csv(file_path):
         raise Exception("训练未完成！无法查看报告内容")
 
 
-
-
 def get_last_row_log(file_path):
     with open(file_path, 'r', newline='') as file:
         reader = csv.reader(file)
@@ -289,6 +288,7 @@ def get_last_row_log(columns):
     res = columns[2:5]
     loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2], loss=float(res[2]), time=TimeNow())
     return loss
+
 
 # 读log最新的一行,获取百分比
 def get_last_row_log_stage(columns):

@@ -2,12 +2,12 @@ import os.path
 
 from sqlmodel import Session
 
-from config.config import config_path, get_data_show
-from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
+from config.config import get_data_show
 from schemas.projectWorkReport_model import GetProjectWorkReportReply
 from schemas.req_model import StringIdReq
+from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from util.file import get_last_row_csv, read_json_file
-import json
+
 
 def get_project_work_report_by_id_impl(
         req: StringIdReq,
@@ -47,5 +47,3 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session):
         print(f"读取文件时出错: {e}")
     res = {"prf": data, "matrix": data2}
     return res
-
-

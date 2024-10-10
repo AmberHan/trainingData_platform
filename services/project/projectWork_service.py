@@ -1,26 +1,25 @@
-import subprocess
+import multiprocessing
 import time
 
 from sqlalchemy.orm import Session
 
 import config.config
-from schemas.project_model import SaveProjectReq
 from schemas.projectWork_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
     GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply
+from schemas.project_model import SaveProjectReq
 from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
 from services.data import data_service
 from services.module import module_service
 from services.module.moduleType_service import get_module_type_by_id_impl
 from services.module.module_service import get_module_by_id
+from sqlmodels.module import Module as ModuleSql
 from sqlmodels.project import Project
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
 from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from util import util
-import multiprocessing
-
 from util.commd import exec_work, exec_work2
 from util.file import get_last_row_log, get_last_row_log_stage
 
@@ -181,6 +180,7 @@ def get_project_work_by_id_impl(
         return None
     return ret
 
+
 # 进度
 def get_project_work_stage_by_id(req: StringIdReq, db: Session):
     loss_exec = config.config.exec_into(req.id)
@@ -188,12 +188,14 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
     res = get_last_row_log_stage(res_exec)
     return res
 
+
 # loss获取， 目前从日志获取
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
     loss_exec = config.config.exec_into(req.id)
     res_exec = exec_work2(loss_exec)
     res = get_last_row_log(res_exec)
     return res
+
 
 def get_project_work_type_by_id(
         req: StringIdReq,
@@ -286,8 +288,6 @@ def get_project_work_list_by_page_impl(
     return reply
 
 
-
-
 def run_work(command: str):
     # 检查进程是否已启动
     exec_work(command)
@@ -297,13 +297,15 @@ def run_work(command: str):
 def start_work(req: StringIdReq, db: Session):
     # TODO 开始运行完后的结果获取
     res_work = ProjectWorkSql.select_by_id(db, req.id)
+    module = ModuleSql.select_by_id(db, res_work.ModuleId)
     res_work.WorkStatus = 0
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
-    command = config.config.start_into(res_work.DataId, req.id)
+    command = config.config.start_into(res_work.DataId, req.id, module.ModuleName)
     work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()
+
 
 # 停止任务
 def stop_work(req: StringIdReq, db: Session):
