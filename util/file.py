@@ -246,15 +246,6 @@ def get_last_row_csv(file_path):
         raise Exception("训练未完成！无法查看报告内容")
 
 
-def get_last_row_log(file_path):
-    with open(file_path, 'r', newline='') as file:
-        reader = csv.reader(file)
-        last_row = None
-        for row in reader:
-            last_row = row
-        return last_row
-
-
 def read_json_file(file_path):  # 读取文件内容并进行异常处理
     try:
         if not os.path.exists(file_path):
@@ -277,8 +268,17 @@ def read_json_file(file_path):  # 读取文件内容并进行异常处理
     return data
 
 
+def get_last_row_log(file_path):
+    with open(file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        last_row = None
+        for row in reader:
+            last_row = row
+        return last_row
+
+
 # 读log最新的一行,获取loss
-def get_last_row_log(columns):
+def get_last_row_loss(columns) -> LossReply:
     columns = columns.split()
     # 检查是否有足够的列
     if len(columns) < 5:

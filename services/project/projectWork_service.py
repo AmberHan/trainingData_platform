@@ -21,7 +21,7 @@ from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from util import util
 from util.commd import exec_work, exec_work2
-from util.file import get_last_row_log, get_last_row_log_stage
+from util.file import get_last_row_log_stage, get_last_row_loss
 
 
 def delete_project_work_impl(
@@ -193,7 +193,7 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
     loss_exec = config.config.exec_into(req.id)
     res_exec = exec_work2(loss_exec)
-    res = get_last_row_log(res_exec)
+    res = get_last_row_loss(res_exec)
     return res
 
 
