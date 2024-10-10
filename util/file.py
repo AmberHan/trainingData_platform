@@ -5,9 +5,12 @@ import tarfile
 import zipfile
 
 from config.config import config_path
+from schemas.projectWork_model import LossReply
 from util.util import NewId
 import yaml
 import csv
+
+
 def unzip_file(zip_path, extract_to):
     """
     解压 ZIP 文件
@@ -135,7 +138,6 @@ def get_all_subfolders(base_dir):
     return subfolders
 
 
-
 # 目录移动
 def move_file_to_folder(file_path, destination_folder):
     try:
@@ -155,6 +157,7 @@ def move_file_to_folder(file_path, destination_folder):
         print(f"错误: 操作系统错误。无法移动文件 {file_path}. 错误信息: {str(os_error)}")
     except Exception as e:
         print(f"未知错误: {str(e)}")
+
 
 # 复制迁移
 def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
@@ -230,9 +233,6 @@ def generate_yaml(data, file_path):
         yaml.dump(data, file, default_flow_style=False, allow_unicode=True)
 
 
-
-
-
 def get_last_row_csv(file_path):
     with open(file_path, 'r', newline='') as file:
         reader = csv.reader(file)
@@ -241,7 +241,17 @@ def get_last_row_csv(file_path):
             last_row = row
         return last_row
 
-def read_json_file(file_path): # 读取文件内容并进行异常处理
+
+def get_last_row_log(file_path):
+    with open(file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        last_row = None
+        for row in reader:
+            last_row = row
+        return last_row
+
+
+def read_json_file(file_path):  # 读取文件内容并进行异常处理
     try:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"文件 {file_path} 不存在")
@@ -261,3 +271,23 @@ def read_json_file(file_path): # 读取文件内容并进行异常处理
         print(f"其他错误: {e}")
         return {}
     return data
+
+
+# 读log最新的一行
+def get_last_row_log(columns):
+    # with open(file_path, 'r') as file:
+    #     lines = file.readlines()  # 读取所有行
+    #     if not lines:
+    #         return None  # 如果文件是空的，返回 None
+    #     last_line = lines[-1].strip()  # 取最后一行，并去掉可能的换行符
+    #     # 使用split分隔符号时去除连续空格
+    #     columns = last_line.split()  # 自动处理连续空格
+    columns = columns.split()
+    # 检查是否有足够的列
+    if len(columns) < 5:
+        return None  # 列数不够返回 None
+
+    # 取第3到第5列 (索引为2, 3, 4)
+    res = columns[2:5]
+    loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2])
+    return loss

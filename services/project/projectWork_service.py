@@ -21,6 +21,10 @@ from sqlmodels.user import User
 from util import util
 import multiprocessing
 
+from util.commd import exec_work, exec_work2
+from util.file import get_last_row_log
+
+
 def delete_project_work_impl(
         id: str,
         db: Session,
@@ -175,6 +179,11 @@ def get_project_work_by_id_impl(
     ret = get_project_info(ProjectWork.from_orm(work), db)
     if ret is None:
         return None
+    loss_exec = config.config.exec_into(req.id)
+    res_exec = exec_work2(loss_exec)
+    res = get_last_row_log(res_exec)
+    # 取最后一行读取
+    ret.loss = res
     return ret
 
 
@@ -269,25 +278,7 @@ def get_project_work_list_by_page_impl(
     return reply
 
 
-def exec_work(command: str):
-    try:
-        # 执行命令
-        result = subprocess.run(
-            command,  # 需要执行的命令
-            shell=True,  # 如果设置为True，命令将通过shell执行
-            # cwd=conf_path,  # 设置工作目录
-            check=True,  # 如果命令执行失败，将抛出异常
-            stdout=subprocess.PIPE,  # 捕获标准输出
-            stderr=subprocess.PIPE  # 捕获错误输出
-        )
-        # 捕获并记录命令的输出和错误
-        print(f"Command executed successfully: {command}")
-        print(f"Output: {result.stdout.decode('utf-8')}")
-        print(f"Errors: {result.stderr.decode('utf-8')}")
-    except subprocess.CalledProcessError as e:  # 捕获subprocess调用错误
-        print(f"Command failed with error: {e.stderr.decode('utf-8')}")
-    except Exception as e:  # 捕获其他所有异常
-        print(f"An error occurred: {str(e)}")
+
 
 def run_work(command: str):
     # 检查进程是否已启动

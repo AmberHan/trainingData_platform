@@ -19,23 +19,31 @@ config_path = {
     },
 }
 
+
 def start_into(data_id: str, work_id: str):
     # 由workid和data_id组成
     return f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
-          f"-v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all " \
-          f"ultralytics/ultralytics:8.2.0 yolo detect train " \
-          f"data=/app/data/{data_id}/data.yaml model=/app/model/yolov8s.pt " \
-          f"project=/app/runs/helmet/{work_id} name=train epochs=10 imgsz=640 device=0 " \
-          f"lr0=0.01 batch=16 > train.log"
+           f"-v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all " \
+           f"ultralytics/ultralytics:8.2.0 yolo detect train " \
+           f"data=/app/data/{data_id}/data.yaml model=/app/model/yolov8s.pt " \
+           f"project=/app/runs/helmet/{work_id} name=train epochs=10 imgsz=640 device=0 " \
+           f"lr0=0.01 batch=16 > train.log"
     # return "python test2.py"
+
+
+def exec_into(work_id: str):
+    return f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir /app/runs/helmet/{work_id}/train --host 0.0.0.0"
+    # return "python test2.py"
+
 
 def get_data_show(work_id: str):
     # 由workid和data_id组成
     return {
         "prf": f"./app/runs/helmet/{work_id}/train/prf1.json",  # 图1 TODO 改为动态目录
-        "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json" # 图2 TODO 改为动态目录
+        "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json"  # 图2 TODO 改为动态目录
     }
     # return "python test2.py"
+
 
 # docker指令
 config_command = {
