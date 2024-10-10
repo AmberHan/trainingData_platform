@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from common import const
 from common.const import CURRENT_USER_ID_KEY
-from config.db import get_db
+from config.db_config import get_db
 from schemas.dataStrong_model import DataStrong, DataStrongParam
 from schemas.data_model import SaveDataForm
 from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq

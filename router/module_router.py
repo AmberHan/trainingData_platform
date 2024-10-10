@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from common import const
 from common.const import CURRENT_USER_ID_KEY
-from config.db import get_db
+from config.db_config import get_db
 from schemas.module_model import SaveModuleReq
 from schemas.req_model import ListByPageReq
 from services.module import module_service, moduleFrame_service, moduleType_service

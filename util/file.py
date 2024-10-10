@@ -65,7 +65,7 @@ import os
 # file_urls
 def file_path_to_url(file_path: str) -> str:
     save_path = config_path['FileConf']['SaveDataPath']
-    uri = config_path['FileConf']['Uri']
+    uri = config_path['HostConf']['Uri']
 
     if len(file_path) > len(save_path) and file_path.startswith(save_path):
         file_path = uri + file_path[len(save_path):]

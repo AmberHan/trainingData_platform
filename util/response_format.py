@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
 from common.code import Code, ServiceInsideError, RequestSuccess
-from config.log import logger
+from config.log_config import logger
 
 
 def ret_format(code: Code, data=None):

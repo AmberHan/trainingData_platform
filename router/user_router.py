@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from common import const
-from config.db import get_db
+from config.db_config import get_db
 from schemas.user_model import UserLoginReq
 from services.user.user_service import user_login_impl
 from util.response_format import response_format

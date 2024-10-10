@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from common import const
 from common.const import CURRENT_USER_ID_KEY
-from config.db import get_db
+from config.db_config import get_db
 from schemas.projectWork_model import SaveProjectWorkReq
 from schemas.req_model import StringIdReq, DeleteListReq, ListByPageReq
 from services.project import project_service, projectWork_service, projectWorkReport_service

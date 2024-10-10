@@ -1,16 +1,16 @@
-# 路径端口配置
+# region 路径及端口配置
 config_path = {
     'HostConf': {  # 监听端口
         'host': '0.0.0.0',
-        'port': 8081
+        'port': 8081,
+        'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
-    'FileConf': {  # 模型训练生成相关路径配置
-        'SaveDataPath': './dataorign',  # 替换为你的数据存储路径
-        'SaveDataSetsPath': './datasets',  # 替换为数据迁移路径
-        'SaveModelPath': './model',  # 替换为你的模型存储路径
+    'FileConf': {  # 相关路径配置
+        'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
+        'SaveDataSetsPath': './datasets',  # 替换为数据迁移保存的路径
+        'SaveModelPath': './model',  # 替换为你的模型上传的存储路径
         'SaveRunPath': './app/run/',  # 替换为训练产出路径
         'SaveYamlDataPath': './app/data/',  # yaml存放地
-        'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
     'SysConf': {  # 系统设置
         'DbPath': "./db/atp.db",  # 数据库路径
@@ -19,6 +19,10 @@ config_path = {
 }
 
 
+# endregion
+
+
+# region 配置docker命令
 # 开始work命令
 # todo 需要根据情况修改下面的路径，通用的路径可以在config_path里配置
 def start_into(data_id: str, work_id: str, model_name: str, epochs: int = 10, lr0: float = 0.01, batch: int = 16):
@@ -42,9 +46,10 @@ def exec_into(work_id: str):
 # todo 需要根据情况修改下面的路径，通用的路径可以在config_path里配置
 def get_data_show(work_id: str):
     # 由workid和data_id组成
+    # return "python test2.py"
     return {
         "prf": f"./app/runs/helmet/{work_id}/train/prf1.json",  # 图1 TODO 改为动态目录
         "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json",  # 图2 TODO 改为动态目录
         "result_csv": f"./app/runs/helmet/{work_id}/train/results.csv"  # 图2 TODO 改为动态目录
     }
-    # return "python test2.py"
+# endregion
