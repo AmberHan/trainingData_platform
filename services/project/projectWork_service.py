@@ -22,7 +22,7 @@ from util import util
 import multiprocessing
 
 from util.commd import exec_work, exec_work2
-from util.file import get_last_row_log
+from util.file import get_last_row_log, get_last_row_log_stage
 
 
 def delete_project_work_impl(
@@ -179,13 +179,21 @@ def get_project_work_by_id_impl(
     ret = get_project_info(ProjectWork.from_orm(work), db)
     if ret is None:
         return None
+    return ret
+
+# 进度
+def get_project_work_stage_by_id(req: StringIdReq, db: Session):
+    loss_exec = config.config.exec_into(req.id)
+    res_exec = exec_work2(loss_exec)
+    res = get_last_row_log_stage(res_exec)
+    return res
+
+# loss获取， 目前从日志获取
+def get_project_work_inter_by_id(req: StringIdReq, db: Session):
     loss_exec = config.config.exec_into(req.id)
     res_exec = exec_work2(loss_exec)
     res = get_last_row_log(res_exec)
-    # 取最后一行读取
-    ret.loss = res
-    return ret
-
+    return res
 
 def get_project_work_type_by_id(
         req: StringIdReq,

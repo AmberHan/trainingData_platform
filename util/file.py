@@ -5,8 +5,8 @@ import tarfile
 import zipfile
 
 from config.config import config_path
-from schemas.projectWork_model import LossReply
-from util.util import NewId
+from schemas.projectWork_model import StageReply, LossReply
+from util.util import NewId, TimeNow
 import yaml
 import csv
 
@@ -273,15 +273,8 @@ def read_json_file(file_path):  # 读取文件内容并进行异常处理
     return data
 
 
-# 读log最新的一行
+# 读log最新的一行,获取loss
 def get_last_row_log(columns):
-    # with open(file_path, 'r') as file:
-    #     lines = file.readlines()  # 读取所有行
-    #     if not lines:
-    #         return None  # 如果文件是空的，返回 None
-    #     last_line = lines[-1].strip()  # 取最后一行，并去掉可能的换行符
-    #     # 使用split分隔符号时去除连续空格
-    #     columns = last_line.split()  # 自动处理连续空格
     columns = columns.split()
     # 检查是否有足够的列
     if len(columns) < 5:
@@ -289,5 +282,17 @@ def get_last_row_log(columns):
 
     # 取第3到第5列 (索引为2, 3, 4)
     res = columns[2:5]
-    loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2])
+    loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2], loss=float(res[2]), time=TimeNow())
+    return loss
+
+# 读log最新的一行,获取百分比
+def get_last_row_log_stage(columns):
+    columns = columns.split()
+    # 检查是否有足够的列
+    if len(columns) < 5:
+        return None  # 列数不够返回 None
+
+    # 取第3到第5列 (索引为2, 3, 4)
+    res = float(columns[7].replace("%", ""))
+    loss = StageReply(stage=res, time=TimeNow())
     return loss

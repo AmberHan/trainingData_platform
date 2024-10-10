@@ -71,12 +71,12 @@ def flush_project_work_num(project_id: int):
 
 @projectHandler.post("/getProjectWorkStageById")
 def get_project_work_stage_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    pass
+    return response_format(lambda: projectWork_service.get_project_work_stage_by_id(req, db))
 
 
 @projectHandler.post("/getProjectWorkInterById")
 def get_project_work_inter_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    pass
+    return response_format(lambda: projectWork_service.get_project_work_inter_by_id(req, db))
 
 
 @projectHandler.post("/getProjectWorkInterValById")

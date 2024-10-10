@@ -27,6 +27,11 @@ class LossReply(BaseModel):
     box_loss: Optional[str] = None
     cls_loss: Optional[str] = None
     dfl_loss: Optional[str] = None
+    loss: Optional[float] = None
+    time: Optional[str] = None
+
+class StageReply(BaseModel):
+    stage: Optional[float] = None
 
 class SaveProjectWorkReq(BaseModel):
     work: Optional[ProjectWork] = None
@@ -37,7 +42,6 @@ class SaveProjectWorkReq(BaseModel):
     project: Optional['SaveProjectReq'] = None  # Define SaveProjectReq similarly
     data: Optional[DataReply] = None
     projectWorkType: Optional[ProjectWorkTypeReply] = None
-    loss: Optional[LossReply] = None
 
     @classmethod
     def from_orm(cls, project_work: ProjectWorkSql) -> 'SaveProjectWorkReq':
@@ -64,3 +68,5 @@ class SaveProjectWorkReq(BaseModel):
 class GetProjectWorkListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectWorkReq] = []
+
+

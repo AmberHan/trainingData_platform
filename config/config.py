@@ -32,8 +32,8 @@ def start_into(data_id: str, work_id: str):
 
 
 def exec_into(work_id: str):
-    return f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir /app/runs/helmet/{work_id}/train --host 0.0.0.0"
-    # return "python test2.py"
+    # return f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir /app/runs/helmet/{work_id}/train --host 0.0.0.0"
+    return "python test2.py"
 
 
 def get_data_show(work_id: str):
