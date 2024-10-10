@@ -67,7 +67,7 @@ def save_project_impl(
             project.CreateTime = util.TimeNow()
 
         project.ProjectName = req.projectName
-        project.ModuleTypeId = req.moduleTypeId
+        project.ModuleTypeId = "basic-model-type-id"
         project.CreateUid = uid
         project.Detail = req.detail
         project.save(db)
