@@ -234,12 +234,17 @@ def generate_yaml(data, file_path):
 
 
 def get_last_row_csv(file_path):
-    with open(file_path, 'r', newline='') as file:
-        reader = csv.reader(file)
-        last_row = None
-        for row in reader:
-            last_row = row
-        return last_row
+    try:
+        with open(file_path, 'r', newline='') as file:
+            reader = csv.reader(file)
+            last_row = None
+            for row in reader:
+                last_row = row
+            return last_row
+    except:
+        raise Exception("训练未完成！无法查看报告内容")
+
+
 
 
 def get_last_row_log(file_path):

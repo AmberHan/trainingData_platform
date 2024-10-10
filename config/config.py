@@ -19,7 +19,7 @@ config_path = {
     },
 }
 
-
+# 开始work命令
 def start_into(data_id: str, work_id: str):
     # 由workid和data_id组成
     return f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
@@ -30,12 +30,13 @@ def start_into(data_id: str, work_id: str):
            f"lr0=0.01 batch=16 > train.log"
     # return "python test2.py"
 
-
+# 过程读取
 def exec_into(work_id: str):
     # return f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir /app/runs/helmet/{work_id}/train --host 0.0.0.0"
     return "python test2.py"
 
 
+# 结果数据读取
 def get_data_show(work_id: str):
     # 由workid和data_id组成
     return {
