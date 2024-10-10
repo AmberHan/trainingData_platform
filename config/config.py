@@ -41,7 +41,8 @@ def get_data_show(work_id: str):
     # 由workid和data_id组成
     return {
         "prf": f"./app/runs/helmet/{work_id}/train/prf1.json",  # 图1 TODO 改为动态目录
-        "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json"  # 图2 TODO 改为动态目录
+        "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json",  # 图2 TODO 改为动态目录
+        "result_csv": f"./app/runs/helmet/{work_id}/train/results.csv"  # 图2 TODO 改为动态目录
     }
     # return "python test2.py"
 
