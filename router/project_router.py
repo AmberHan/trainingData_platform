@@ -80,8 +80,8 @@ def get_project_work_inter_by_id(req: StringIdReq, db: Session = Depends(get_db)
 
 
 @projectHandler.post("/getProjectWorkInterValById")
-def get_project_work_inter_val_by_id(db: Session = Depends(get_db)):
-    return response_format(lambda: projectWorkReport_service.get_project_work_inter_val_by_id(db))
+def get_project_work_inter_val_by_id(req: StringIdReq, db: Session = Depends(get_db)):
+    return response_format(lambda: projectWorkReport_service.get_project_work_inter_val_by_id(req, db))
 
 
 
