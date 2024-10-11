@@ -1,0 +1,24 @@
+stages:
+  - build
+  - test
+  - deploy
+ 
+build_job:
+  stage: build
+  script:
+    - echo "Building the project..."
+ 
+test_job:
+  stage: test
+  script:
+    - echo "Testing the built project..."
+ 
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Deploying to 119 server..."
+    - ssh basic@192.168.20.119 "cd /data/disk3/other/training_platform && git pull && sh restart.sh"
+  environment:
+    name: production
+  only:
+    - main
