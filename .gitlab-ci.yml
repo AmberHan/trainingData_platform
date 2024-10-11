@@ -17,7 +17,7 @@ deploy_job:
   stage: deploy
   script:
     - echo "Deploying to 119 server..."
-    - ssh basic@192.168.20.119 "cd /data/disk3/other/training_platform && git pull && sh restart.sh"
+    - ssh basic@192.168.20.119 "cd /data/disk3/other/training_platform && git pull && ./restart.sh"
   environment:
     name: production
   only:
