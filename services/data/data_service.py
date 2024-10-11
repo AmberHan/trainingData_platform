@@ -2,6 +2,7 @@ import os
 
 from sqlalchemy.orm import Session
 
+from config.config import config_path
 from schemas.data_model import SaveDataReq, GetDataListByPageReply, SaveDataForm
 from schemas.req_model import ListByPageReq
 from services.module import module_service
@@ -11,7 +12,7 @@ from sqlmodels.data import Data as DataSql, Data
 from sqlmodels.dataFile import DataFile
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
-from util.file import unzip_file, untar_file, file_path_to_url
+from util.file import unzip_file, untar_file, file_path_to_url, delete_file, split_and_move_files
 from util.util import NewId, TimeNow, exec_command
 
 
@@ -99,6 +100,8 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
             if label_name not in label_files:
                 unmatched_images.append(img)
         res = ", ".join(unmatched_images)
+        delete_file(tar_zip_path)
+        delete_file(file_path)
         raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
 
     # 保存数据
@@ -160,7 +163,9 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
     except Exception as e:
         print(f"Error processing files: {str(e)}")
         raise
-
+    res = DataFile.find_all_by_data_id(db, mod.Id)
+    images_parent_dir = config_path['FileConf']['SaveDataSetsPath'] + "/" + mod.Id
+    split_and_move_files(res, 20, 0, 80, images_parent_dir)
     return None
 
 def get_files_from_directory(base_dir, subfolder_name):
