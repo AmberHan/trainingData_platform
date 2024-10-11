@@ -28,7 +28,7 @@ class LossReply(BaseModel):
     cls_loss: Optional[str] = None
     dfl_loss: Optional[str] = None
     loss: Optional[float] = None
-    time: Optional[str] = None
+    time: Optional[int] = None
 
 class StageReply(BaseModel):
     stage: Optional[float] = None

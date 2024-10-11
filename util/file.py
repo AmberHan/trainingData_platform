@@ -286,7 +286,7 @@ def get_last_row_loss(columns) -> LossReply:
 
     # 取第3到第5列 (索引为2, 3, 4)
     res = columns[2:5]
-    loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2], loss=float(res[2]), time=TimeNow())
+    loss = LossReply(box_loss=res[0], cls_loss=res[1], dfl_loss=res[2], loss=res[1], time=columns[8].split("/")[0])
     return loss
 
 
