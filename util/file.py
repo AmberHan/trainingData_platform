@@ -125,8 +125,7 @@ def get_unique_path(save_dir, file_name: str) -> (str, bool):
     save_path = os.path.join(save_dir, file_name)
     if os.path.exists(save_path):
         return os.path.join(save_dir, NewId() + file_ext), True
-    save_path = os.path.normpath(save_path).replace(os.sep, '/')
-    return save_path, True
+    return save_path.replace("\\", '/'), True
 
 
 # 获取子目录list
@@ -302,3 +301,15 @@ def get_last_row_log_stage(columns):
     res = float(columns[7].replace("%", ""))
     loss = StageReply(stage=res, time=TimeNow())
     return loss
+
+
+def delete_file(path: str):
+    try:
+        if os.path.exists(path):
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
+            return True
+    except OSError as e:
+        raise Exception(f"删除文件 {path} 时出错: {str(e)}")

@@ -30,7 +30,7 @@ def start_into(data_id: str, work_id: str, model_path: str, epochs: int = 10, lr
     return f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
            f"-v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all " \
            f"ultralytics/ultralytics:8.2.0 yolo detect train " \
-           f"data=/app/data/{data_id}/data.yaml model= ./{model_path}.pt " \
+           f"data=/app/data/{data_id}/data.yaml model= {model_path}.pt " \
            f"project=/app/runs/helmet/{work_id} name=train epochs={epochs} imgsz=640 device=0 " \
            f"lr0={lr0} batch={batch} > train.log"
     # return "python test2.py"
