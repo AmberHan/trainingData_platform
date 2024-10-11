@@ -40,4 +40,7 @@ if kill -0 $NEW_PID > /dev/null 2>&1; then
     echo "New process with PID $NEW_PID is running."
 else
     echo "Failed to start the new process."
+    exit 1
 fi
+
+exit 0
