@@ -25,12 +25,12 @@ config_path = {
 # region 配置docker命令
 # 开始work命令
 # todo 需要根据情况修改下面的路径，通用的路径可以在config_path里配置
-def start_into(data_id: str, work_id: str, model_name: str, epochs: int = 10, lr0: float = 0.01, batch: int = 16):
+def start_into(data_id: str, work_id: str, model_path: str, epochs: int = 10, lr0: float = 0.01, batch: int = 16):
     # 由workid和data_id组成
     return f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
            f"-v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all " \
            f"ultralytics/ultralytics:8.2.0 yolo detect train " \
-           f"data=/app/data/{data_id}/data.yaml model= {config_path['FileConf']['SaveModelPath']}/{model_name}.pt " \
+           f"data=/app/data/{data_id}/data.yaml model= ./{model_path}.pt " \
            f"project=/app/runs/helmet/{work_id} name=train epochs={epochs} imgsz=640 device=0 " \
            f"lr0={lr0} batch={batch} > train.log"
     # return "python test2.py"

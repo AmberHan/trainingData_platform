@@ -125,6 +125,7 @@ def get_unique_path(save_dir, file_name: str) -> (str, bool):
     save_path = os.path.join(save_dir, file_name)
     if os.path.exists(save_path):
         return os.path.join(save_dir, NewId() + file_ext), True
+    save_path = os.path.normpath(save_path).replace(os.sep, '/')
     return save_path, True
 
 
