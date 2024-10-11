@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 from schemas.project_model import GetProjectListByPageReply, SaveProjectReq
 from schemas.req_model import ListByPageReq
 from services.module import module_service, moduleType_service
+from services.project import projectWork_service
 from sqlmodels.project import Project
+from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
 from sqlmodels.user import User
 from util import util
 
@@ -86,7 +88,10 @@ def delete_project_impl(
     project = Project()
     try:
         project.Id = id
+        for projectWork in ProjectWorkSql.find_all_by_projectId(db, id):
+            projectWork_service.delete_project_work_impl(projectWork.Id, db)
         project.delete(db)
+
     except SQLAlchemyError as e:
         raise Exception(e)
 
@@ -99,6 +104,7 @@ def delete_all_project_impl(
     try:
         if len(ids) == 0:
             raise Exception("id不能为空")
-        Project.delete_all(db, ids)
+        for id in ids:
+            delete_project_impl(id, db)
     except SQLAlchemyError as e:
         raise Exception(e)

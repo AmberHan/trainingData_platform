@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Sequence
 
 from sqlalchemy import func
 from sqlmodel import SQLModel, Field, select, Session
@@ -43,6 +43,11 @@ class ProjectWork(SQLModel, table=True):
         result = session.exec(query.offset(offset).limit(size)).all()
 
         return result, count
+
+    @classmethod
+    def find_all_by_projectId(cls, session: Session, project_id: str) -> Sequence["ProjectWork"]:
+        statement = select(cls).where(cls.ProjectId == project_id)
+        return session.exec(statement).all()
 
     @classmethod
     def select_by_id(cls, session: Session, id: str) -> Optional["ProjectWork"]:

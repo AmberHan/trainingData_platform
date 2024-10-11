@@ -37,8 +37,8 @@ def delete_all_project_work_impl(
 ):
     if len(ids) == 0:
         raise Exception("id不能为空")
-    for id in ids:
-        delete_project_work(id, db)
+    for _id in ids:
+        delete_project_work(_id, db)
 
 
 def delete_project_work(
@@ -125,8 +125,8 @@ def save_project_work(
         if r is not None:
             restart = False
     else:
-        if ProjectWorkSql.name_exists(db, uid, req.work.workName):
-            raise Exception("工作流名称已存在")
+        # if ProjectWorkSql.name_exists(db, uid, req.work.workName):
+        #     raise Exception("工作流名称已存在")
         projectWork.Id = util.NewId()
         projectWork.CreateUid = uid
         projectWork.CreateTime = util.TimeNow()
@@ -298,11 +298,13 @@ def start_work(req: StringIdReq, db: Session):
     # TODO 开始运行完后的结果获取
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     module = ModuleSql.select_by_id(db, res_work.ModuleId)
+    if module is None:
+        raise Exception("模型不存在")
     res_work.WorkStatus = 0
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
-    command = config.config.start_into(res_work.DataId, req.id, module.ModuleName)
+    command = config.config.start_into(res_work.DataId, req.id, module.ModuleFile)
     work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()
 
