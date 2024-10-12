@@ -2,7 +2,7 @@
 config_path = {
     'HostConf': {  # 监听端口
         'host': '0.0.0.0',
-        'port': 8081,
+        'port': 9202,
         'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
     'FileConf': {  # 相关路径配置
