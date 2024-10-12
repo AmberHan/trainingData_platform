@@ -1,6 +1,5 @@
+import datetime
 import os
-
-from util.file import append_to_test_file
 
 # region const设置
 DATASETS = "datasets"  # 迁移目录名
@@ -64,11 +63,11 @@ def start_into(data_id: str, work_id: str, model_path: str, train_count: str, ep
 def start_assessment(data_id: str, work_id: str, train_count: str):
     project_path = f"{RUNS_HELMET}/{work_id}"
     assessment_command = f"docker run --rm --name val_work_{work_id} --ipc=host " \
-                    f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} " \
-                    f"--gpus all " \
-                    f"{ULTRALYTICS} " \
-                    f"yolo val data={DATA}/{data_id}/data.yaml model={project_path}/train{train_count}/weights/best.pt " \
-                    f"project={project_path} name=val{train_count}"
+                         f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} " \
+                         f"--gpus all " \
+                         f"{ULTRALYTICS} " \
+                         f"yolo val data={DATA}/{data_id}/data.yaml model={project_path}/train{train_count}/weights/best.pt " \
+                         f"project={project_path} name=val{train_count}"
     append_to_test_file(config_path["PathConf"]["TestPath"] + "/test.txt", assessment_command)
     return assessment_command
 
@@ -89,4 +88,14 @@ def get_data_show(work_id: str, train_count: str):
         "matrix": f".{project_path}/val{train_count}/confusion_matrix.json",
         "result_csv": f".{project_path}/train{train_count}/results.csv"
     }
+
+
 # endregion
+
+def append_to_test_file(file_path: str, content: str):
+    try:
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open(file_path, 'a') as file:
+            file.write(f"[{current_time}] {content}\n")
+    except IOError as e:
+        raise Exception(f"追究文件失败：{e}")

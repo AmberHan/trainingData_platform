@@ -4,7 +4,6 @@ import math
 import shutil
 import tarfile
 import zipfile
-import datetime
 
 import yaml
 
@@ -326,25 +325,17 @@ def delete_file_and_directory(path: str):
         raise Exception(f"删除文件 {path} 时出错: {str(e)}")
 
 
-def count_directories(path: str) -> int:
+def count_directories(path: str, fold_name: str) -> int:
     try:
         entries = os.listdir(path)
 
         # 统计其中的目录数量
-        directory_count = sum(1 for entry in entries if os.path.isdir(os.path.join(path, entry)))
+        directory_count = sum(
+            1 for entry in entries if os.path.isdir(os.path.join(path, entry)) and entry.startswith(fold_name))
 
         return directory_count
     except OSError as e:
         raise Exception(f"{e}")
-
-
-def append_to_test_file(file_path: str, content: str):
-    try:
-        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open(file_path, 'a') as file:
-            file.write(f"[{current_time}] {content}\n")
-    except IOError as e:
-        raise Exception(f"追究文件失败：{e}")
 
 
 def read_file_content(file_path: str) -> str:
