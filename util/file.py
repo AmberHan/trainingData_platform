@@ -215,9 +215,9 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         # 将文件移动到相应的文件夹
         move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
     data_yaml = {
-        'train': os.path.join(base_dir, "train"),
-        'test': os.path.join(base_dir, "test"),
-        'val': os.path.join(base_dir, "valid"),
+        'train': os.path.join(base_dir, "train").lstrip("."),
+        'test': os.path.join(base_dir, "test").lstrip("."),
+        'val': os.path.join(base_dir, "valid").lstrip("."),
         'names': {
                 0: "two_wheeler",
                 1: "helmet",
