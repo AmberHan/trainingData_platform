@@ -4,6 +4,7 @@ import math
 import shutil
 import tarfile
 import zipfile
+import datetime
 
 import yaml
 
@@ -64,7 +65,7 @@ import os
 
 # file_urls
 def file_path_to_url(file_path: str) -> str:
-    save_path = config_path['FileConf']['SaveDataPath']
+    save_path = config_path['PathConf']['SaveDataPath']
     uri = config_path['HostConf']['Uri']
 
     if len(file_path) > len(save_path) and file_path.startswith(save_path):
@@ -226,7 +227,7 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         }
     }
 
-    dir_path = os.path.join(config_path['FileConf']['SaveYamlDataPath'], res[0].DataId)
+    dir_path = os.path.join(config_path['PathConf']['SaveYamlDataPath'], res[0].DataId)
     # 如果目录不存在，则创建目录
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -334,5 +335,24 @@ def count_directories(path: str) -> int:
 
         return directory_count
     except OSError as e:
-        print(f"访问路径 {path} 时出错: {str(e)}")
-        return 0
+        raise Exception(f"{e}")
+
+
+def append_to_test_file(file_path: str, content: str):
+    try:
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open(file_path, 'a') as file:
+            file.write(f"[{current_time}] {content}\n")
+    except IOError as e:
+        raise Exception(f"追究文件失败：{e}")
+
+
+def read_file_content(file_path: str) -> str:
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        return content
+    except FileNotFoundError:
+        return f"文件 {file_path} 未找到"
+    except IOError as e:
+        return f"读取文件 {file_path} 时出错: {str(e)}"

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from common import const
 from config.config import config_path
-from util.file import delete_file_and_directory
+from util.file import delete_file_and_directory, read_file_content
 from util.response_format import response_format
 
 testHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-t")
@@ -17,11 +17,21 @@ testHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-t")
 async def init_all():
     return response_format(lambda: initAll())
 
+@testHandler.post("/getCommandTxt")
+async def get_command_txt():
+    return response_format(lambda: getCommandTxt())
+
+def getCommandTxt():
+    try:
+        return read_file_content(config_path["PathConf"]["TestPath"] + "/test.txt")
+    except Exception as e:
+        raise Exception("e")
+
 
 # 删除除了SaveRunPath以为的目录,暂不包含删除数据库
 def initAll():
     try:
-        file_conf = config_path.get('FileConf', {})
+        file_conf = config_path.get('PathConf', {})
         for key, path in file_conf.items():
             if key != 'SaveRunPath':
                 delete_file_and_directory(path)
