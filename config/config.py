@@ -3,8 +3,8 @@ import os
 
 # region const设置
 DATASETS = "datasets"  # 迁移目录名
+MODELS = "/model"  # 为你的模型上传的存储路径
 DATA_PATH = "/app/data"  # yaml存放地
-MODELS_PATH = "/model"  # 为你的模型上传的存储路径
 RUNS_HELMET_PATH = "/app/runs/helmet"  # 为训练产出路径
 ULTRALYTICS = "ultralytics:basic"
 DOCKER_PORT = 6006  # docker映射端口
@@ -25,7 +25,7 @@ config_path = {
         'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
         'SaveDataSetsPath': f'./{DATASETS}',  # 为数据迁移保存的路径
         'SaveYamlDataPath': f'./{DATA_PATH}',  # yaml存放地
-        'SaveModelPath': f'.{MODELS_PATH}',  # 为你的模型上传的存储路径
+        'SaveModelPath': f'.{MODELS}',  # 为你的模型上传的存储路径
         'SaveRunPath': f'.{RUNS_HELMET_PATH}',  # 为训练产出路径
         'TestPath': f'./test',  # 为训练产出路径
     },
@@ -48,11 +48,11 @@ def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '
                batch: int = 16):
     project_path = f"{RUNS_HELMET_PATH}/{work_id}"
     start_command = f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
-                    f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} " \
+                    f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} -v {os.getcwd()}/{MODELS}:/{MODELS} " \
                     f"-p {DOCKER_PORT}:{DOCKER_PORT} " \
                     f"--gpus all " \
                     f"{ULTRALYTICS} " \
-                    f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= {MODELS_PATH}/{model_name}.pt " \
+                    f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= {MODELS}/{model_name}.pt " \
                     f"project={project_path} name=train{train_count} " \
                     f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > train.log"
     append_to_test_file(config_path["PathConf"]["TestPath"] + "/test.txt", start_command)
