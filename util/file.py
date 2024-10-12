@@ -335,7 +335,7 @@ def count_directories(path: str, fold_name: str) -> int:
 
         return directory_count
     except OSError as e:
-        raise Exception(f"{e}")
+        return 0
 
 
 def read_file_content(file_path: str) -> str:
