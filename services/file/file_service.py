@@ -23,7 +23,7 @@ def upload_impl(file: UploadFile = File(...)):
     file_path, is_complete = upload_data(config_path['PathConf']['SaveModelPath'], file)
     if is_complete:
         return ChunkUploadResult(
-            path=file_path,
+            path=os.path.basename(file_path),
             isComplete=is_complete
         )
 
