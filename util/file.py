@@ -299,16 +299,18 @@ def get_last_row_loss(file_path):
 
 
 # 读log最新的一行,获取百分比
-def get_last_row_log_stage(columns):
-    columns = columns.split()
-    # 检查是否有足够的列
-    if len(columns) < 5:
-        return None  # 列数不够返回 None
-
-    # 取第3到第5列 (索引为2, 3, 4)
-    res = float(columns[7].replace("%", ""))
-    loss = StageReply(stage=res, time=TimeNow())
-    return loss
+def get_last_row_log_stage(file_path):
+    last_row = None
+    with open(file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            last_row = row
+    # 假设 last_row[0] 是一个整数或能转换为整数的字符串
+    value = int(last_row[0]) / 10
+    # 计算百分比，保留小数
+    percentage = value * 100
+    stage = StageReply(stage=percentage, time=TimeNow())
+    return stage
 
 
 def delete_file_and_directory(path: str):

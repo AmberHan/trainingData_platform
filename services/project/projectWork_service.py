@@ -21,7 +21,7 @@ from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from util import util
 from util.commd import exec_work, exec_work2
-from util.file import get_last_row_log_stage, get_last_row_loss
+from util.file import get_last_row_log_stage, get_last_row_loss, count_directories
 
 
 def delete_project_work_impl(
@@ -183,19 +183,20 @@ def get_project_work_by_id_impl(
 
 # 进度
 def get_project_work_stage_by_id(req: StringIdReq, db: Session):
-    loss_exec = config.config.exec_into(req.id)
-    res_exec = exec_work2(loss_exec)
-    res = get_last_row_log_stage(res_exec)
+    res_work = ProjectWorkSql.select_by_id(db, req.id)
+    train_count = count_directories(f"{config.config.RUNS_HELMET}/{req.id}") * '1'
+    result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
+    res = get_last_row_log_stage(result_path)
+    if res.stage >= 100:
+        res_work.WorkStatus = 2
+        res_work.save(db)
     return res
 
 
 # loss获取， 目前从日志获取
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
-    loss_exec = config.config.exec_into(req.id)
-    # 执行训练过程docker命令
-    exec_work2(loss_exec)
-    # 不读命令行那就是从train下读res
-    result_path = config.config.get_data_show(req.id)["result_csv"]
+    train_count = count_directories(f"{config.config.RUNS_HELMET}/{req.id}") * '1'
+    result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     res = get_last_row_loss(result_path)
     return res
 
@@ -302,6 +303,10 @@ def start_work(req: StringIdReq, db: Session):
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     if res_work is None:
         raise Exception("工作流不存在")
+        # 添加
+    if res_work.WorkStatus == 0:
+        # 如果任务在进行，就stop
+        stop_work(req, db)
     module = ModuleSql.select_by_id(db, res_work.ModuleId)
     if module is None:
         raise Exception("模型不存在")
@@ -324,11 +329,12 @@ def stop_work(req: StringIdReq, db: Session):
         work.save(db)
     # 关闭pid
     # 设置配置文件路径 TODO 设置动态从前端获取
-    conf_path = "/data/disk2/yolov8/app/"
+    command = f"docker stop helmet_train_work_{req.id}"
+    exec_work(command)
     # 等待 500 毫秒
     time.sleep(0.5)
     # 构建 shell 命令
-    command = f"ps -ef | grep {conf_path}config.py | grep -v grep | awk '{{print $2}}' | xargs kill -9"
+    command = f"docker rm helmet_train_work_{req.id}"
     exec_work(command)
     # work获取
     Project.flush_project_work_num(db, work.ProjectId)

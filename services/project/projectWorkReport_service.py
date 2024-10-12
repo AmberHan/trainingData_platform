@@ -37,6 +37,7 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session):
     data = None
     data2 = None
     # 使用 try-except 读取文件
+    # 先执行docker命令
     path_get = get_data_show(req.id)
     print(path_get)
     try:
