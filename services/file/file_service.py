@@ -9,7 +9,7 @@ from util.file import get_file_size, get_unique_path
 
 
 def upload_tar_impl(file: UploadFile = File(...)):
-    file_path, is_complete = upload_data(config_path['FileConf']['SaveDataPath'], file)
+    file_path, is_complete = upload_data(config_path['PathConf']['SaveDataPath'], file)
     if is_complete:
         return FileReply(
             path=file_path,
@@ -20,7 +20,7 @@ def upload_tar_impl(file: UploadFile = File(...)):
 
 
 def upload_impl(file: UploadFile = File(...)):
-    file_path, is_complete = upload_data(config_path['FileConf']['SaveModelPath'], file)
+    file_path, is_complete = upload_data(config_path['PathConf']['SaveModelPath'], file)
     if is_complete:
         return ChunkUploadResult(
             path=file_path,

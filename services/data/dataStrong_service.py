@@ -27,7 +27,7 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # res = DataFile.find_all_by_data_id(db, "0b7ad095-3efe-4e42-8286-448a7e631792")
     res = DataFile.find_all_by_data_id(db, dataId)
     # 保存DataSets 在路径中的位置
-    images_parent_dir = config_path['FileConf']['SaveDataSetsPath']
+    images_parent_dir = config_path['PathConf']['SaveDataSetsPath']
     # 统一文件名dataId表示
     images_parent_dir += ("/" + dataId)
     split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),

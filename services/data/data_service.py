@@ -164,7 +164,7 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
         print(f"Error processing files: {str(e)}")
         raise
     res = DataFile.find_all_by_data_id(db, mod.Id)
-    images_parent_dir = config_path['FileConf']['SaveDataSetsPath'] + "/" + mod.Id
+    images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
     split_and_move_files(res, 20, 0, 80, images_parent_dir)
     return None
 
