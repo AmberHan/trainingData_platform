@@ -2,11 +2,13 @@ import os.path
 
 from sqlmodel import Session
 
-from config.config import get_data_show
+from config import config
+from config.config import get_data_show, start_assessment
 from schemas.projectWorkReport_model import GetProjectWorkReportReply
 from schemas.req_model import StringIdReq
+from services.project.projectWork_service import run_work
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
-from util.file import get_last_row_csv, read_json_file
+from util.file import get_last_row_csv, read_json_file, count_directories
 
 
 def get_project_work_report_by_id_impl(
@@ -17,7 +19,8 @@ def get_project_work_report_by_id_impl(
     if work is None:
         raise Exception("Project Work Not Found")
     # save_path = './test/results.csv'
-    save_path = os.path.join(get_data_show(work.Id)["result_csv"])
+    train_count = count_directories(f"{config.RUNS_HELMET}/{req.id}") * '1'
+    save_path = os.path.join(get_data_show(work.Id, train_count)["result_csv"])
     row = get_last_row_csv(save_path)
     try:
         precision = float(row[4])
@@ -38,8 +41,11 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session):
     data2 = None
     # 使用 try-except 读取文件
     # 先执行docker命令
-    path_get = get_data_show(req.id)
-    print(path_get)
+
+    train_count = count_directories(f"{config.RUNS_HELMET}/{req.id}") * '1'
+    res_work = ProjectWorkSql.select_by_id(db, req.id)
+    run_work(start_assessment(res_work.DataId, req.id, train_count))
+    path_get = get_data_show(req.id, train_count)
     try:
         data = read_json_file(path_get["prf"])
         data2 = read_json_file(path_get["matrix"])
