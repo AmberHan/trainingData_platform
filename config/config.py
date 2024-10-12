@@ -7,7 +7,7 @@ config_path = {
     },
     'FileConf': {  # 相关路径配置
         'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
-        'SaveDataSetsPath': './app/datasets',  # 替换为数据迁移保存的路径
+        'SaveDataSetsPath': './datasets',  # 替换为数据迁移保存的路径
         'SaveModelPath': './model',  # 替换为你的模型上传的存储路径
         'SaveRunPath': './app/run/',  # 替换为训练产出路径
         'SaveYamlDataPath': './app/data/',  # yaml存放地
