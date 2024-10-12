@@ -4,7 +4,7 @@ import os
 # region const设置
 DATASETS = "datasets"  # 迁移目录名
 DATA_PATH = "/app/data"  # yaml存放地
-MODELS_PATH = "/app/model"  # 为你的模型上传的存储路径
+MODELS_PATH = "/model"  # 为你的模型上传的存储路径
 RUNS_HELMET_PATH = "/app/runs/helmet"  # 为训练产出路径
 ULTRALYTICS = "ultralytics:basic"
 DOCKER_PORT = 6006  # docker映射端口
