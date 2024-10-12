@@ -30,7 +30,7 @@ fi
 
 # 启动新进程
 echo "Starting new process..."
-$UVICORN_CMD &
+$UVICORN_CMD > server.log 2>&1 &
 NEW_PID=$!
 echo "New process started with PID $NEW_PID."
 
