@@ -1,20 +1,35 @@
+import os
+
+# region const设置
+DATASETS = "datasets"  # 迁移目录名
+DATA = "/app/data"  # yaml存放地
+MODELS = "/app/model"  # 为你的模型上传的存储路径
+RUNS_HELMET = "/app/runs/helmet"  # 为训练产出路径
+ULTRALYTICS = "ultralytics:basic"
+DOCKER_PORT = 6006  # docker映射端口
+SERVER_HOST = 9202  # server映射端口
+# endregion
+
+
 # region 路径及端口配置
+
+
 config_path = {
     'HostConf': {  # 监听端口
         'host': '0.0.0.0',
-        'port': 9202,
+        'port': SERVER_HOST,
         'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
-    'FileConf': {  # 相关路径配置
+    'FileConf': {  # 相关路径不做修改
         'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
-        'SaveDataSetsPath': './datasets',  # 替换为数据迁移保存的路径
-        'SaveModelPath': './model',  # 替换为你的模型上传的存储路径
-        'SaveRunPath': './app/run/',  # 替换为训练产出路径
-        'SaveYamlDataPath': './app/data/',  # yaml存放地
+        'SaveDataSetsPath': f'./{DATASETS}',  # 为数据迁移保存的路径
+        'SaveYamlDataPath': f'./{DATA}',  # yaml存放地
+        'SaveModelPath': f'.{MODELS}',  # 为你的模型上传的存储路径
+        'SaveRunPath': f'.{RUNS_HELMET}',  # 为训练产出路径
     },
     'SysConf': {  # 系统设置
         'DbPath': "./db/atp.db",  # 数据库路径
-        'LogPath': "./log",  # 日志路径
+        'LogPath': "./log",  # 系统日志路径
     },
 }
 
@@ -23,37 +38,52 @@ config_path = {
 
 
 # region 配置docker命令
-# 开始work命令
-# todo 需要根据情况修改下面的路径，通用的路径可以在config_path里配置
-def start_into(data_id: str, work_id: str, model_path: str, epochs: int = 10, lr0: float = 0.01, batch: int = 16):
-    # 由workid和data_id组成
+
+
+# 开始work命令 data_id找到对应的yaml
+# project路径 /app/runs/helmet/{work_id}； 下一层目录格式train{train_count}
+def start_into(data_id: str, work_id: str, model_path: str, train_count: str, epochs: int = 10, lr0: float = 0.01,
+               batch: int = 16):
+    project_path = f"{RUNS_HELMET}/{work_id}"
     start_command = f"docker run --rm --name helmet_train_work_{work_id} -it --ipc=host " \
-           f"-v /data/disk2/yolov8/app:/app -p 6006:6006 --gpus all " \
-           f"ultralytics/ultralytics:8.2.0 yolo detect train " \
-           f"data=/app/data/{data_id}/data.yaml model= {model_path}.pt " \
-           f"project=/app/runs/helmet/{work_id} name=train epochs={epochs} imgsz=640 device=0 " \
-           f"lr0={lr0} batch={batch} > train.log"
+                    f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} " \
+                    f"-p {DOCKER_PORT}:{DOCKER_PORT} " \
+                    f"--gpus all " \
+                    f"{ULTRALYTICS} " \
+                    f"yolo detect train data={DATA}/{data_id}/data.yaml model= /app/{model_path}.pt " \
+                    f"project={project_path} name=train{train_count} " \
+                    f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > train.log"
     print(start_command)
     return start_command
-    # return "python test2.py"
+
+
+# 重新评估
+def start_assessment(data_id: str, work_id: str, train_count: str):
+    project_path = f"{RUNS_HELMET}/{work_id}"
+    start_command = f"docker run --rm --name val_work_{work_id} --ipc=host " \
+                    f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} " \
+                    f"--gpus all " \
+                    f"{ULTRALYTICS} " \
+                    f"yolo val data={DATA}/{data_id}/data.yaml model={project_path}/train{train_count}/weights/best.pt " \
+                    f"project={project_path} name=val{train_count}"
+    print(start_command)
+    return start_command
 
 
 # 过程读取
-def exec_into(work_id: str):
-    process_command = f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir /app/runs/helmet/{work_id}/train --host 0.0.0.0"
+def exec_into(work_id: str, train_count: str):
+    project_path = f"{RUNS_HELMET}/{work_id}"
+    process_command = f"docker exec -it helmet_train_work_{work_id} tensorboard --logdir {project_path}/train{train_count} --host 0.0.0.0"
     print(process_command)
     return process_command
-    # return "python test2.py"
 
 
 # 结果数据读取
-# todo 需要根据情况修改下面的路径，通用的路径可以在config_path里配置
-def get_data_show(work_id: str):
-    # 由workid和data_id组成
-    # return "python test2.py"
+def get_data_show(work_id: str, train_count: str):
+    project_path = f"{RUNS_HELMET}/{work_id}"
     return {
-        "prf": f"./app/runs/helmet/{work_id}/train/prf1.json",  # 图1 TODO 改为动态目录
-        "matrix": f"./app/runs/helmet/{work_id}/train/confusion_matrix.json",  # 图2 TODO 改为动态目录
-        "result_csv": f"./app/runs/helmet/{work_id}/train/results.csv"  # 图2 TODO 改为动态目录
+        "prf": f".{project_path}/train{train_count}/prf1.json",
+        "matrix": f".{project_path}/val{train_count}/confusion_matrix.json",
+        "result_csv": f".{project_path}/val{train_count}/results.csv"
     }
 # endregion
