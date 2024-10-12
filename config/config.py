@@ -27,7 +27,7 @@ config_path = {
         'SaveYamlDataPath': f'./{DATA_PATH}',  # yaml存放地
         'SaveModelPath': f'.{MODELS}',  # 为你的模型上传的存储路径
         'SaveRunPath': f'.{RUNS_HELMET_PATH}',  # 为训练产出路径
-        'TestPath': f'./test',  # 为训练产出路径
+        'TestPath': f'./test_out',  # 为训练产出路径
     },
     'SysConf': {  # 系统设置
         'DbPath': "./db/atp.db",  # 数据库路径
@@ -95,7 +95,7 @@ def get_data_show(work_id: str, train_count: str):
 def append_to_test_file(file_path: str, content: str):
     try:
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open(file_path, 'a') as file:
+        with open(file_path, 'a+') as file:
             file.write(f"[{current_time}] {content}\n")
     except IOError as e:
         raise Exception(f"追究文件失败：{e}")
