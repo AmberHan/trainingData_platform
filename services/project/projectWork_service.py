@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 import time
 
 from sqlalchemy.orm import Session
@@ -186,6 +187,8 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
+    if not os.path.exists(result_path):
+        return 
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
         res_work.WorkStatus = 2
@@ -197,6 +200,8 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
+    if not os.path.exists(result_path):
+        return
     res = get_last_row_loss(result_path)
     return res
 

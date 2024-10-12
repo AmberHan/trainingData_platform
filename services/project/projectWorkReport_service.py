@@ -43,9 +43,9 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session):
     # 先执行docker命令
 
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count1 = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    train_count1 = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "vol") * '1'
     run_work(start_assessment(res_work.DataId, req.id, train_count1))
-    train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "vol1") * '1'
     path_get = get_data_show(req.id, train_count)
     try:
         data = read_json_file(path_get["prf"])
