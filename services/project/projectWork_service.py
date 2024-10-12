@@ -184,7 +184,7 @@ def get_project_work_by_id_impl(
 # 进度
 def get_project_work_stage_by_id(req: StringIdReq, db: Session):
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = count_directories(f"{config.config.RUNS_HELMET}/{req.id}") * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
@@ -195,7 +195,7 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
 
 # loss获取， 目前从日志获取
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
-    train_count = count_directories(f"{config.config.RUNS_HELMET}/{req.id}") * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     res = get_last_row_loss(result_path)
     return res
@@ -314,7 +314,8 @@ def start_work(req: StringIdReq, db: Session):
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
-    command = config.config.start_into(res_work.DataId, req.id, module.ModuleFile)
+    train_count = count_directories(f".{config.RUNS_HELMET}/{req.id}", "train") * '1'
+    command = config.config.start_into(res_work.DataId, req.id, module.ModuleFile, train_count)
     work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()
 
