@@ -314,7 +314,7 @@ def start_work(req: StringIdReq, db: Session):
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
-    train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     command = config.config.start_into(res_work.DataId, req.id, module.ModuleFile, train_count)
     work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()

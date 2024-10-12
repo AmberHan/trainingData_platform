@@ -26,6 +26,8 @@ def upload_impl(file: UploadFile = File(...)):
             path=os.path.basename(file_path),
             isComplete=is_complete
         )
+    else:
+        return Exception(file_path)
 
 
 def upload_data(save_dir, file: UploadFile = File(...)):
