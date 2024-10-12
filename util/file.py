@@ -217,7 +217,7 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
     data_yaml = {
         'train': os.path.join(base_dir, "train"),
         'test': os.path.join(base_dir, "test"),
-        'valid': os.path.join(base_dir, "valid"),
+        'val': os.path.join(base_dir, "valid"),
     }
 
     dir_path = os.path.join(config_path['FileConf']['SaveYamlDataPath'], res[0].DataId)
