@@ -24,11 +24,8 @@ class ProjectWorkTypeReply(BaseModel):
         )
 
 class LossReply(BaseModel):
-    box_loss: Optional[str] = None
-    cls_loss: Optional[str] = None
-    dfl_loss: Optional[str] = None
-    loss: Optional[float] = None
-    time: Optional[int] = None
+    loss: Optional[list] = None
+    time: Optional[list] = None
 
 class StageReply(BaseModel):
     stage: Optional[float] = None

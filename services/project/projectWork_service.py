@@ -192,8 +192,11 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
 # loss获取， 目前从日志获取
 def get_project_work_inter_by_id(req: StringIdReq, db: Session):
     loss_exec = config.config.exec_into(req.id)
-    res_exec = exec_work2(loss_exec)
-    res = get_last_row_loss(res_exec)
+    # 执行训练过程docker命令
+    exec_work2(loss_exec)
+    # 不读命令行那就是从train下读res
+    result_path = config.config.get_data_show(req.id)["result_csv"]
+    res = get_last_row_loss(result_path)
     return res
 
 

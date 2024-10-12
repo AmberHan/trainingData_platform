@@ -16,9 +16,8 @@ def get_project_work_report_by_id_impl(
     work = ProjectWorkSql.select_by_id(db, req.id)
     if work is None:
         raise Exception("Project Work Not Found")
-    # todo 确定路径, 转移路径
     # save_path = './test/results.csv'
-    save_path = os.path.join(get_data_show(work.Id))
+    save_path = os.path.join(get_data_show(work.Id)["result_csv"])
     row = get_last_row_csv(save_path)
     try:
         precision = float(row[4])
