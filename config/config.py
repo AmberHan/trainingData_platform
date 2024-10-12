@@ -3,7 +3,7 @@ import os
 
 # region const设置
 DATASETS = "datasets"  # 迁移目录名
-MODELS = "/model"  # 为你的模型上传的存储路径
+MODELS = "model"  # 为你的模型上传的存储路径
 DATA_PATH = "/app/data"  # yaml存放地
 RUNS_HELMET_PATH = "/app/runs/helmet"  # 为训练产出路径
 ULTRALYTICS = "ultralytics:basic"
@@ -24,8 +24,8 @@ config_path = {
     'PathConf': {  # 相关路径不做修改
         'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
         'SaveDataSetsPath': f'./{DATASETS}',  # 为数据迁移保存的路径
-        'SaveYamlDataPath': f'./{DATA_PATH}',  # yaml存放地
-        'SaveModelPath': f'.{MODELS}',  # 为你的模型上传的存储路径
+        'SaveModelPath': f'./{MODELS}',  # 为你的模型上传的存储路径
+        'SaveYamlDataPath': f'.{DATA_PATH}',  # yaml存放地
         'SaveRunPath': f'.{RUNS_HELMET_PATH}',  # 为训练产出路径
         'TestPath': f'./test_out',  # 为训练产出路径
     },
@@ -52,7 +52,7 @@ def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '
                     f"-p {DOCKER_PORT}:{DOCKER_PORT} " \
                     f"--gpus all " \
                     f"{ULTRALYTICS} " \
-                    f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= {MODELS}/{model_name}.pt " \
+                    f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= {MODELS}/{model_name} " \
                     f"project={project_path} name=train{train_count} " \
                     f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > train.log"
     append_to_test_file(config_path["PathConf"]["TestPath"] + "/test.txt", start_command)
