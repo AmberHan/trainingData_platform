@@ -11,6 +11,7 @@ from config.config import config_path
 from schemas.projectWork_model import StageReply, LossReply
 from util.util import NewId, TimeNow
 
+
 def unzip_file(zip_path, extract_to):
     """
     解压 ZIP 文件
@@ -124,7 +125,7 @@ def get_unique_path(save_dir, file_name: str) -> (str, bool):
     save_path = os.path.join(save_dir, file_name)
     if os.path.exists(save_path):
         return os.path.join(save_dir, NewId() + file_ext), True
-    return save_path.replace("\\", '/'), True
+    return os.path.normpath(save_path).replace(os.sep, '/'), True
 
 
 # 获取子目录list
@@ -219,10 +220,10 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         'test': os.path.join(base_dir, "test").lstrip("."),
         'val': os.path.join(base_dir, "valid").lstrip("."),
         'names': {
-                0: "two_wheeler",
-                1: "helmet",
-                2: "without_helmet"
-    }
+            0: "two_wheeler",
+            1: "helmet",
+            2: "without_helmet"
+        }
     }
 
     dir_path = os.path.join(config_path['FileConf']['SaveYamlDataPath'], res[0].DataId)
@@ -296,6 +297,7 @@ def get_last_row_loss(file_path):
     reply_loss = LossReply(time=epo_list, loss=cls_list)
     return reply_loss
 
+
 # 读log最新的一行,获取百分比
 def get_last_row_log_stage(columns):
     columns = columns.split()
@@ -309,7 +311,7 @@ def get_last_row_log_stage(columns):
     return loss
 
 
-def delete_file(path: str):
+def delete_file_and_directory(path: str):
     try:
         if os.path.exists(path):
             if os.path.isfile(path):
@@ -319,3 +321,16 @@ def delete_file(path: str):
             return True
     except OSError as e:
         raise Exception(f"删除文件 {path} 时出错: {str(e)}")
+
+
+def count_directories(path: str) -> int:
+    try:
+        entries = os.listdir(path)
+
+        # 统计其中的目录数量
+        directory_count = sum(1 for entry in entries if os.path.isdir(os.path.join(path, entry)))
+
+        return directory_count
+    except OSError as e:
+        print(f"访问路径 {path} 时出错: {str(e)}")
+        return 0

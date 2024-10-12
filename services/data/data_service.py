@@ -12,7 +12,7 @@ from sqlmodels.data import Data as DataSql, Data
 from sqlmodels.dataFile import DataFile
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
-from util.file import unzip_file, untar_file, file_path_to_url, delete_file, split_and_move_files
+from util.file import unzip_file, untar_file, file_path_to_url, delete_file_and_directory, split_and_move_files
 from util.util import NewId, TimeNow, exec_command
 
 
@@ -100,8 +100,8 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
             if label_name not in label_files:
                 unmatched_images.append(img)
         res = ", ".join(unmatched_images)
-        delete_file(tar_zip_path)
-        delete_file(file_path)
+        delete_file_and_directory(tar_zip_path)
+        delete_file_and_directory(file_path)
         raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
 
     # 保存数据

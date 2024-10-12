@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from common import const
 from config.config import config_path
-from util.file import delete_file
+from util.file import delete_file_and_directory
 from util.response_format import response_format
 
 testHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-t")
@@ -24,7 +24,7 @@ def initAll():
         file_conf = config_path.get('FileConf', {})
         for key, path in file_conf.items():
             if key != 'SaveRunPath':
-                delete_file(path)
+                delete_file_and_directory(path)
     except Exception as e:
         raise Exception("e")
 

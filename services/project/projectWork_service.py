@@ -300,6 +300,8 @@ def run_work(command: str):
 def start_work(req: StringIdReq, db: Session):
     # TODO 开始运行完后的结果获取
     res_work = ProjectWorkSql.select_by_id(db, req.id)
+    if res_work is None:
+        raise Exception("工作流不存在")
     module = ModuleSql.select_by_id(db, res_work.ModuleId)
     if module is None:
         raise Exception("模型不存在")
