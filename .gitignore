@@ -7,3 +7,6 @@ datasets
 model
 testFile
 venv
+dataorign
+server.log
+testtrain.log
