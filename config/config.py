@@ -8,7 +8,7 @@ DATA_PATH = "/app/data"  # yaml存放地
 RUNS_HELMET_PATH = "/app/runs/helmet"  # 为训练产出路径
 ULTRALYTICS = "ultralytics:basic"
 DOCKER_PORT = 6006  # docker映射端口
-SERVER_HOST = 9202  # server映射端口
+SERVER_PORT = 9202  # server映射端口
 # endregion
 
 
@@ -18,7 +18,7 @@ SERVER_HOST = 9202  # server映射端口
 config_path = {
     'HostConf': {  # 监听端口
         'host': '0.0.0.0',
-        'port': SERVER_HOST,
+        'port': SERVER_PORT,
         'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
     },
     'PathConf': {  # 相关路径不做修改

@@ -2,7 +2,8 @@ import subprocess
 import threading
 import time
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from common import const
@@ -17,15 +18,19 @@ testHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-t")
 async def init_all():
     return response_format(lambda: initAll())
 
-@testHandler.post("/getCommandTxt")
-async def get_command_txt():
-    return response_format(lambda: getCommandTxt())
 
-def getCommandTxt():
+@testHandler.get("/getCommandTxt")
+async def get_command_txt(path: str = Query(None, description="查询参数")):
+    content = getCommandTxt(path)
+    html_content = f"<pre>{content}</pre>"
+    return HTMLResponse(content=html_content)
+
+
+def getCommandTxt(path: str):
     try:
-        return read_file_content(config_path["PathConf"]["TestPath"] + "/test.txt")
+        return read_file_content(path)
     except Exception as e:
-        raise Exception("e")
+        return f"{e}"
 
 
 # 删除除了SaveRunPath以为的目录,暂不包含删除数据库
