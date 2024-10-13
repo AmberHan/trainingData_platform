@@ -2,17 +2,17 @@ stages:
   - build
   - test
   - deploy
- 
+
 build_job:
   stage: build
   script:
     - echo "Building the project..."
- 
+
 test_job:
   stage: test
   script:
     - echo "Testing the built project..."
- 
+
 deploy_job:
   stage: deploy
   script:

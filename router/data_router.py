@@ -33,7 +33,6 @@ async def get_data_strong(req: SaveDataForm, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.save_data(CURRENT_USER_ID_KEY, req, db))
 
 
-
 @dataHandler.post("/deleteData")
 def delete_project(project_req: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.delete_data_impl(project_req.id, db))

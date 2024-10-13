@@ -1,8 +1,8 @@
 import uvicorn
 
+from config.config import config_path
 from config.db_config import init_data_db
 from config.file_config import init_file_conf
-from config.config import config_path
 
 if __name__ == '__main__':
     init_data_db()

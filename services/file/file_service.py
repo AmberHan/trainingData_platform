@@ -41,6 +41,3 @@ def upload_data(save_dir, file: UploadFile = File(...)):
     except Exception as e:
         return f"保存失败: {str(e)}", False
     return file_path, True
-
-
-

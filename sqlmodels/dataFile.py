@@ -70,7 +70,6 @@ class DataFile(SQLModel, table=True):
         except Exception as e:
             raise Exception("delete failed")
 
-
     @classmethod
     def delete_by_data_id(cls, session: Session, data_id: str):
         # 根据 data_id 删除 fileType = 0 的记录

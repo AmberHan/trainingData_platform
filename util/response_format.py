@@ -3,7 +3,7 @@ import json
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
-from common.code import Code, ServiceInsideError, RequestSuccess
+from common.code import Code, RequestSuccess
 from config.log_config import logger
 
 

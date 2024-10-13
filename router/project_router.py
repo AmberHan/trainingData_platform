@@ -84,7 +84,6 @@ def get_project_work_inter_val_by_id(req: StringIdReq, db: Session = Depends(get
     return response_format(lambda: projectWorkReport_service.get_project_work_inter_val_by_id(req, db))
 
 
-
 @projectHandler.post("/getProjectWorkReport")
 def get_project_work_report(req: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: projectWorkReport_service.get_project_work_report_by_id_impl(req, db))
@@ -95,11 +94,9 @@ def start_work(work_id: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: projectWork_service.start_work(work_id, db))
 
 
-
 @projectHandler.post("/stopWork")
 def stop_work(work_id: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: projectWork_service.stop_work(work_id, db))
-
 
 
 @projectHandler.post("/getProjectWorkLog")

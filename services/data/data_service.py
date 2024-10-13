@@ -13,7 +13,7 @@ from sqlmodels.dataFile import DataFile
 from sqlmodels.moduleType import ModuleType
 from sqlmodels.user import User
 from util.file import unzip_file, untar_file, file_path_to_url, delete_file_and_directory, split_and_move_files
-from util.util import NewId, TimeNow, exec_command
+from util.util import NewId, TimeNow
 
 
 def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetDataListByPageReply:
@@ -57,10 +57,7 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 # data管理保存
 
 
-
-
-
-def save_data(uid:str, req: SaveDataForm, db: Session):
+def save_data(uid: str, req: SaveDataForm, db: Session):
     if not os.path.exists(req.uploadPath):
         raise Exception("文件不存在，请重新上传")
 
@@ -82,7 +79,6 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
     except Exception as e:
         print(f"Failed to unzip {tar_zip_path}: {str(e)}")
         raise Exception("解压失败，请重新上传合法的压缩包")
-
 
     image_files = get_files_from_directory(file_path, 'images')
 
@@ -126,38 +122,37 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
     mod.UpdateTime = TimeNow()
     mod.save(db)
 
-
     print(file_path)
     # 获取文件列表并保存入库
     try:
         res_list = ['images', 'labels']
         class_num = 0
-    #
+        #
         for val in res_list:
             if not val:
                 continue
             class_num += 1
-    #
+        #
         for k, v in enumerate(image_files):
-                # 保存图片
-                data_file = DataFile()
-                data_file.Id = NewId()
-                data_file.DataId=mod.Id
-                data_file.FilePath=v
-                data_file.FileType="png"
-                data_file.Url=file_path_to_url(v)
-                data_file.DirPath="images"
-                data_file.save(db)
-                # 保存文件
-                data_file2 = DataFile()
-                data_file2.Id = NewId()
-                data_file2.DataId = mod.Id
-                data_file2.FilePath = label_files[k]
-                data_file2.FileType = "txt"
-                data_file2.Url = file_path_to_url(label_files[k])
-                data_file2.DirPath = "labels"
-                data_file2.save(db)
-    #         # 修改类型数量
+            # 保存图片
+            data_file = DataFile()
+            data_file.Id = NewId()
+            data_file.DataId = mod.Id
+            data_file.FilePath = v
+            data_file.FileType = "png"
+            data_file.Url = file_path_to_url(v)
+            data_file.DirPath = "images"
+            data_file.save(db)
+            # 保存文件
+            data_file2 = DataFile()
+            data_file2.Id = NewId()
+            data_file2.DataId = mod.Id
+            data_file2.FilePath = label_files[k]
+            data_file2.FileType = "txt"
+            data_file2.Url = file_path_to_url(label_files[k])
+            data_file2.DirPath = "labels"
+            data_file2.save(db)
+        #         # 修改类型数量
         mod.ClassNum = class_num
         mod.save(db)
     except Exception as e:
@@ -167,6 +162,7 @@ def save_data(uid:str, req: SaveDataForm, db: Session):
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
     split_and_move_files(res, 20, 0, 80, images_parent_dir)
     return None
+
 
 def get_files_from_directory(base_dir, subfolder_name):
     """
@@ -181,6 +177,7 @@ def get_files_from_directory(base_dir, subfolder_name):
                 if os.path.isfile(file_path):
                     file_list.append(file_path)
     return file_list
+
 
 def delete_data_impl(
         id: str,

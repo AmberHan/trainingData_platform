@@ -23,12 +23,15 @@ class ProjectWorkTypeReply(BaseModel):
             icon=work_type.Icon
         )
 
+
 class LossReply(BaseModel):
     loss: Optional[list] = None
     time: Optional[list] = None
 
+
 class StageReply(BaseModel):
     stage: Optional[float] = None
+
 
 class SaveProjectWorkReq(BaseModel):
     work: Optional[ProjectWork] = None
@@ -65,5 +68,3 @@ class SaveProjectWorkReq(BaseModel):
 class GetProjectWorkListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[SaveProjectWorkReq] = []
-
-

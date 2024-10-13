@@ -34,8 +34,6 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
                          images_parent_dir)
 
 
-
-
 def save_data_strong(req: DataStrongSql, db: Session):
     data = DataSql.select_by_id(db, req.DataId)
     if data is None:

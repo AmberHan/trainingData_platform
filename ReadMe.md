@@ -1,9 +1,11 @@
 ## 环境
+
 - python: 版本需大于等于3.9
 - 涉及库: sqlModel、fastApi、pydantic、python-multipart、sqlalchemy、cryptography、uvicorn
 - 安装环境: 执行 ```pip install -r requirements.txt```
 
 ## 目录
+
 - config 配置文件，docker指令，数据模型保存路径等配置处
 - common 全局定义
 - db 数据库位置

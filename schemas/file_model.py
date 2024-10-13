@@ -6,6 +6,7 @@ class FileReply(BaseModel):
     url: str
     fileSize: str
 
+
 class ChunkUploadResult(BaseModel):
     path: str
     isComplete: bool

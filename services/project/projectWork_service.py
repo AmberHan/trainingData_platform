@@ -21,7 +21,7 @@ from sqlmodels.projectWorkParam import ProjectWorkParam as ProjectWorkParamSql
 from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from util import util
-from util.commd import exec_work, exec_work2
+from util.commd import exec_work
 from util.file import get_last_row_log_stage, get_last_row_loss, count_directories
 
 
@@ -188,7 +188,7 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
-        return 
+        return
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
         res_work.WorkStatus = 2
