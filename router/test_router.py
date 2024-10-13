@@ -52,7 +52,9 @@ class TestReq(BaseModel):
 # 执行简单的不需要长时间等待的
 @testHandler.post("/excCommand")
 async def exc_command(req: TestReq):
-    return response_format(lambda: run_command(req.cmd, req.timeout))
+    content = run_command(req.cmd, req.timeout)
+    html_content = f"<pre>{content}</pre>"
+    return HTMLResponse(content=html_content)
 
 
 def read_output(pipe, buffer):
