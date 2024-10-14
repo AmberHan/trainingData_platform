@@ -1,20 +1,16 @@
-import util.util
-from schemas.device_model import GetDeviceReply
+from typing import Optional
+
+from pydantic import BaseModel
 
 
-def get_device_temp_impl() -> GetDeviceReply:
-    try:
-        reply = GetDeviceReply()
-        reply.cpu.num = 1
-        reply.cpu.present = 11
-        reply.gpu.num = 1
-        reply.gpu.present = 13
-        reply.mem.num = 6
-        reply.mem.present = 10
-        return reply
-    except Exception as e:
-        raise Exception(f"Failed to fetch data: {e}")
+# 定义嵌套的 DeviceStatus 类,
+class DeviceStatus(BaseModel):
+    num: Optional[int] = 0
+    present: Optional[float] = 0
 
 
-def get_id_impl() -> str:
-    return util.util.NewId()
+# 定义 GetDeviceReply 类，使用嵌套的 DeviceStatus
+class GetDeviceReply(BaseModel):
+    cpu: DeviceStatus = DeviceStatus()
+    gpu: DeviceStatus = DeviceStatus()
+    mem: DeviceStatus = DeviceStatus()
