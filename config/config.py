@@ -19,7 +19,7 @@ config_path = {
     'HostConf': {  # 监听端口
         'host': '0.0.0.0',
         'port': SERVER_PORT,
-        'Uri': 'http://localhost/uploads/'  # 替换为你的 URI
+        'Uri': 'http://smartai.com:8288/static'  # 替换为你的 URI
     },
     'PathConf': {  # 相关路径不做修改
         'SaveDataPath': './dataorign',  # 替换为你数据上传的存储路径
