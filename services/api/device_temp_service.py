@@ -4,7 +4,6 @@ import psutil
 import GPUtil
 
 
-
 def get_device_temp_impl() -> GetDeviceReply:
     try:
         # 获取CPU信息
@@ -28,7 +27,6 @@ def get_device_temp_impl() -> GetDeviceReply:
         reply.gpu.num = gpu_count
         if gpu_count > 0:
             # 假设您想将第一个GPU的使用率作为present值:q
-
 
             reply.gpu.present = gpus[0].load * 100  # GPU使用率（百分比）
 

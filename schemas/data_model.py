@@ -106,7 +106,7 @@ class DataFile(BaseModel):
 
     @classmethod
     def from_orm(cls, data: DataFileSql) -> 'DataFile':
-        return DataFileSql(
+        return DataFile(
             id=data.Id,
             dataId=data.DataId,
             filePath=data.FilePath,
