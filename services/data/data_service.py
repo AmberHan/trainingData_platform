@@ -68,7 +68,7 @@ def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> 
         # 调用封装好的分页方法
         dataFiles, total = DataFileSql.find_by_page(db, req.dataId, req.fileType, req.page, req.size)
         reply = GetDataFileListByPageReply(total=total)
-        for i, d in enumerate(dataFiles):
+        for d in dataFiles:
             dataFileReq = DataFile.from_orm(d)
             reply.list.append(dataFileReq)
         return reply

@@ -107,7 +107,7 @@ class DataReply(BaseModel):
 
 
 class DataFile(BaseModel):
-    id: Optional[int] = None
+    id: Optional[str] = None
     dataId: Optional[str] = None
     filePath: Optional[str] = None
     url: Optional[str] = None
@@ -117,7 +117,7 @@ class DataFile(BaseModel):
     @classmethod
     def from_orm(cls, data: DataFileSql) -> 'DataFile':
         return DataFile(
-            id=data.Id,
+            id=str(data.Id),
             dataId=data.DataId,
             filePath=data.FilePath,
             url=data.Url,
