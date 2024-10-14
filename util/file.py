@@ -208,29 +208,29 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
             folder = os.path.join(base_dir, "valid", "labels")
-            dataFile.FileType = 2
+            # dataFile.FileType = 2
         elif index < validation_count + test_count:
-            dataFile.FileType = 3
+            # dataFile.FileType = 3
             folder = os.path.join(base_dir, "test", "labels")
         else:
             folder = os.path.join(base_dir, "train", "labels")
-            dataFile.FileType = 1
-        dataFile.save(db)
+            # dataFile.FileType = 1
+        # dataFile.save(db)
         # 将文件移动到相应的文件夹
         move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
 
     if len(defineList) != 0:
+        names = {}
+        for i in defineList:
+            names[int(i.input2)] = i.input1
         data_yaml = {
             'train': os.path.join(base_dir, "train").lstrip("."),
             'test': os.path.join(base_dir, "test").lstrip("."),
             'val': os.path.join(base_dir, "valid").lstrip("."),
-            'names': {
-
-            }
+            'names':
+                names
         }
-        for i in defineList:
-            print(i)
-            data_yaml['names'][int(i.input2)] = i.input1
+
 
         dir_path = os.path.join(config_path['PathConf']['SaveYamlDataPath'], res[0].DataId)
         # 如果目录不存在，则创建目录

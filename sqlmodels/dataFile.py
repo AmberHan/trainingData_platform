@@ -63,7 +63,7 @@ class DataFile(SQLModel, table=True):
 
     def save(self, session: Session):
         try:
-            session.add(self)
+            session.merge(self)
             session.commit()
         except Exception as e:
             raise Exception("save failed")
