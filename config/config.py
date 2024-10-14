@@ -47,7 +47,6 @@ config_path = {
 def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '', epochs: int = 10, lr0: float = 0.01,
                batch: int = 16):
     project_path = f"{RUNS_HELMET_PATH}/{work_id}"
-    os.makedirs(f'.{project_path}', exist_ok=True)
     start_command = f"docker run --rm --name helmet_train_work_{work_id} --ipc=host " \
                     f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} -v {os.getcwd()}/{MODELS}:/{MODELS} " \
                     f"-p {DOCKER_PORT}:{DOCKER_PORT} " \
@@ -55,7 +54,7 @@ def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '
                     f"{ULTRALYTICS} " \
                     f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= /{MODELS}/{model_name} " \
                     f"project={project_path} name=train{train_count} " \
-                    f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > {project_path}/train{train_count}.log"
+                    f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > /train{work_id}{train_count}.log"
     append_to_test_file(config_path["PathConf"]["TestPath"] + "/test.txt", start_command)
     return start_command
 

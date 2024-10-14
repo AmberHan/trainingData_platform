@@ -15,10 +15,8 @@ from util.file import get_last_row_csv, read_json_file, count_directories, read_
 def get_project_work_log_by_id_impl(
         req: StringIdReq
 ) -> ProjectWorkLogReply:
-    project_path = f".{config.RUNS_HELMET_PATH}/{req.id}"
     train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
-    log_path = os.path.join(project_path, f'train{train_count}.log')
-    return ProjectWorkLogReply(content=read_file_content(log_path))
+    return ProjectWorkLogReply(content=read_file_content(f'train{req.id}{train_count}.log'))
 
 
 def get_project_work_report_by_id_impl(
