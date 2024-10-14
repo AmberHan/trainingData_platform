@@ -47,7 +47,7 @@ config_path = {
 def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '', epochs: int = 10, lr0: float = 0.01,
                batch: int = 16):
     project_path = f"{RUNS_HELMET_PATH}/{work_id}"
-    os.makedirs(f'./{project_path}', exist_ok=True)
+    os.makedirs(f'.{project_path}', exist_ok=True)
     start_command = f"docker run --rm --name helmet_train_work_{work_id} --ipc=host " \
                     f"-v {os.getcwd()}/app:/app -v {os.getcwd()}/{DATASETS}:/{DATASETS} -v {os.getcwd()}/{MODELS}:/{MODELS} " \
                     f"-p {DOCKER_PORT}:{DOCKER_PORT} " \
