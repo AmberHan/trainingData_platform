@@ -158,7 +158,7 @@ def move_file_to_folder(file_path, destination_folder):
 
 
 # 复制迁移
-def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir, db: Session):
+def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir, db: Session, defineList=[]):
     # 按照文件类型分类
     png_files = [(file.FilePath, file) for file in res if file.DirPath == 'images']
 
@@ -185,6 +185,7 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
     # sub_dir = get_all_subfolders(base_dir)
     # train_folders = [folder for folder in sub_dir if 'train' in folder.lower()]
     # str_add = '1' * len(train_folders)
+
     if os.path.exists(base_dir):
         # 删除目录及其内容
         shutil.rmtree(base_dir)
@@ -207,29 +208,35 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
             folder = os.path.join(base_dir, "valid", "labels")
+            dataFile.FileType = 2
         elif index < validation_count + test_count:
+            dataFile.FileType = 3
             folder = os.path.join(base_dir, "test", "labels")
         else:
             folder = os.path.join(base_dir, "train", "labels")
-
+            dataFile.FileType = 1
+        dataFile.save(db)
         # 将文件移动到相应的文件夹
         move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
-    data_yaml = {
-        'train': os.path.join(base_dir, "train").lstrip("."),
-        'test': os.path.join(base_dir, "test").lstrip("."),
-        'val': os.path.join(base_dir, "valid").lstrip("."),
-        'names': {
-            0: "two_wheeler",
-            1: "helmet",
-            2: "without_helmet"
-        }
-    }
 
-    dir_path = os.path.join(config_path['PathConf']['SaveYamlDataPath'], res[0].DataId)
-    # 如果目录不存在，则创建目录
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    generate_yaml(data_yaml, os.path.join(dir_path, "data.yaml"))
+    if len(defineList) != 0:
+        data_yaml = {
+            'train': os.path.join(base_dir, "train").lstrip("."),
+            'test': os.path.join(base_dir, "test").lstrip("."),
+            'val': os.path.join(base_dir, "valid").lstrip("."),
+            'names': {
+
+            }
+        }
+        for i in defineList:
+            print(i)
+            data_yaml['names'][int(i.input2)] = i.input1
+
+        dir_path = os.path.join(config_path['PathConf']['SaveYamlDataPath'], res[0].DataId)
+        # 如果目录不存在，则创建目录
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        generate_yaml(data_yaml, os.path.join(dir_path, "data.yaml"))
 
 
 def generate_yaml(data, file_path):

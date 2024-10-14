@@ -6,6 +6,13 @@ from sqlmodels.data import Data as DataSql
 from sqlmodels.dataFile import DataFile as DataFileSql
 
 
+
+# 定义 DetailItem 模型
+class DetailItem(BaseModel):
+    input1: str
+    input2: int
+
+
 # 保存data实体
 class SaveDataForm(BaseModel):
     dataName: Optional[str] = None
@@ -14,6 +21,9 @@ class SaveDataForm(BaseModel):
     isTest: Optional[bool] = False
     moduleTypeId: Optional[str] = None
     uploadPath: Optional[str] = None
+
+    details: Optional[List[DetailItem]] = None  # 可选的 details 列表
+
 
 
 # data 表格实体
