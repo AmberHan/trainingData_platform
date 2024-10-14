@@ -19,8 +19,8 @@ from util.util import NewId, TimeNow
 def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetDataListByPageReply:
     try:
         # 查询分页数据
-        if req.size < 5:
-            req.size = 5
+        if req.size < 15:
+            req.size = 15
         if req.page < 1:
             req.page = 1
 
@@ -39,6 +39,10 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetD
         return reply
     except Exception as e:
         raise Exception(f"Failed to get data by page: {e}")
+
+
+def get_data_by_id_impl(req: StringIdReq, db: Session) -> SaveDataReq:
+    return get_data_by_id(req, db)
 
 
 def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
@@ -160,7 +164,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
         raise
     res = DataFile.find_all_by_data_id(db, mod.Id)
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
-    split_and_move_files(res, 20, 0, 80, images_parent_dir)
+    split_and_move_files(res, 10, 10, 80, images_parent_dir)
     return None
 
 

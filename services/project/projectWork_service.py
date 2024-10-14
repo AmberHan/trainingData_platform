@@ -1,3 +1,5 @@
+import csv
+import datetime
 import multiprocessing
 import os
 import time
@@ -6,7 +8,7 @@ from sqlalchemy.orm import Session
 
 import config.config
 from schemas.projectWork_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
-    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply
+    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply, LossReply, StageReply
 from schemas.project_model import SaveProjectReq
 from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
@@ -22,7 +24,8 @@ from sqlmodels.projectWorkType import ProjectWorkType
 from sqlmodels.user import User
 from util import util
 from util.commd import exec_work
-from util.file import get_last_row_log_stage, get_last_row_loss, count_directories
+from util.file import count_directories
+from util.util import TimeNow
 
 
 def delete_project_work_impl(
@@ -183,7 +186,7 @@ def get_project_work_by_id_impl(
 
 
 # 进度
-def get_project_work_stage_by_id(req: StringIdReq, db: Session):
+def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
@@ -197,13 +200,32 @@ def get_project_work_stage_by_id(req: StringIdReq, db: Session):
 
 
 # loss获取， 目前从日志获取
-def get_project_work_inter_by_id(req: StringIdReq, db: Session):
+def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
-        return
+        return None
     res = get_last_row_loss(result_path)
+    res_work = ProjectWorkSql.select_by_id(db, req.id)
+    if res_work.WorkStatus != 2:
+        res_work.UpdateTime = datetime.datetime.now()
     return res
+
+
+# 读log最新的一行,获取loss
+def get_last_row_loss(file_path) -> LossReply:
+    epo_list = []
+    cls_list = []
+    with open(file_path, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        # 跳过第一行（表头）
+        next(reader, None)
+        for row in reader:
+            if row:  # 确保行不为空
+                epo_list.append(int(row[0].strip()))  # 去掉左右空格
+                cls_list.append(float(row[2].strip()))  # 去掉左右空格
+    reply_loss = LossReply(time=epo_list, loss=cls_list)
+    return reply_loss
 
 
 def get_project_work_type_by_id(
@@ -215,6 +237,21 @@ def get_project_work_type_by_id(
         return None
     ret = ProjectWorkTypeReply.from_orm(work_type)
     return ret
+
+
+# 读log最新的一行,获取百分比
+def get_last_row_log_stage(file_path) -> StageReply:
+    last_row = None
+    with open(file_path, 'r', newline='') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            last_row = row
+    # 假设 last_row[0] 是一个整数或能转换为整数的字符串
+    value = int(last_row[0]) / 10
+    # 计算百分比，保留小数
+    percentage = value * 100
+    stage = StageReply(stage=percentage, time=TimeNow())
+    return stage
 
 
 def get_project_work_type_list_impl(
@@ -282,8 +319,8 @@ def get_project_work_list_by_page_impl(
         # current_user_id: str = Depends(get_current_user_id)
 ) -> GetProjectWorkListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
-    if req.size < 5:
-        req.size = 5
+    if req.size < 15:
+        req.size = 15
     if req.page < 1:
         req.page = 1
 
@@ -316,6 +353,7 @@ def start_work(req: StringIdReq, db: Session):
     if module is None:
         raise Exception("模型不存在")
     res_work.WorkStatus = 0
+    res_work.StartTime = datetime.datetime.now()
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))

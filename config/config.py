@@ -54,7 +54,7 @@ def start_into(data_id: str, work_id: str, model_name: str, train_count: str = '
                     f"{ULTRALYTICS} " \
                     f"yolo detect train data={DATA_PATH}/{data_id}/data.yaml model= /{MODELS}/{model_name} " \
                     f"project={project_path} name=train{train_count} " \
-                    f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > train.log"
+                    f"epochs={epochs} imgsz=640 device=0 lr0={lr0} batch={batch} > {project_path}/train{train_count}.log"
     append_to_test_file(config_path["PathConf"]["TestPath"] + "/test.txt", start_command)
     return start_command
 

@@ -8,8 +8,7 @@ import zipfile
 import yaml
 
 from config.config import config_path
-from schemas.projectWork_model import StageReply, LossReply
-from util.util import NewId, TimeNow
+from util.util import NewId
 
 
 def unzip_file(zip_path, extract_to):
@@ -280,37 +279,6 @@ def get_last_row_log(file_path):
         for row in reader:
             last_row = row
         return last_row
-
-
-# 读log最新的一行,获取loss
-def get_last_row_loss(file_path):
-    epo_list = []
-    cls_list = []
-    with open(file_path, 'r', newline='', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        # 跳过第一行（表头）
-        next(reader, None)
-        for row in reader:
-            if row:  # 确保行不为空
-                epo_list.append(int(row[0].strip()))  # 去掉左右空格
-                cls_list.append(float(row[2].strip()))  # 去掉左右空格
-    reply_loss = LossReply(time=epo_list, loss=cls_list)
-    return reply_loss
-
-
-# 读log最新的一行,获取百分比
-def get_last_row_log_stage(file_path):
-    last_row = None
-    with open(file_path, 'r', newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            last_row = row
-    # 假设 last_row[0] 是一个整数或能转换为整数的字符串
-    value = int(last_row[0]) / 10
-    # 计算百分比，保留小数
-    percentage = value * 100
-    stage = StageReply(stage=percentage, time=TimeNow())
-    return stage
 
 
 def delete_file_and_directory(path: str):

@@ -24,6 +24,11 @@ class ProjectWorkTypeReply(BaseModel):
         )
 
 
+class ProjectWorkLogReply(BaseModel):
+    content: Optional[str] = None
+    total: Optional[int] = None
+
+
 class LossReply(BaseModel):
     loss: Optional[list] = None
     time: Optional[list] = None

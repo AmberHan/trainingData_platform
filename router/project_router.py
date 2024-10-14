@@ -71,12 +71,12 @@ def flush_project_work_num(project_id: int):
 
 @projectHandler.post("/getProjectWorkStageById")
 def get_project_work_stage_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    return response_format(lambda: projectWork_service.get_project_work_stage_by_id(req, db))
+    return response_format(lambda: projectWork_service.get_project_work_stage_by_id_impl(req, db))
 
 
 @projectHandler.post("/getProjectWorkInterById")
 def get_project_work_inter_by_id(req: StringIdReq, db: Session = Depends(get_db)):
-    return response_format(lambda: projectWork_service.get_project_work_inter_by_id(req, db))
+    return response_format(lambda: projectWork_service.get_project_work_inter_by_id_impl(req, db))
 
 
 @projectHandler.post("/getProjectWorkInterValById")
@@ -100,8 +100,8 @@ def stop_work(work_id: StringIdReq, db: Session = Depends(get_db)):
 
 
 @projectHandler.post("/getProjectWorkLog")
-def get_project_work_log(work_id: int):
-    pass
+def get_project_work_log(req: StringIdReq):
+    return response_format(lambda: projectWorkReport_service.get_project_work_log_by_id_impl(req))
 
 
 @projectHandler.post("/downloadProjectWork")

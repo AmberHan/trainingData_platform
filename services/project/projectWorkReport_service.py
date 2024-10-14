@@ -5,10 +5,20 @@ from sqlmodel import Session
 from config import config
 from config.config import get_data_show, start_assessment
 from schemas.projectWorkReport_model import GetProjectWorkReportReply
+from schemas.projectWork_model import ProjectWorkLogReply
 from schemas.req_model import StringIdReq
 from services.project.projectWork_service import run_work
 from sqlmodels.projectWork import ProjectWork as ProjectWorkSql
-from util.file import get_last_row_csv, read_json_file, count_directories
+from util.file import get_last_row_csv, read_json_file, count_directories, read_file_content
+
+
+def get_project_work_log_by_id_impl(
+        req: StringIdReq
+) -> ProjectWorkLogReply:
+    project_path = f".{config.RUNS_HELMET_PATH}/{req.id}"
+    train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    log_path = os.path.join(project_path, f'train{train_count}.log')
+    return ProjectWorkLogReply(content=read_file_content(log_path))
 
 
 def get_project_work_report_by_id_impl(

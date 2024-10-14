@@ -11,8 +11,8 @@ from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 def get_module_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetModuleListByPageReply:
     try:
         # 查询分页数据
-        if req.size < 5:
-            req.size = 5
+        if req.size < 15:
+            req.size = 15
         if req.page < 1:
             req.page = 1
 

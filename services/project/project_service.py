@@ -18,8 +18,8 @@ def get_project_list_by_page_impl(
         # current_user_id: str = Depends(get_current_user_id)
 ) -> GetProjectListByPageReply:
     # 处理分页参数，确保 page 和 size 有效
-    if req.size < 5:
-        req.size = 5
+    if req.size < 15:
+        req.size = 15
     if req.page < 1:
         req.page = 1
 
