@@ -16,7 +16,7 @@ def get_project_work_log_by_id_impl(
         req: StringIdReq
 ) -> ProjectWorkLogReply:
     train_count = count_directories(f".{config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
-    return ProjectWorkLogReply(content=read_file_content(f'train{req.id}{train_count}.log'))
+    return ProjectWorkLogReply(content=read_file_content(f'./train{req.id}{train_count}.log'))
 
 
 def get_project_work_report_by_id_impl(
