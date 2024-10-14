@@ -31,7 +31,7 @@ def save_data_strong_impl(req: DataStrongParam, db: Session):
     # 统一文件名dataId表示
     images_parent_dir += ("/" + dataId)
     split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
-                         images_parent_dir)
+                         images_parent_dir, db)
 
 
 def save_data_strong(req: DataStrongSql, db: Session):

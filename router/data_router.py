@@ -6,7 +6,7 @@ from common.const import CURRENT_USER_ID_KEY
 from config.db_config import get_db
 from schemas.dataStrong_model import DataStrong, DataStrongParam
 from schemas.data_model import SaveDataForm
-from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq
+from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq, DataFileListByPageReq
 from services.data import data_service, dataStrong_service
 from util.response_format import response_format
 
@@ -23,8 +23,13 @@ async def get_data_by_id(req: StringIdReq, db: Session = Depends(get_db)):
 
 
 @dataHandler.post("/getDataFileListByPage")
-async def get_data_file_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
+async def get_data_file_list_by_page(req: DataFileListByPageReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.get_data_file_list_by_page_impl(req, db))
+
+
+@dataHandler.post("/getDataFilePresent")
+async def get_data_file_present(req: DataFileListByPageReq, db: Session = Depends(get_db)):
+    return response_format(lambda: data_service.get_data_file_present_impl(req, db))
 
 
 @dataHandler.post("/saveDataStrong")

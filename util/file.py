@@ -4,10 +4,14 @@ import math
 import shutil
 import tarfile
 import zipfile
+import os
+from typing import List
 
 import yaml
+from sqlmodel import Session
 
 from config.config import config_path
+from sqlmodels.dataFile import DataFile as DataFileSql
 from util.util import NewId
 
 
@@ -58,9 +62,6 @@ def get_file_size(file_path):
         return None
 
 
-import os
-
-
 # file_urls
 def file_path_to_url(file_path: str) -> str:
     save_path = config_path['PathConf']['SaveDataPath']
@@ -70,9 +71,6 @@ def file_path_to_url(file_path: str) -> str:
         file_path = uri + file_path[len(save_path):]
 
     return file_path
-
-
-a = file_path_to_url("aa")
 
 
 # 解析images和labels文件
@@ -160,9 +158,9 @@ def move_file_to_folder(file_path, destination_folder):
 
 
 # 复制迁移
-def split_and_move_files(res, validation_num, test_data_num, training_data_num, base_dir):
+def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir, db: Session):
     # 按照文件类型分类
-    png_files = [file.FilePath for file in res if file.FileType == 'png']
+    png_files = [(file.FilePath, file) for file in res if file.DirPath == 'images']
 
     # 计算文件划分的数量
     total_files = len(png_files)
@@ -170,7 +168,7 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
     if total_files == 0:
         raise ValueError("没有可用的PNG文件进行划分")
 
-        # 按比例计算验证集、测试集和训练集的数量
+    # 按比例计算验证集、测试集和训练集的数量
     validation_count = math.ceil(total_files * validation_num / 100)
     test_count = math.ceil(total_files * test_data_num / 100)
     training_count = total_files - validation_count - test_count
@@ -191,16 +189,18 @@ def split_and_move_files(res, validation_num, test_data_num, training_data_num, 
         # 删除目录及其内容
         shutil.rmtree(base_dir)
 
-    for index, value in enumerate(png_files):
-
+    for index, (value, dataFile) in enumerate(png_files):
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
             folder = os.path.join(base_dir, "valid", "images")
+            dataFile.FileType = 2
         elif index < validation_count + test_count:
             folder = os.path.join(base_dir, "test", "images")
+            dataFile.FileType = 3
         else:
             folder = os.path.join(base_dir, "train", "images")
-
+            dataFile.FileType = 1
+        dataFile.save(db)
         # 将文件移动到相应的文件夹
         move_file_to_folder(value, folder)
 

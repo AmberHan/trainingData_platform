@@ -45,6 +45,10 @@ def get_data_by_id_impl(req: StringIdReq, db: Session) -> SaveDataReq:
     return get_data_by_id(req, db)
 
 
+def get_data_file_present_impl(req: StringIdReq, db: Session) -> SaveDataReq:
+    return get_data_by_id(req, db)
+
+
 def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> GetDataFileListByPageReply:
     try:
         # 查询分页数据
@@ -162,7 +166,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             data_file.Id = NewId()
             data_file.DataId = mod.Id
             data_file.FilePath = v
-            data_file.FileType = "png"
+            data_file.FileType = 0
             data_file.Url = file_path_to_url(v)
             data_file.DirPath = "images"
             data_file.save(db)
@@ -171,7 +175,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             data_file2.Id = NewId()
             data_file2.DataId = mod.Id
             data_file2.FilePath = label_files[k]
-            data_file2.FileType = "txt"
+            data_file2.FileType = 0
             data_file2.Url = file_path_to_url(label_files[k])
             data_file2.DirPath = "labels"
             data_file2.save(db)
@@ -183,7 +187,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
         raise
     res = DataFileSql.find_all_by_data_id(db, mod.Id)
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
-    split_and_move_files(res, 10, 10, 80, images_parent_dir)
+    split_and_move_files(res, 10, 10, 80, images_parent_dir, db)
     return None
 
 
