@@ -28,7 +28,7 @@ async def get_data_file_list_by_page(req: DataFileListByPageReq, db: Session = D
 
 
 @dataHandler.post("/getDataFilePresent")
-async def get_data_file_present(req: DataFileListByPageReq, db: Session = Depends(get_db)):
+async def get_data_file_present(req: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.get_data_file_present_impl(req, db))
 
 

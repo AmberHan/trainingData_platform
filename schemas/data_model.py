@@ -119,3 +119,13 @@ class DataFile(BaseModel):
 class GetDataFileListByPageReply(BaseModel):
     total: Optional[int] = None
     list: List[DataFile] = []
+
+
+class FilePresent(BaseModel):
+    dir: Optional[str] = None
+    number: Optional[int] = None
+
+
+class GetDataFilePresentReply(BaseModel):
+    total: Optional[int] = None
+    list: List[FilePresent] = []

@@ -53,6 +53,14 @@ class DataFile(SQLModel, table=True):
         statement = select(cls).where(cls.DataId == data_id, cls.FileType == file_type)
         return session.exec(statement).all()
 
+    @classmethod
+    def count_by_data_id_and_type(cls, session: Session, data_id: str, file_type: int) -> int:
+        # 根据 data_id 和 file_type 统计文件记录总数
+        statement = select(func.count()).where(cls.DataId == data_id, cls.FileType == file_type)
+        result = session.execute(statement).scalar()
+        return result
+
+
     def save(self, session: Session):
         try:
             session.add(self)

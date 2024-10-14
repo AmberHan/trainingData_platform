@@ -3,7 +3,8 @@ import os
 from sqlalchemy.orm import Session
 
 from config.config import config_path
-from schemas.data_model import SaveDataReq, GetDataListByPageReply, SaveDataForm, GetDataFileListByPageReply, DataFile
+from schemas.data_model import SaveDataReq, GetDataListByPageReply, SaveDataForm, GetDataFileListByPageReply, DataFile, \
+    GetDataFilePresentReply, FilePresent
 from schemas.req_model import ListByPageReq, DataFileListByPageReq
 from services.module import module_service
 from services.module.moduleType_service import get_module_type_by_id_impl
@@ -45,8 +46,15 @@ def get_data_by_id_impl(req: StringIdReq, db: Session) -> SaveDataReq:
     return get_data_by_id(req, db)
 
 
-def get_data_file_present_impl(req: StringIdReq, db: Session) -> SaveDataReq:
-    return get_data_by_id(req, db)
+def get_data_file_present_impl(req: StringIdReq, db: Session) -> GetDataFilePresentReply:
+    train_total = DataFileSql.count_by_data_id_and_type(db, req.id, 1)
+    val_total = DataFileSql.count_by_data_id_and_type(db, req.id, 2)
+    test_total = DataFileSql.count_by_data_id_and_type(db, req.id, 3)
+    pre = GetDataFilePresentReply(total=3)
+    pre.list.append(FilePresent(dir="train",number=train_total))
+    pre.list.append(FilePresent(dir="val", number=val_total))
+    pre.list.append(FilePresent(dir="test", number=test_total))
+    return pre
 
 
 def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> GetDataFileListByPageReply:
