@@ -3,6 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from sqlmodels.data import Data as DataSql
+from sqlmodels.dataFile import DataFile as DataFileSql
 
 
 # 保存data实体
@@ -93,3 +94,28 @@ class DataReply(BaseModel):
             isDelete=data.IsDelete,
             classNum=data.ClassNum
         )
+
+
+class DataFile(BaseModel):
+    id: Optional[int] = None
+    dataId: Optional[str] = None
+    filePath: Optional[str] = None
+    url: Optional[str] = None
+    fileType: Optional[int] = -1
+    dirPath: Optional[str] = None
+
+    @classmethod
+    def from_orm(cls, data: DataFileSql) -> 'DataFile':
+        return DataFileSql(
+            id=data.Id,
+            dataId=data.DataId,
+            filePath=data.FilePath,
+            url=data.Url,
+            fileType=data.FileType,
+            dirPath=data.DirPath,
+        )
+
+
+class GetDataFileListByPageReply(BaseModel):
+    total: Optional[int] = None
+    list: List[DataFile] = []

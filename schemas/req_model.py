@@ -10,6 +10,13 @@ class ListByPageReq(BaseModel):
     projectId: Optional[str] = None
 
 
+class DataFileListByPageReq(BaseModel):
+    page: Optional[int] = 1  # 默认值为 1
+    size: Optional[int] = 5  # 默认值为 5
+    fileType: Optional[int] = 1
+    dataId: Optional[str] = None
+
+
 class StringIdReq(BaseModel):
     id: str
 

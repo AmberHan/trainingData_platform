@@ -3,14 +3,14 @@ import os
 from sqlalchemy.orm import Session
 
 from config.config import config_path
-from schemas.data_model import SaveDataReq, GetDataListByPageReply, SaveDataForm
-from schemas.req_model import ListByPageReq
+from schemas.data_model import SaveDataReq, GetDataListByPageReply, SaveDataForm, GetDataFileListByPageReply, DataFile
+from schemas.req_model import ListByPageReq, DataFileListByPageReq
 from services.module import module_service
 from services.module.moduleType_service import get_module_type_by_id_impl
 from services.module.module_service import StringIdReq
 from sqlmodels.data import Data as DataSql, Data
-from sqlmodels.dataFile import DataFile
-from sqlmodels.moduleType import ModuleType
+from sqlmodels.dataFile import DataFile as DataFileSql
+from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 from sqlmodels.user import User
 from util.file import unzip_file, untar_file, file_path_to_url, delete_file_and_directory, split_and_move_files
 from util.util import NewId, TimeNow
@@ -32,7 +32,7 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetD
             user = User.select_by_id(db, p.CreateUid)
             if user is not None:
                 saveDataReq.userName = user.username
-            moduleType = ModuleType.select_by_id(db, p.ModuleTypeId)
+            moduleType = ModuleTypeSql.select_by_id(db, p.ModuleTypeId)
             if moduleType is not None:
                 saveDataReq.moduleTypeName = moduleType.ModuleTypeName
             reply.list.append(saveDataReq)
@@ -43,6 +43,25 @@ def get_data_list_by_page_impl(id: str, req: ListByPageReq, db: Session) -> GetD
 
 def get_data_by_id_impl(req: StringIdReq, db: Session) -> SaveDataReq:
     return get_data_by_id(req, db)
+
+
+def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> GetDataFileListByPageReply:
+    try:
+        # 查询分页数据
+        if req.size < 15:
+            req.size = 15
+        if req.page < 1:
+            req.page = 1
+
+        # 调用封装好的分页方法
+        dataFiles, total = DataFileSql.find_by_page(db, req.dataId, req.fileType, req.page, req.size)
+        reply = GetDataFileListByPageReply(total=total)
+        for i, d in enumerate(dataFiles):
+            dataFileReq = DataFile.from_orm(d)
+            reply.list.append(dataFileReq)
+        return reply
+    except Exception as e:
+        raise Exception(f"Failed to get data by page: {e}")
 
 
 def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
@@ -139,7 +158,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
         #
         for k, v in enumerate(image_files):
             # 保存图片
-            data_file = DataFile()
+            data_file = DataFileSql()
             data_file.Id = NewId()
             data_file.DataId = mod.Id
             data_file.FilePath = v
@@ -148,7 +167,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             data_file.DirPath = "images"
             data_file.save(db)
             # 保存文件
-            data_file2 = DataFile()
+            data_file2 = DataFileSql()
             data_file2.Id = NewId()
             data_file2.DataId = mod.Id
             data_file2.FilePath = label_files[k]
@@ -162,7 +181,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
     except Exception as e:
         print(f"Error processing files: {str(e)}")
         raise
-    res = DataFile.find_all_by_data_id(db, mod.Id)
+    res = DataFileSql.find_all_by_data_id(db, mod.Id)
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
     split_and_move_files(res, 10, 10, 80, images_parent_dir)
     return None
