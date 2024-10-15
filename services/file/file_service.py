@@ -56,7 +56,7 @@ def download_impl(
         train_count = count_directories(work_path, "train1") * '1'
         file_location = f"{work_path}/train{train_count}/weights/best.pt"
     elif req.modelName is not None:
-        file_location = f"{config.config_path['PathConf']['SaveModelPath']}/{req.modelName}.pt"
+        file_location = f"{config.config_path['PathConf']['SaveModelPath']}/{req.modelName}"
     elif req.path is not None:
         file_location = f"{config.config_path['PathConf']['SaveDataPath']}/{req.path}"
         add = True
