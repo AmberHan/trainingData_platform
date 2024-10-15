@@ -134,7 +134,6 @@ def save_project_work(
         projectWork.Id = util.NewId()
         projectWork.CreateUid = uid
         projectWork.CreateTime = util.TimeNow()
-        projectWork.CreateTime = projectWork.CreateTime
     projectWork.ProjectId = req.work.projectId
     projectWork.ModuleTypeId = req.work.moduleTypeId
     projectWork.ModuleFrameId = req.work.moduleFrameId
@@ -144,7 +143,6 @@ def save_project_work(
     projectWork.DataId = req.work.dataId
     projectWork.ModuleId = req.work.moduleId
     projectWork.UpdateTime = projectWork.CreateTime
-    projectWork.StartTime = projectWork.CreateTime
     projectWork.save(db)
 
     # param
@@ -190,7 +188,7 @@ def get_project_work_by_id_impl(
 def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     train_count = 0
-    if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
+    if transfor_time(res_work.CreateTime) >= transfor_time(res_work.UpdateTime):
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     else:
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
@@ -211,7 +209,7 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     # train_count = 0
-    if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
+    if transfor_time(res_work.CreateTime) >= transfor_time(res_work.UpdateTime):
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     else:
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
