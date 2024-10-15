@@ -195,7 +195,7 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
         return
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
-        res_work.WorkStatus = 2
+        res_work.WorkStatus = 1
         res_work.UpdateTime = util.TimeNow()
         res_work.save(db)
     return res
@@ -376,7 +376,7 @@ def stop_work(req: StringIdReq, db: Session):
     if work.WorkStatus == 2:
         raise Exception("任务暂未开启！")
     else:
-        work.WorkStatus = 1
+        work.WorkStatus = 2
         work.save(db)
     # 关闭pid
     # 设置配置文件路径 TODO 设置动态从前端获取
