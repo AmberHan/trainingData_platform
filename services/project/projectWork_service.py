@@ -398,8 +398,6 @@ def download_project_work_impl(
     train_count = count_directories(work_path, "train1") * '1'
     file_location = f".{work_path}/train{train_count}/weights/best.pt"
 
-    # 先试一下下面这个行不行，可以的话用把下面一行注释掉
-    file_location = './test/sql_test_data.py'
 
     # 检查文件是否存在
     if not os.path.exists(file_location) or not os.path.isfile(file_location):
