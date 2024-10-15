@@ -5,18 +5,6 @@ import GPUtil
 
 
 def get_device_temp_impl() -> GetDeviceReply:
-    # try:
-    #     reply = GetDeviceReply()
-    #     reply.cpu.num = 1
-    #     reply.cpu.present = 11
-    #     reply.gpu.num = 1
-    #     reply.gpu.present = 13
-    #     reply.mem.num = 6
-    #     reply.mem.present = 10
-    #     return reply
-    # except Exception as e:
-    #     raise Exception(f"Failed to fetch data: {e}")
-
     try:
         # 获取CPU信息
         cpu_count = psutil.cpu_count(logical=True)  # 逻辑CPU核心数

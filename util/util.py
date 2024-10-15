@@ -30,7 +30,6 @@ def exec_command(command):
         return None, e.stderr
 
 
-
 # 时间转数字
 def transfor_time(date_str: str):
     # 将字符串转换为 datetime 对象

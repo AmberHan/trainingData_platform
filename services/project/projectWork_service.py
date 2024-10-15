@@ -178,6 +178,8 @@ def get_project_work_by_id_impl(
         db: Session
 ) -> SaveProjectWorkReq:
     work = ProjectWorkSql.select_by_id(db, req.id)
+    if work is None:
+        raise Exception("工作流不存在")
     ret = get_project_info(ProjectWork.from_orm(work), db)
     if ret is None:
         return None
@@ -190,7 +192,7 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
-        return
+        return None
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
         res_work.WorkStatus = 1
