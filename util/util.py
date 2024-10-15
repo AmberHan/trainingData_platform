@@ -28,3 +28,13 @@ def exec_command(command):
     except subprocess.CalledProcessError as e:
         # 如果命令执行失败，返回错误信息
         return None, e.stderr
+
+
+
+# 时间转数字
+def transfor_time(date_str: str):
+    # 将字符串转换为 datetime 对象
+    date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+    # 将 datetime 对象转换为 Unix 时间戳
+    timestamp = date_obj.timestamp()
+    return timestamp

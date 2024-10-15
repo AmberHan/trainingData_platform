@@ -25,7 +25,7 @@ from sqlmodels.user import User
 from util import util
 from util.commd import exec_work
 from util.file import count_directories
-from util.util import TimeNow
+from util.util import TimeNow, transfor_time
 
 
 def delete_project_work_impl(
@@ -188,7 +188,11 @@ def get_project_work_by_id_impl(
 # 进度
 def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    train_count = ''
+    if transfor_time(res_work.CreateTime) > transfor_time(res_work.UpdateTime):
+        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    else:
+        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return
@@ -199,9 +203,16 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
     return res
 
 
-# loss获取， 目前从日志获取
+
+
+
+# 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
-    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    res_work = ProjectWorkSql.select_by_id(db, req.id)
+    if transfor_time(res_work.CreateTime) > transfor_time(res_work.UpdateTime):
+        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    else:
+        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return None
