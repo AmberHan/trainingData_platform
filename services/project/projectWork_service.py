@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 import config.config
 from schemas.projectWork_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
-    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply, LossReply, StageReply
+    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply, LossReply, StageReply, \
+    ModelDownloadUrl
 from schemas.project_model import SaveProjectReq
 from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
@@ -25,6 +26,7 @@ from util import util
 from util.commd import exec_work
 from util.file import count_directories
 from util.util import TimeNow
+
 
 def delete_project_work_impl(
         id: str,
@@ -197,9 +199,6 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
     return res
 
 
-
-
-
 # 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
@@ -312,8 +311,9 @@ def get_project_info(
     if projectWorkType is not None:
         saveProjectWorkReq.projectWorkType = ProjectWorkTypeReply.from_orm(projectWorkType)
     # 模型下载地址
-    saveProjectWorkReq.urls.best_url = f"{config.config.config_path['HostConf']['Uri']}?workId={req.id}"
-    saveProjectWorkReq.urls.origin_url = f"{config.config.config_path['HostConf']['Uri']}?modelName={module.moduleFile}"
+    saveProjectWorkReq.urls = ModelDownloadUrl(
+        best_url=f"{config.config.config_path['HostConf']['Uri']}?workId={req.id}",
+        origin_url=f"{config.config.config_path['HostConf']['Uri']}?modelName={module.moduleFile}")
     return saveProjectWorkReq
 
 

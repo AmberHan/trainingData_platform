@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 from fastapi import UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
@@ -61,9 +62,13 @@ def download_impl(
 
 
 def download_file(path: str):
-    # 检查文件是否存在
-    if not os.path.exists(path) or not os.path.isfile(path):
+    safe_path = Path(path).resolve()
+    if not safe_path.is_file() or not safe_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
 
-    # 返回文件
-    return FileResponse(path=path, filename=os.path.basename(path))
+    filename = os.path.basename(safe_path)
+    headers = {
+        "Content-Disposition": f"inline; filename={filename}",
+        "Content-Length": str(safe_path.stat().st_size),
+    }
+    return FileResponse(path=str(safe_path), filename=filename, headers=headers)
