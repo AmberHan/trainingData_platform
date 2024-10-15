@@ -104,6 +104,7 @@ def get_project_work_log(req: StringIdReq):
     return response_format(lambda: projectWorkReport_service.get_project_work_log_by_id_impl(req))
 
 
-@projectHandler.post("/downloadProjectWork")
-def download_project_work(project_id: int):
-    pass
+from fastapi import Query
+@projectHandler.get("/downloadProjectWork")
+def download_project_work(workid: str = Query(None, description="查询参数")):
+    return projectWork_service.download_project_work_impl(workid)
