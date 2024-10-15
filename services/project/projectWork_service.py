@@ -384,7 +384,7 @@ def stop_work(req: StringIdReq, db: Session):
     if work.WorkStatus == 2:
         raise Exception("任务暂未开启！")
     else:
-        work.WorkStatus = 2
+        work.WorkStatus = 1
         work.save(db)
     # 关闭pid
     # 设置配置文件路径 TODO 设置动态从前端获取
