@@ -220,6 +220,7 @@ def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossRepl
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     if res_work.WorkStatus != 2:
         res_work.UpdateTime = datetime.datetime.now()
+        res_work.save(db)
     return res
 
 
