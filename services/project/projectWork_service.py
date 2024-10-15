@@ -144,6 +144,7 @@ def save_project_work(
     projectWork.DataId = req.work.dataId
     projectWork.ModuleId = req.work.moduleId
     projectWork.UpdateTime = projectWork.CreateTime
+    projectWork.StartTime = projectWork.CreateTime
     projectWork.save(db)
 
     # param
