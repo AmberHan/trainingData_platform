@@ -47,11 +47,13 @@ def get_data_by_id_impl(req: StringIdReq, db: Session) -> SaveDataReq:
 
 
 def get_data_file_present_impl(req: StringIdReq, db: Session) -> GetDataFilePresentReply:
+    if req.id is None:
+        raise Exception("Id为空")
     train_total = DataFileSql.count_by_data_id_and_type(db, req.id, 1)
     val_total = DataFileSql.count_by_data_id_and_type(db, req.id, 2)
     test_total = DataFileSql.count_by_data_id_and_type(db, req.id, 3)
     pre = GetDataFilePresentReply(total=3)
-    pre.list.append(FilePresent(dir="train",number=train_total))
+    pre.list.append(FilePresent(dir="train", number=train_total))
     pre.list.append(FilePresent(dir="val", number=val_total))
     pre.list.append(FilePresent(dir="test", number=test_total))
     return pre
@@ -60,10 +62,12 @@ def get_data_file_present_impl(req: StringIdReq, db: Session) -> GetDataFilePres
 def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> GetDataFileListByPageReply:
     try:
         # 查询分页数据
-        if req.size < 15:
-            req.size = 15
+        if req.size < 5:
+            req.size = 5
         if req.page < 1:
             req.page = 1
+        if req.dataId is None:
+            raise Exception("dataId为空")
 
         # 调用封装好的分页方法
         dataFiles, total = DataFileSql.find_by_page(db, req.dataId, req.fileType, req.page, req.size)

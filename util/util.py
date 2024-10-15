@@ -1,3 +1,4 @@
+import hashlib
 import subprocess
 import uuid
 from datetime import datetime
@@ -30,7 +31,6 @@ def exec_command(command):
         return None, e.stderr
 
 
-
 # 时间转数字
 def transfor_time(date_str: str):
     # 将字符串转换为 datetime 对象
@@ -38,3 +38,9 @@ def transfor_time(date_str: str):
     # 将 datetime 对象转换为 Unix 时间戳
     timestamp = date_obj.timestamp()
     return timestamp
+
+
+def calculate_md5(data):
+    md5_hash = hashlib.md5()
+    md5_hash.update(data)
+    return md5_hash.hexdigest()

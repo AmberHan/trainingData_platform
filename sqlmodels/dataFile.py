@@ -60,7 +60,6 @@ class DataFile(SQLModel, table=True):
         result = session.execute(statement).scalar()
         return result
 
-
     def save(self, session: Session):
         try:
             session.merge(self)

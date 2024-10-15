@@ -2,13 +2,15 @@ import os
 import shutil
 from pathlib import Path
 
-from fastapi import UploadFile, File, HTTPException
+from fastapi import UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
+
 from config import config
 from config.config import config_path
 from schemas.file_model import FileReply, ChunkUploadResult
 from schemas.req_model import DownloadParams
 from util.file import get_file_size, get_unique_path, count_directories
+from util.util import calculate_md5
 
 
 def upload_tar_impl(file: UploadFile = File(...)):
@@ -82,3 +84,45 @@ def download_file(path: str, add: bool = False):
 
     # 返回文件
     return FileResponse(path=str(safe_path), filename=filename, headers=headers)
+
+
+async def upload_chunk_impl(chunk_id: int, file: UploadFile, md5: str = Form(...)):
+    chunk_path = os.path.join(config_path['PathConf']['SaveDataPath'], f"{chunk_id}_{file.filename}")
+
+    with open(chunk_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+
+    # 验证分片的MD5值
+    calculated_md5 = calculate_md5(chunk_path)
+    if calculated_md5 != md5:
+        os.remove(chunk_path)
+        raise HTTPException(status_code=400, detail=f"MD5 mismatch for chunk {chunk_id}")
+
+    return {"status": "success", "message": f"Chunk {chunk_id} uploaded successfully."}
+
+
+def merge_chunks_impl(file_name: str, file_md5: str):
+    try:
+        # 获取所有分片
+        chunks = [f for f in os.listdir(config_path['PathConf']['SaveDataPath']) if f.endswith(f"_{file_name}")]
+        chunks.sort(key=lambda x: int(x.split('_')[0]))  # 按分片编号排序
+
+        # 合并分片
+        merged_path = os.path.join(config_path['PathConf']['SaveDataPath'], file_name)
+        with open(merged_path, "wb") as merged_file:
+            for chunk in chunks:
+                chunk_path = os.path.join(config_path['PathConf']['SaveDataPath'], chunk)
+                with open(chunk_path, "rb") as chunk_file:
+                    shutil.copyfileobj(chunk_file, merged_file)
+                os.remove(chunk_path)  # 删除已合并的分片
+
+        # 验证合并后的文件的MD5值
+        calculated_file_md5 = calculate_md5(merged_path)
+        if calculated_file_md5 != file_md5:
+            os.remove(merged_path)
+            raise HTTPException(status_code=400, detail="MD5 mismatch for the merged file")
+
+        return {"status": "success", "message": f"File {file_name} merged successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
