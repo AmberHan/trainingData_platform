@@ -189,7 +189,9 @@ def get_project_work_by_id_impl(
 # 进度
 def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = int(res_work.WorkStage) * '1'
+    train_count = 0
+    if res_work.WorkStage != None:
+        train_count = int(res_work.WorkStage) * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return
@@ -207,7 +209,9 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
 # 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = int(res_work.WorkStage) * '1'
+    train_count = 0
+    if res_work.WorkStage != None:
+        train_count = int(res_work.WorkStage) * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return None
