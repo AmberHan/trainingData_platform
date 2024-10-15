@@ -396,8 +396,7 @@ def download_project_work_impl(
 ):
     work_path = f".{config.config.RUNS_HELMET_PATH}/{work_id}"
     train_count = count_directories(work_path, "train1") * '1'
-    file_location = f".{work_path}/train{train_count}/weights/best.pt"
-
+    file_location = f"{work_path}/train{train_count}/weights/best.pt"
 
     # 检查文件是否存在
     if not os.path.exists(file_location) or not os.path.isfile(file_location):
