@@ -62,8 +62,8 @@ def get_data_file_present_impl(req: StringIdReq, db: Session) -> GetDataFilePres
 def get_data_file_list_by_page_impl(req: DataFileListByPageReq, db: Session) -> GetDataFileListByPageReply:
     try:
         # 查询分页数据
-        if req.size < 15:
-            req.size = 15
+        if req.size < 5:
+            req.size = 5
         if req.page < 1:
             req.page = 1
         if req.dataId is None:
