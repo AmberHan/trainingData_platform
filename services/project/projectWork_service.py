@@ -369,6 +369,7 @@ def start_work(req: StringIdReq, db: Session):
         raise Exception("模型不存在")
     res_work.WorkStatus = 0
     res_work.StartTime = util.TimeNow()
+    res_work.UpdateTime = ''
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
