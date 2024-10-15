@@ -53,7 +53,7 @@ def get_data_file_present_impl(req: StringIdReq, db: Session) -> GetDataFilePres
     val_total = DataFileSql.count_by_data_id_and_type(db, req.id, 2)
     test_total = DataFileSql.count_by_data_id_and_type(db, req.id, 3)
     pre = GetDataFilePresentReply(total=3)
-    pre.list.append(FilePresent(dir="train",number=train_total))
+    pre.list.append(FilePresent(dir="train", number=train_total))
     pre.list.append(FilePresent(dir="val", number=val_total))
     pre.list.append(FilePresent(dir="test", number=test_total))
     return pre

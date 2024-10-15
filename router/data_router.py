@@ -17,6 +17,7 @@ dataHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-d")
 async def get_data_list_by_page(req: ListByPageReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.get_data_list_by_page_impl(CURRENT_USER_ID_KEY, req, db))
 
+
 @dataHandler.post("/getDataById")
 async def get_data_by_id(req: StringIdReq, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.get_data_by_id_impl(req, db))

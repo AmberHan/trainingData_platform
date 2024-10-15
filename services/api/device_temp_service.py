@@ -1,7 +1,8 @@
+import GPUtil
+import psutil
+
 import util.util
 from schemas.device_model import GetDeviceReply
-import psutil
-import GPUtil
 
 
 def get_device_temp_impl() -> GetDeviceReply:
