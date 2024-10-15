@@ -189,6 +189,8 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     train_count = 0
     if res_work.UpdateTime == '':
+        res_work.WorkStatus = 0
+        res_work.save(db)
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     else:
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
@@ -210,6 +212,8 @@ def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossRepl
     res_work = ProjectWorkSql.select_by_id(db, req.id)
     # train_count = 0
     if res_work.UpdateTime == '':
+        res_work.WorkStatus = 0
+        res_work.save(db)
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     else:
         train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
