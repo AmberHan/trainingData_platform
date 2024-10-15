@@ -188,11 +188,11 @@ def get_project_work_by_id_impl(
 # 进度
 def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = 0
-    if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
-        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
-    else:
-        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    # train_count = 0
+    # if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
+    #     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    # else:
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return
@@ -209,11 +209,11 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
 # 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = 0
-    if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
-        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
-    else:
-        train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
+    # train_count = 0
+    # if transfor_time(res_work.StartTime) >= transfor_time(res_work.UpdateTime):
+    #     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    # else:
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return None
