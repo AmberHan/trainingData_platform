@@ -1,5 +1,4 @@
 import csv
-import datetime
 import multiprocessing
 import os
 import time
@@ -8,7 +7,8 @@ from sqlalchemy.orm import Session
 
 import config.config
 from schemas.projectWork_model import SaveProjectWorkReq, ProjectWork, ProjectWorkTypeReply, \
-    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply, LossReply, StageReply
+    GetProjectWorkTypeListReply, ProjectWorkParam, GetProjectWorkListByPageReply, LossReply, StageReply, \
+    ModelDownloadUrl
 from schemas.project_model import SaveProjectReq
 from schemas.req_model import StringIdReq, ListByPageReq
 from schemas.user_model import UserInfo
@@ -134,7 +134,6 @@ def save_project_work(
         projectWork.Id = util.NewId()
         projectWork.CreateUid = uid
         projectWork.CreateTime = util.TimeNow()
-        projectWork.CreateTime = projectWork.CreateTime
     projectWork.ProjectId = req.work.projectId
     projectWork.ModuleTypeId = req.work.moduleTypeId
     projectWork.ModuleFrameId = req.work.moduleFrameId
@@ -143,7 +142,7 @@ def save_project_work(
     projectWork.Detail = req.work.detail
     projectWork.DataId = req.work.dataId
     projectWork.ModuleId = req.work.moduleId
-    projectWork.UpdateTime = projectWork.CreateTime
+    projectWork.UpdateTime = ""
     projectWork.save(db)
 
     # param
@@ -194,21 +193,23 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
         return
     res = get_last_row_log_stage(result_path)
     if res.stage >= 100:
-        res_work.WorkStatus = 2
+        res_work.WorkStatus = 1
+        res_work.UpdateTime = util.TimeNow()
         res_work.save(db)
     return res
 
 
-# loss获取， 目前从日志获取
+# 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
+    res_work = ProjectWorkSql.select_by_id(db, req.id)
     train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return None
+    res_work.UpdateTime = util.TimeNow()
+    res_work.save(db)
     res = get_last_row_loss(result_path)
-    res_work = ProjectWorkSql.select_by_id(db, req.id)
-    if res_work.WorkStatus != 2:
-        res_work.UpdateTime = datetime.datetime.now()
+
     return res
 
 
@@ -309,6 +310,10 @@ def get_project_info(
     projectWorkType = ProjectWorkType.select_by_id(db, req.projectWorkTypeId)
     if projectWorkType is not None:
         saveProjectWorkReq.projectWorkType = ProjectWorkTypeReply.from_orm(projectWorkType)
+    # 模型下载地址
+    saveProjectWorkReq.urls = ModelDownloadUrl(
+        best_url=f"{config.config.config_path['HostConf']['Uri']}?workId={req.id}",
+        origin_url=f"{config.config.config_path['HostConf']['Uri']}?modelName={module.moduleFile}")
     return saveProjectWorkReq
 
 
@@ -353,7 +358,8 @@ def start_work(req: StringIdReq, db: Session):
     if module is None:
         raise Exception("模型不存在")
     res_work.WorkStatus = 0
-    res_work.StartTime = datetime.datetime.now()
+    res_work.StartTime = util.TimeNow()
+    # res_work.UpdateTime = ''
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))

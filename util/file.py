@@ -1,10 +1,10 @@
 import csv
 import json
 import math
+import os
 import shutil
 import tarfile
 import zipfile
-import os
 from typing import List
 
 import yaml
@@ -68,7 +68,7 @@ def file_path_to_url(file_path: str) -> str:
     uri = config_path['HostConf']['Uri']
 
     if len(file_path) > len(save_path) and file_path.startswith(save_path):
-        file_path = uri + file_path[len(save_path):]
+        file_path = uri + "?path=" + file_path[len(save_path):]
 
     return file_path
 
@@ -158,7 +158,8 @@ def move_file_to_folder(file_path, destination_folder):
 
 
 # 复制迁移
-def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir, db: Session, defineList=[]):
+def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir,
+                         db: Session, defineList=[]):
     # 按照文件类型分类
     png_files = [(file.FilePath, file) for file in res if file.DirPath == 'images']
 
@@ -230,7 +231,6 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
             'names':
                 names
         }
-
 
         dir_path = os.path.join(config_path['PathConf']['SaveYamlDataPath'], res[0].DataId)
         # 如果目录不存在，则创建目录
