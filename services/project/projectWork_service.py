@@ -1,5 +1,4 @@
 import csv
-import datetime
 import multiprocessing
 import os
 import time
@@ -25,10 +24,7 @@ from sqlmodels.user import User
 from util import util
 from util.commd import exec_work
 from util.file import count_directories
-from util.util import TimeNow, transfor_time
-
-from fastapi.responses import FileResponse
-from fastapi import HTTPException
+from util.util import TimeNow
 
 def delete_project_work_impl(
         id: str,
@@ -389,18 +385,3 @@ def stop_work(req: StringIdReq, db: Session):
     exec_work(command)
     # work获取
     Project.flush_project_work_num(db, work.ProjectId)
-
-
-def download_project_work_impl(
-        work_id: str
-):
-    work_path = f".{config.config.RUNS_HELMET_PATH}/{work_id}"
-    train_count = count_directories(work_path, "train1") * '1'
-    file_location = f".{work_path}/train{train_count}/weights/best.pt"
-
-    # 检查文件是否存在
-    if not os.path.exists(file_location) or not os.path.isfile(file_location):
-        raise HTTPException(status_code=404, detail="File not found")
-
-    # 返回文件
-    return FileResponse(path=file_location, filename=os.path.basename(file_location))

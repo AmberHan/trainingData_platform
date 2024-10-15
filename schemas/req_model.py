@@ -23,3 +23,9 @@ class StringIdReq(BaseModel):
 
 class DeleteListReq(BaseModel):
     id: List[str]
+
+
+class DownloadParams(BaseModel):
+    workId: Optional[str] = None
+    modelName: Optional[str] = None
+    path: Optional[str] = None
