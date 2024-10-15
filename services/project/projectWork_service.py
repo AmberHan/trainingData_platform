@@ -311,6 +311,9 @@ def get_project_info(
     projectWorkType = ProjectWorkType.select_by_id(db, req.projectWorkTypeId)
     if projectWorkType is not None:
         saveProjectWorkReq.projectWorkType = ProjectWorkTypeReply.from_orm(projectWorkType)
+    # 模型下载地址
+    saveProjectWorkReq.urls.best_url = f"{config.config.config_path['HostConf']['Uri']}?workId={req.id}"
+    saveProjectWorkReq.urls.origin_url = f"{config.config.config_path['HostConf']['Uri']}?modelName={module.moduleFile}"
     return saveProjectWorkReq
 
 

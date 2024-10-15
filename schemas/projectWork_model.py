@@ -38,6 +38,11 @@ class StageReply(BaseModel):
     stage: Optional[float] = None
 
 
+class ModelDownloadUrl(BaseModel):
+    best_url: Optional[str] = None
+    origin_url: Optional[str] = None
+
+
 class SaveProjectWorkReq(BaseModel):
     work: Optional[ProjectWork] = None
     param: Optional[ProjectWorkParam] = None
@@ -47,6 +52,7 @@ class SaveProjectWorkReq(BaseModel):
     project: Optional['SaveProjectReq'] = None  # Define SaveProjectReq similarly
     data: Optional[DataReply] = None
     projectWorkType: Optional[ProjectWorkTypeReply] = None
+    urls: Optional[ModelDownloadUrl] = None
 
     @classmethod
     def from_orm(cls, project_work: ProjectWorkSql) -> 'SaveProjectWorkReq':

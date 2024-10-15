@@ -15,7 +15,7 @@ def upload_tar_impl(file: UploadFile = File(...)):
     if is_complete:
         return FileReply(
             path=file_path,
-            url=config_path['HostConf']['Uri'] + os.path.basename(file_path),
+            url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(file_path),
             fileSize=str(get_file_size(file_path))
         )
     return Exception(file_path)
