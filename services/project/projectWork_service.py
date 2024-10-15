@@ -189,9 +189,7 @@ def get_project_work_by_id_impl(
 # 进度
 def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = ''
-    if res_work.WorkStage is not None and res_work.WorkStage != "":
-        train_count = int(res_work.WorkStage) * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return
@@ -209,9 +207,7 @@ def get_project_work_stage_by_id_impl(req: StringIdReq, db: Session) -> StageRep
 # 实时获取loss
 def get_project_work_inter_by_id_impl(req: StringIdReq, db: Session) -> LossReply:
     res_work = ProjectWorkSql.select_by_id(db, req.id)
-    train_count = ''
-    if res_work.WorkStage is not None and res_work.WorkStage != "":
-        train_count = int(res_work.WorkStage) * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train1") * '1'
     result_path = config.config.get_data_show(req.id, train_count)["result_csv"]
     if not os.path.exists(result_path):
         return None
@@ -364,14 +360,11 @@ def start_work(req: StringIdReq, db: Session):
         raise Exception("模型不存在")
     res_work.WorkStatus = 0
     res_work.StartTime = util.TimeNow()
-    # TODO 保存trian的数量，目前暂时放在workStage里面
-    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
-    res_work.WorkStage = f"{train_count}"
     # res_work.UpdateTime = ''
     res_work.save(db)
     # 启动一个新的线程执行工作
     # work_process = multiprocessing.Process(target=run_work, args=(req.id, config.config.start_into(res_work.DataId)))
-    # train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
+    train_count = count_directories(f".{config.config.RUNS_HELMET_PATH}/{req.id}", "train") * '1'
     command = config.config.start_into(res_work.DataId, req.id, module.ModuleFile, train_count)
     work_process = multiprocessing.Process(target=run_work, args=(command,))
     work_process.start()
@@ -403,7 +396,7 @@ def download_project_work_impl(
 ):
     work_path = f".{config.config.RUNS_HELMET_PATH}/{work_id}"
     train_count = count_directories(work_path, "train1") * '1'
-    file_location = f"{work_path}/train{train_count}/weights/best.pt"
+    file_location = f".{work_path}/train{train_count}/weights/best.pt"
 
     # 检查文件是否存在
     if not os.path.exists(file_location) or not os.path.isfile(file_location):
