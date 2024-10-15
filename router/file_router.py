@@ -29,10 +29,10 @@ def download_project_work(params: DownloadParams = Query(..., description="æŸ¥è¯
 
 
 @fileHandler.post("/upload/{chunk_id}")
-async def upload_chunk(chunk_id: int, file: UploadFile, md5: str = Form(...)):
-    return file_service.upload_chunk_impl(chunk_id, file, md5)
+async def upload_chunk(chunk_id: int, file: UploadFile, file_md5: str = Form(...)):
+    return file_service.upload_chunk_impl(chunk_id, file, file_md5)
 
 
-@fileHandler.post("/merge")
+@fileHandler.post("/upload/merge")
 async def merge_chunks(file_name: str = Form(...), file_md5: str = Form(...)):
     return file_service.merge_chunks_impl(file_name, file_md5)
