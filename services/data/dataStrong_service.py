@@ -7,10 +7,10 @@ from sqlmodels.data import Data as DataSql
 from sqlmodels.dataFile import DataFile
 from sqlmodels.dataStrong import DataStrong as DataStrongSql
 from util.convert import model_to_string
-from util.file import split_and_move_files_async
+from util.file import split_and_move_files
 
 
-async def save_data_strong_impl(req: DataStrongParam, db: Session):
+def save_data_strong_impl(req: DataStrongParam, db: Session):
     if req.dataId == "" or None:
         raise Exception("未选择任何数据,DataId不能为空")
 
@@ -30,8 +30,8 @@ async def save_data_strong_impl(req: DataStrongParam, db: Session):
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath']
     # 统一文件名dataId表示
     images_parent_dir += ("/" + dataId)
-    await split_and_move_files_async(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
-                                     images_parent_dir, db)
+    split_and_move_files(res, int(req.validation_num), int(req.test_data_num), int(req.training_data_num),
+                         images_parent_dir, db)
 
 
 def save_data_strong(req: DataStrongSql, db: Session):

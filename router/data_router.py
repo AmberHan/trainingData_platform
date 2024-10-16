@@ -8,7 +8,7 @@ from schemas.dataStrong_model import DataStrong, DataStrongParam
 from schemas.data_model import SaveDataForm
 from schemas.req_model import DeleteListReq, StringIdReq, ListByPageReq, DataFileListByPageReq
 from services.data import data_service, dataStrong_service
-from util.response_format import response_format, response_format_async
+from util.response_format import response_format
 
 dataHandler = APIRouter(prefix=const.API_URL_PREFIX + "/api-d")
 
@@ -35,7 +35,7 @@ async def get_data_file_present(req: StringIdReq, db: Session = Depends(get_db))
 
 @dataHandler.post("/saveDataStrong")
 async def save_data_strong(req: DataStrongParam, db: Session = Depends(get_db)):
-    return await response_format_async(lambda: dataStrong_service.save_data_strong_impl(req, db))
+    return response_format(lambda: dataStrong_service.save_data_strong_impl(req, db))
 
 
 @dataHandler.post("/getDataStrong")
@@ -45,7 +45,7 @@ async def get_data_strong(req: DataStrong, db: Session = Depends(get_db)):
 
 @dataHandler.post("/saveData")
 async def save_data(req: SaveDataForm, db: Session = Depends(get_db)):
-    return await response_format_async(lambda: data_service.save_data_async(CURRENT_USER_ID_KEY, req, db))
+    return response_format(lambda: data_service.save_data(CURRENT_USER_ID_KEY, req, db))
 
 
 @dataHandler.post("/deleteData")
