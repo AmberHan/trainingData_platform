@@ -17,4 +17,4 @@ def setup_logger():
 
 
 # 创建并导出日志记录器
-logger = setup_logger()
+# logger = setup_logger()
