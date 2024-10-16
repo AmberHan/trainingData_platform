@@ -29,3 +29,9 @@ class DownloadParams(BaseModel):
     workId: Optional[str] = None
     modelName: Optional[str] = None
     path: Optional[str] = None
+
+
+class UploadParams(BaseModel):
+    chunkId: Optional[int] = None
+    fileName: Optional[str] = None
+    fileMd5: Optional[str] = None

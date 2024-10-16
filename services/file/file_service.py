@@ -88,6 +88,16 @@ def download_file(path: str, add: bool = False):
 
 async def upload_chunk_impl(chunk_id: int, file: UploadFile, md5: str = Form(...)):
     chunk_path = os.path.join(config_path['PathConf']['SaveDataPath'], f"{chunk_id}_{file.filename}")
+    if os.path.exists(chunk_path):
+        if calculate_md5(chunk_path) == md5:
+            return FileReply(
+                path=chunk_path,
+                url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(chunk_path),
+                fileSize=str(get_file_size(chunk_path))
+            )
+        else:
+            print("上传的数据不一致，已删除，重新保存")
+            os.remove(chunk_path)
 
     with open(chunk_path, "wb") as buffer:
         content = await file.read()
@@ -99,7 +109,11 @@ async def upload_chunk_impl(chunk_id: int, file: UploadFile, md5: str = Form(...
         os.remove(chunk_path)
         raise HTTPException(status_code=400, detail=f"MD5 mismatch for chunk {chunk_id}")
 
-    return {"status": "success", "message": f"Chunk {chunk_id} uploaded successfully."}
+    return FileReply(
+            path=chunk_path,
+            url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(chunk_path),
+            fileSize=str(get_file_size(chunk_path))
+        )
 
 
 def merge_chunks_impl(file_name: str, file_md5: str):
@@ -123,6 +137,10 @@ def merge_chunks_impl(file_name: str, file_md5: str):
             os.remove(merged_path)
             raise HTTPException(status_code=400, detail="MD5 mismatch for the merged file")
 
-        return {"status": "success", "message": f"File {file_name} merged successfully."}
+        return FileReply(
+            path=merged_path,
+            url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(merged_path),
+            fileSize=str(get_file_size(merged_path))
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
