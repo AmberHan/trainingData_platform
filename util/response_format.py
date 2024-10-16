@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
 from common.code import Code, RequestSuccess
-# from config.log_config import logger
+from config.log_config import logger
 
 
 def ret_format(code: Code, data=None):
@@ -22,8 +22,8 @@ def response_format(reply_provider):
         reply = reply_provider()
         return ret_format(RequestSuccess, reply)
     except HTTPException as e:
-        # logger.error(f"HTTPException: {str(e.detail)}", exc_info=True)
+        logger.error(f"HTTPException: {str(e.detail)}", exc_info=True)
         return ret_format(Code(500, False, str(e.detail)), str(e.detail))
     except Exception as e:
-        # logger.error(f"Exception: {str(e)}", exc_info=True)
+        logger.error(f"Exception: {str(e)}", exc_info=True)
         return ret_format(Code(500, False, str(e)), str(e))
