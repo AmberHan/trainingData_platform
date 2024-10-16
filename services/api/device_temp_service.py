@@ -9,7 +9,11 @@ def get_device_temp_impl() -> GetDeviceReply:
     try:
         # 获取CPU信息
         cpu_count = psutil.cpu_count(logical=True)  # 逻辑CPU核心数
-        cpu_usage = psutil.cpu_percent(interval=1)  # CPU使用率
+        # 获取每个 CPU 核心的使用率
+        cpu_usage_per_core = psutil.cpu_percent(interval=1, percpu=True)
+        # 计算平均 CPU 使用率
+        cpu_usage = sum(cpu_usage_per_core) / len(cpu_usage_per_core)
+        # cpu_usage = psutil.cpu_percent(interval=1) # CPU使用率
 
         # 获取内存信息
         memory_info = psutil.virtual_memory()  # 总内存和可用内存
