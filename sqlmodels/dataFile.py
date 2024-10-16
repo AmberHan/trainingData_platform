@@ -67,6 +67,13 @@ class DataFile(SQLModel, table=True):
         except Exception as e:
             raise Exception("save failed")
 
+    # def save_files_in_batch(self, db: Session, data_files = []):
+    #     try:
+    #         db.bulk_save_objects(data_files)
+    #         db.commit()  # 增加批处理
+    #     except Exception as e:
+    #         raise Exception("save failed")
+
     def delete(self, session: Session):
         try:
             statement = select(self.__class__).where(self.__class__.Id == self.Id)
@@ -94,3 +101,4 @@ class DataFile(SQLModel, table=True):
         for result in results:
             session.delete(result)
         session.commit()
+

@@ -172,6 +172,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
                 continue
             class_num += 1
         #
+        data_files = []
         for k, v in enumerate(image_files):
             # 保存图片
             data_file = DataFileSql()
@@ -181,7 +182,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             data_file.FileType = 0
             data_file.Url = file_path_to_url(v)
             data_file.DirPath = "images"
-            data_file.save(db)
+            data_files.append(data_file)
             # 保存文件
             data_file2 = DataFileSql()
             data_file2.Id = NewId()
@@ -190,7 +191,10 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             data_file2.FileType = 0
             data_file2.Url = file_path_to_url(label_files[k])
             data_file2.DirPath = "labels"
-            data_file2.save(db)
+            data_files.append(data_file2)
+        # 批处理
+        db.bulk_save_objects(data_files)
+        db.commit()  # 增加批处理
         #         # 修改类型数量
         mod.ClassNum = class_num
         mod.save(db)

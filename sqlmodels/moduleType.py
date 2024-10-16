@@ -18,3 +18,7 @@ class ModuleType(SQLModel, table=True):
     @classmethod
     def find_all(cls, session: Session) -> Sequence["ModuleType"]:
         return session.exec(select(cls)).all()
+
+    def save(self, session: Session):
+        session.merge(self)
+        session.commit()
