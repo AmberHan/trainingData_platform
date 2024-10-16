@@ -13,7 +13,8 @@ from sqlmodels.data import Data as DataSql, Data
 from sqlmodels.dataFile import DataFile as DataFileSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 from sqlmodels.user import User
-from util.file import unzip_file, untar_file, file_path_to_url, delete_file_and_directory, split_and_move_files
+from util.file import unzip_file_async, untar_file_async, file_path_to_url, delete_file_and_directory_async, \
+    split_and_move_files_async
 from util.util import NewId, TimeNow
 
 
@@ -96,7 +97,7 @@ def get_data_by_id(req: StringIdReq, db: Session) -> SaveDataReq:
 # data管理保存
 
 
-def save_data(uid: str, req: SaveDataForm, db: Session):
+async def save_data_async(uid: str, req: SaveDataForm, db: Session):
     if not os.path.exists(req.uploadPath):
         raise Exception("文件不存在，请重新上传")
 
@@ -108,10 +109,10 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
 
     try:
         if file_ext == ".zip":
-            unzip_file(tar_zip_path, file_path)
+            await unzip_file_async(tar_zip_path, file_path)
             print(f"Unzipped {tar_zip_path} to {file_path}")
         elif file_ext == ".gz":
-            untar_file(tar_zip_path, file_path)
+            await untar_file_async(tar_zip_path, file_path)
             print(f"Untarred {tar_zip_path} to {file_path}")
         else:
             raise Exception(f"不支持 {file_ext} 格式的文件解压")
@@ -135,8 +136,8 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             if label_name not in label_files:
                 unmatched_images.append(img)
         res = ", ".join(unmatched_images)
-        delete_file_and_directory(tar_zip_path)
-        delete_file_and_directory(file_path)
+        await delete_file_and_directory_async(tar_zip_path)
+        await delete_file_and_directory_async(file_path)
         raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
 
     # 保存数据
@@ -203,7 +204,7 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
         raise
     res = DataFileSql.find_all_by_data_id(db, mod.Id)
     images_parent_dir = config_path['PathConf']['SaveDataSetsPath'] + "/" + mod.Id
-    split_and_move_files(res, 10, 10, 80, images_parent_dir, db, req.details)
+    split_and_move_files_async(res, 10, 10, 80, images_parent_dir, db, req.details)
     return None
 
 

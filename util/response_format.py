@@ -27,3 +27,15 @@ def response_format(reply_provider):
     except Exception as e:
         logger.error(f"Exception: {str(e)}", exc_info=True)
         return ret_format(Code(500, False, str(e)), str(e))
+
+
+async def response_format_async(reply_provider):
+    try:
+        reply = await reply_provider()
+        return ret_format(RequestSuccess, reply)
+    except HTTPException as e:
+        logger.error(f"HTTPException: {str(e.detail)}", exc_info=True)
+        return ret_format(Code(500, False, str(e.detail)), str(e.detail))
+    except Exception as e:
+        logger.error(f"Exception: {str(e)}", exc_info=True)
+        return ret_format(Code(500, False, str(e)), str(e))

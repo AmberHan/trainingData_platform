@@ -1,3 +1,4 @@
+import asyncio
 import csv
 import json
 import math
@@ -15,42 +16,42 @@ from sqlmodels.dataFile import DataFile as DataFileSql
 from util.util import NewId
 
 
-def unzip_file(zip_path, extract_to):
-    """
-    解压 ZIP 文件
-    :param zip_path: 压缩文件的路径
-    :param extract_to: 解压到的目标路径
-    """
-    try:
-        if not os.path.exists(extract_to):
-            os.makedirs(extract_to)
+async def unzip_file_async(zip_path, extract_to):
+    loop = asyncio.get_running_loop()
 
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to)
-        print(f"解压成功: {zip_path} 到 {extract_to}")
-    except zipfile.BadZipFile:
-        print(f"文件 {zip_path} 不是有效的 ZIP 文件")
-    except Exception as e:
-        print(f"解压过程中发生错误: {str(e)}")
+    def _unzip_file():
+        try:
+            if not os.path.exists(extract_to):
+                os.makedirs(extract_to)
+
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_to)
+            print(f"解压成功: {zip_path} 到 {extract_to}")
+        except zipfile.BadZipFile:
+            print(f"文件 {zip_path} 不是有效的 ZIP 文件")
+        except Exception as e:
+            print(f"解压过程中发生错误: {str(e)}")
+
+    await loop.run_in_executor(None, _unzip_file)
 
 
-def untar_file(tar_path, extract_to):
-    """
-    解压 .tar.gz 文件
-    :param tar_path: 压缩文件的路径
-    :param extract_to: 解压到的目标路径
-    """
-    try:
-        if not os.path.exists(extract_to):
-            os.makedirs(extract_to)
+async def untar_file_async(tar_path, extract_to):
+    loop = asyncio.get_running_loop()
 
-        with tarfile.open(tar_path, 'r:gz') as tar_ref:
-            tar_ref.extractall(extract_to)
-        print(f"解压成功: {tar_path} 到 {extract_to}")
-    except tarfile.TarError:
-        print(f"文件 {tar_path} 不是有效的 tar 文件")
-    except Exception as e:
-        print(f"解压过程中发生错误: {str(e)}")
+    def _untar_file():
+        try:
+            if not os.path.exists(extract_to):
+                os.makedirs(extract_to)
+
+            with tarfile.open(tar_path, 'r:gz') as tar_ref:
+                tar_ref.extractall(extract_to)
+            print(f"解压成功: {tar_path} 到 {extract_to}")
+        except tarfile.TarError:
+            print(f"文件 {tar_path} 不是有效的 tar 文件")
+        except Exception as e:
+            print(f"解压过程中发生错误: {str(e)}")
+
+    await loop.run_in_executor(None, _untar_file)
 
 
 def get_file_size(file_path):
@@ -137,29 +138,34 @@ def get_all_subfolders(base_dir):
 
 
 # 目录移动
-def move_file_to_folder(file_path, destination_folder):
-    try:
-        # 检查目标文件夹是否存在，如果不存在则创建
-        if not os.path.exists(destination_folder):
-            os.makedirs(destination_folder)
+async def move_file_to_folder(file_path, destination_folder):
+    loop = asyncio.get_running_loop()
 
-        # 移动文件
-        shutil.copy(file_path, os.path.join(destination_folder, os.path.basename(file_path)))
-        print(f"文件已成功移动到 {destination_folder}")
+    def _move_file():
+        try:
+            # 检查目标文件夹是否存在，如果不存在则创建
+            if not os.path.exists(destination_folder):
+                os.makedirs(destination_folder)
 
-    except FileNotFoundError as fnf_error:
-        print(f"错误: 找不到文件 {file_path}. 错误信息: {str(fnf_error)}")
-    except PermissionError as perm_error:
-        print(f"错误: 没有权限移动文件 {file_path}. 错误信息: {str(perm_error)}")
-    except OSError as os_error:
-        print(f"错误: 操作系统错误。无法移动文件 {file_path}. 错误信息: {str(os_error)}")
-    except Exception as e:
-        print(f"未知错误: {str(e)}")
+            # 移动文件
+            shutil.copy(file_path, os.path.join(destination_folder, os.path.basename(file_path)))
+            print(f"文件已成功移动到 {destination_folder}")
+
+        except FileNotFoundError as fnf_error:
+            print(f"错误: 找不到文件 {file_path}. 错误信息: {str(fnf_error)}")
+        except PermissionError as perm_error:
+            print(f"错误: 没有权限移动文件 {file_path}. 错误信息: {str(perm_error)}")
+        except OSError as os_error:
+            print(f"错误: 操作系统错误。无法移动文件 {file_path}. 错误信息: {str(os_error)}")
+        except Exception as e:
+            print(f"未知错误: {str(e)}")
+
+    await loop.run_in_executor(None, _move_file)
 
 
 # 复制迁移
-def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir,
-                         db: Session, defineList=[]):
+async def split_and_move_files_async(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir,
+                                     db: Session, defineList=[]):
     # 按照文件类型分类
     png_files = [(file.FilePath, file) for file in res if file.DirPath == 'images']
 
@@ -204,7 +210,7 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
             dataFile.FileType = 1
         dataFile.save(db)
         # 将文件移动到相应的文件夹
-        move_file_to_folder(value, folder)
+        await move_file_to_folder(value, folder)
 
         # 根据索引确定文件存放的文件夹
         if index < validation_count:
@@ -218,7 +224,7 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
             # dataFile.FileType = 1
         # dataFile.save(db)
         # 将文件移动到相应的文件夹
-        move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
+        await move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
 
     if len(defineList) != 0:
         names = {}
@@ -298,6 +304,24 @@ def delete_file_and_directory(path: str):
             return True
     except OSError as e:
         raise Exception(f"删除文件 {path} 时出错: {str(e)}")
+
+
+async def delete_file_and_directory_async(path: str):
+    loop = asyncio.get_running_loop()
+
+    def _delete_file_or_directory():
+        try:
+            if os.path.exists(path):
+                if os.path.isfile(path):
+                    os.remove(path)
+                elif os.path.isdir(path):
+                    shutil.rmtree(path)
+                return True
+        except OSError as e:
+            raise Exception(f"删除文件 {path} 时出错: {str(e)}")
+
+    result = await loop.run_in_executor(None, _delete_file_or_directory)
+    return result
 
 
 def count_directories(path: str, fold_name: str) -> int:
