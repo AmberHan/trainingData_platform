@@ -101,4 +101,3 @@ class DataFile(SQLModel, table=True):
         for result in results:
             session.delete(result)
         session.commit()
-
