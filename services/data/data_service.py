@@ -9,7 +9,7 @@ from schemas.req_model import ListByPageReq, DataFileListByPageReq
 from services.module import module_service
 from services.module.moduleType_service import get_module_type_by_id_impl
 from services.module.module_service import StringIdReq
-from sqlmodels.data import Data as DataSql, Data
+from sqlmodels.data import Data as DataSql
 from sqlmodels.dataFile import DataFile as DataFileSql
 from sqlmodels.moduleType import ModuleType as ModuleTypeSql
 from sqlmodels.user import User
@@ -125,6 +125,10 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
     label_files = get_files_from_directory(file_path, 'labels')
 
     if len(image_files) != len(label_files):
+        delete_file_and_directory(tar_zip_path)
+        delete_file_and_directory(file_path)
+        raise Exception(f"上传失败，images和labels数量未对应，请重新上传合法的压缩包")
+    else:
         # 找出没有对应label的image文件
         unmatched_images = []
         for img in image_files:
@@ -134,13 +138,14 @@ def save_data(uid: str, req: SaveDataForm, db: Session):
             # 检查转换后的标签是否在 label_files 中
             if label_name not in label_files:
                 unmatched_images.append(img)
-        res = ", ".join(unmatched_images)
-        delete_file_and_directory(tar_zip_path)
-        delete_file_and_directory(file_path)
-        raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
+        if len(unmatched_images) != 0:
+            res = ", ".join(unmatched_images)
+            delete_file_and_directory(tar_zip_path)
+            delete_file_and_directory(file_path)
+            raise Exception(f"上传失败，images和labels数据未对应， 如下{res}", "请重新上传合法的压缩包")
 
     # 保存数据
-    mod = Data()
+    mod = DataSql()
 
     # TODO 目前无对应id
     # if req['id']:

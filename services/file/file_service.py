@@ -110,10 +110,10 @@ async def upload_chunk_impl(chunk_id: int, file: UploadFile, md5: str = Form(...
         raise HTTPException(status_code=400, detail=f"MD5 mismatch for chunk {chunk_id}")
 
     return FileReply(
-            path=chunk_path,
-            url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(chunk_path),
-            fileSize=str(get_file_size(chunk_path))
-        )
+        path=chunk_path,
+        url=config_path['HostConf']['Uri'] + "?path=" + os.path.basename(chunk_path),
+        fileSize=str(get_file_size(chunk_path))
+    )
 
 
 def merge_chunks_impl(file_name: str, file_md5: str):

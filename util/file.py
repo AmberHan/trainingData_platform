@@ -1,6 +1,7 @@
 import csv
 import json
 import math
+import multiprocessing
 import os
 import shutil
 import tarfile
@@ -160,6 +161,7 @@ def move_file_to_folder(file_path, destination_folder):
 # 复制迁移
 def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, training_data_num, base_dir,
                          db: Session, defineList=[]):
+
     # 按照文件类型分类
     png_files = [(file.FilePath, file) for file in res if file.DirPath == 'images']
 
@@ -191,34 +193,22 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
         # 删除目录及其内容
         shutil.rmtree(base_dir)
 
-    for index, (value, dataFile) in enumerate(png_files):
-        # 根据索引确定文件存放的文件夹
-        if index < validation_count:
-            folder = os.path.join(base_dir, "valid", "images")
-            dataFile.FileType = 2
-        elif index < validation_count + test_count:
-            folder = os.path.join(base_dir, "test", "images")
-            dataFile.FileType = 3
-        else:
-            folder = os.path.join(base_dir, "train", "images")
-            dataFile.FileType = 1
-        dataFile.save(db)
-        # 将文件移动到相应的文件夹
-        move_file_to_folder(value, folder)
+    base_from = []
+    base_to = []
+    # 用于保存更新的 dataFile 对象
+    data_files_to_update = []
 
-        # 根据索引确定文件存放的文件夹
-        if index < validation_count:
-            folder = os.path.join(base_dir, "valid", "labels")
-            # dataFile.FileType = 2
-        elif index < validation_count + test_count:
-            # dataFile.FileType = 3
-            folder = os.path.join(base_dir, "test", "labels")
-        else:
-            folder = os.path.join(base_dir, "train", "labels")
-            # dataFile.FileType = 1
-        # dataFile.save(db)
-        # 将文件移动到相应的文件夹
-        move_file_to_folder(value.replace("images", "labels").replace(".jpg", ".txt"), folder)
+    dir_list_group(base_dir, base_from, base_to, data_files_to_update, png_files, test_count, validation_count)
+
+    # 批量保存更新到数据库
+    db.bulk_save_objects(data_files_to_update)
+    db.commit()
+    # for i in range(len(base_from)):
+    #     move_file_to_folder(base_from[i], base_to[i])
+    """并行移动文件，使用 7 个进程"""
+    with multiprocessing.Pool(processes=7) as pool:
+        # 将文件移动任务分配到进程池中并行执行
+        pool.starmap(move_file_to_folder, zip(base_from, base_to))
 
     if len(defineList) != 0:
         names = {}
@@ -237,6 +227,44 @@ def split_and_move_files(res: List[DataFileSql], validation_num, test_data_num, 
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         generate_yaml(data_yaml, os.path.join(dir_path, "data.yaml"))
+
+
+# 字段拼接
+def dir_list_group(base_dir, base_from, base_to, data_files_to_update, png_files, test_count, validation_count):
+    for index, (value, dataFile) in enumerate(png_files):
+        # 根据索引确定文件存放的文件夹
+        if index < validation_count:
+            folder = os.path.join(base_dir, "valid", "images")
+
+            dataFile.FileType = 2
+        elif index < validation_count + test_count:
+            folder = os.path.join(base_dir, "test", "images")
+            dataFile.FileType = 3
+        else:
+            folder = os.path.join(base_dir, "train", "images")
+            dataFile.FileType = 1
+        # dataFile.save(db)
+        # 将文件移动到相应的文件夹
+        base_from.append(value)
+        base_to.append(folder)
+        # 将更新后的 dataFile 添加到列表中
+        data_files_to_update.append(dataFile)
+        # move_file_to_folder(value, folder)
+
+        # 根据索引确定文件存放的文件夹
+        if index < validation_count:
+            folder = os.path.join(base_dir, "valid", "labels")
+            # dataFile.FileType = 2
+        elif index < validation_count + test_count:
+            # dataFile.FileType = 3
+            folder = os.path.join(base_dir, "test", "labels")
+        else:
+            folder = os.path.join(base_dir, "train", "labels")
+            # dataFile.FileType = 1
+        # dataFile.save(db)
+        # 将文件移动到相应的文件夹
+        base_from.append(value.replace("images", "labels").replace(".jpg", ".txt"))
+        base_to.append(folder)
 
 
 def generate_yaml(data, file_path):
