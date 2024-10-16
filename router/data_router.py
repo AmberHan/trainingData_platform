@@ -44,7 +44,7 @@ async def get_data_strong(req: DataStrong, db: Session = Depends(get_db)):
 
 
 @dataHandler.post("/saveData")
-async def get_data_strong(req: SaveDataForm, db: Session = Depends(get_db)):
+async def save_data(req: SaveDataForm, db: Session = Depends(get_db)):
     return response_format(lambda: data_service.save_data(CURRENT_USER_ID_KEY, req, db))
 
 

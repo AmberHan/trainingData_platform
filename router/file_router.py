@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Query, Form
 
 from common import const
-from schemas.req_model import DownloadParams
+from schemas.req_model import DownloadParams, UploadParams
 from services.file import file_service
 from util.response_format import response_format
 
@@ -28,11 +28,11 @@ def download_project_work(params: DownloadParams = Query(..., description="æŸ¥è¯
     return file_service.download_impl(params)
 
 
-@fileHandler.post("/upload/{chunk_id}")
-async def upload_chunk(chunk_id: int, file: UploadFile, file_md5: str = Form(...)):
-    return file_service.upload_chunk_impl(chunk_id, file, file_md5)
+@fileHandler.post("/upload/chunk")
+async def upload_chunk(req: UploadParams, file: UploadFile):
+    return response_format(file_service.upload_chunk_impl(req.chunkId, file, req.fileMd5))
 
 
 @fileHandler.post("/upload/merge")
-async def merge_chunks(file_name: str = Form(...), file_md5: str = Form(...)):
-    return file_service.merge_chunks_impl(file_name, file_md5)
+async def merge_chunks(req: UploadParams):
+    return response_format(file_service.merge_chunks_impl(req.fileName, req.fileMd5))
