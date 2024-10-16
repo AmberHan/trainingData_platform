@@ -52,5 +52,5 @@ class ProjectWorkParam(SQLModel, table=True):
 
     def save(self, session: Session):
         # 保存记录
-        session.add(self)
+        session.merge(self)
         session.commit()

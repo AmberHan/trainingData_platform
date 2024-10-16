@@ -125,8 +125,8 @@ def save_project_work(
     restart = True
     projectWork = ProjectWorkSql()
     if req.work.id is not None:
-        r = ProjectWorkSql.select_by_id(db, req.work.id)
-        if r is not None:
+        projectWork = ProjectWorkSql.select_by_id(db, req.work.id)
+        if projectWork is not None:
             restart = False
     else:
         # if ProjectWorkSql.name_exists(db, uid, req.work.workName):
