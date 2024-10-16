@@ -45,7 +45,7 @@ class Module(SQLModel, table=True):
         return session.get(cls, id)
 
     def save(self, session: Session):
-        session.add(self)
+        session.merge(self)
         session.commit()
 
     def delete(self, session: Session):
